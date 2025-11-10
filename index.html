@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>متجر التطبيقات</title>
+</head>
+<body>
+    <h1>مرحبا بك في متجر التطبيقات</h1>
+    <div id="apps-list"></div>
+    
+    <script type="module">
+        // سيتم إضافة الكود هنا لاحقاً
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6h-oOG7xteSiJt2jDpSyGitiPp0aDimI",
+            authDomain: "wacelmarkt.firebaseapp.com",
+            projectId: "wacelmarkt",
+            storageBucket: "wacelmarkt.firebasestorage.app",
+            messagingSenderId: "662446208797",
+            appId: "1:662446208797:web:a3cc83551d42761e4753f4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        console.log("Firebase connected successfully!");
+    </script>
+</body>
+</html>

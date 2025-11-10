@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر التطبيقات - WacelMarkt</title>
+    <title>WacelMarkt - متجر التطبيقات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/style.css">
 </head>
@@ -11,9 +11,11 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-container">
-            <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
+            <div class="logo-section">
+                <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
+            </div>
             <div class="nav-links">
-                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a>
+                <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> الرئيسية</a>
                 <a href="#categories" class="nav-link"><i class="fas fa-th-large"></i> الفئات</a>
                 <button id="loginBtn" class="btn-login"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</button>
                 <button id="logoutBtn" class="btn-logout" style="display:none;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
@@ -24,12 +26,14 @@
     <!-- قسم الهيرو -->
     <header class="hero">
         <div class="hero-content">
-            <h2>اكتشف عالم التطبيقات</h2>
-            <p>أفضل التطبيقات المختارة خصيصاً لك</p>
-            <div class="search-bar">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
-                <button class="search-btn" onclick="searchApps()">بحث</button>
+            <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
+            <p class="hero-subtitle">أفضل التطبيقات المختارة خصيصاً لك</p>
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
+                    <button class="search-btn" onclick="searchApps()">بحث</button>
+                </div>
             </div>
         </div>
     </header>
@@ -39,7 +43,7 @@
         <!-- قسم الفئات -->
         <section class="categories-section" id="categories">
             <div class="section-header">
-                <h3><i class="fas fa-th-large"></i> الفئات</h3>
+                <h2 class="section-title"><i class="fas fa-th-large"></i> الفئات</h2>
                 <a href="#" class="see-all">عرض الكل</a>
             </div>
             <div class="categories-grid">
@@ -47,31 +51,31 @@
                     <div class="category-icon">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <span>التواصل الاجتماعي</span>
+                    <span class="category-name">التواصل الاجتماعي</span>
                 </div>
                 <div class="category-card" onclick="filterApps('entertainment')">
                     <div class="category-icon">
                         <i class="fas fa-gamepad"></i>
                     </div>
-                    <span>الترفيه</span>
+                    <span class="category-name">الترفيه</span>
                 </div>
                 <div class="category-card" onclick="filterApps('productivity')">
                     <div class="category-icon">
                         <i class="fas fa-briefcase"></i>
                     </div>
-                    <span>الإنتاجية</span>
+                    <span class="category-name">الإنتاجية</span>
                 </div>
                 <div class="category-card" onclick="filterApps('education')">
                     <div class="category-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <span>التعليم</span>
+                    <span class="category-name">التعليم</span>
                 </div>
                 <div class="category-card" onclick="filterApps('utility')">
                     <div class="category-icon">
                         <i class="fas fa-tools"></i>
                     </div>
-                    <span>الأدوات</span>
+                    <span class="category-name">الأدوات</span>
                 </div>
             </div>
         </section>
@@ -79,7 +83,7 @@
         <!-- التطبيقات المقترحة -->
         <section class="featured-section">
             <div class="section-header">
-                <h3><i class="fas fa-star"></i> مقترحة لك</h3>
+                <h2 class="section-title"><i class="fas fa-star"></i> مقترحة لك</h2>
                 <a href="#" class="see-all">عرض الكل</a>
             </div>
             <div id="featured-apps" class="apps-grid">
@@ -90,7 +94,7 @@
         <!-- قائمة الأكثر رواجًا -->
         <section class="trending-section">
             <div class="section-header">
-                <h3><i class="fas fa-fire"></i> الأكثر رواجاً</h3>
+                <h2 class="section-title"><i class="fas fa-fire"></i> الأكثر رواجاً</h2>
                 <a href="#" class="see-all">عرض الكل</a>
             </div>
             <div id="trending-apps" class="apps-grid">
@@ -101,10 +105,13 @@
         <!-- جميع التطبيقات -->
         <section class="all-apps-section">
             <div class="section-header">
-                <h3><i class="fas fa-th"></i> جميع التطبيقات</h3>
+                <h2 class="section-title"><i class="fas fa-th"></i> جميع التطبيقات</h2>
             </div>
             <div id="apps-list" class="apps-grid">
-                <p>جاري تحميل التطبيقات...</p>
+                <div class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحميل التطبيقات...</p>
+                </div>
             </div>
         </section>
     </main>
@@ -148,7 +155,7 @@
                     <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
                 </button>
             </form>
-            <p id="loginMessage"></p>
+            <div id="loginMessage"></div>
             
             <div class="test-credentials">
                 <h4><i class="fas fa-info-circle"></i> بيانات الاختبار:</h4>

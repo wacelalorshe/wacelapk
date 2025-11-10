@@ -1,18 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-    <title>لوحة التحكم</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - WacelMarkt</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/admin.css">
 </head>
 <body>
-    <h1>لوحة تحكم المتجر</h1>
-    
-    <form id="add-app-form">
-        <input type="text" id="app-name" placeholder="اسم التطبيق" required>
-        <textarea id="app-desc" placeholder="وصف التطبيق" required></textarea>
-        <input type="file" id="app-file" required>
-        <button type="submit">إضافة تطبيق</button>
-    </form>
-    
-    <div id="apps-management"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">لوحة التحكم</h1>
+            <div class="nav-links">
+                <a href="index.html">العودة للمتجر</a>
+                <button id="adminLogoutBtn" class="btn-logout">تسجيل الخروج</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-main">
+        <div class="admin-container">
+            <h2>إدارة التطبيقات</h2>
+            
+            <!-- إحصائيات سريعة -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>إجمالي التطبيقات</h3>
+                    <p id="totalApps">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>التطبيقات النشطة</h3>
+                    <p id="activeApps">0</p>
+                </div>
+            </div>
+
+            <!-- نموذج إضافة تطبيق -->
+            <section class="add-app-section">
+                <h3>إضافة تطبيق جديد</h3>
+                <form id="addAppForm" class="app-form">
+                    <div class="form-group">
+                        <label for="appName">اسم التطبيق *</label>
+                        <input type="text" id="appName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appDescription">وصف التطبيق *</label>
+                        <textarea id="appDescription" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appVersion">الإصدار *</label>
+                            <input type="text" id="appVersion" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appSize">الحجم (MB) *</label>
+                            <input type="text" id="appSize" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appCategory">التصنيف *</label>
+                            <select id="appCategory" required>
+                                <option value="productivity">الإنتاجية</option>
+                                <option value="education">التعليم</option>
+                                <option value="entertainment">الترفيه</option>
+                                <option value="utility">الأدوات</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appRating">التقييم (1-5)</label>
+                            <input type="number" id="appRating" min="1" max="5" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appDownloadURL">رابط التحميل *</label>
+                        <input type="url" id="appDownloadURL" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appIcon">أيقونة التطبيق</label>
+                        <input type="file" id="appIcon" accept="image/*">
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">إضافة التطبيق</button>
+                    <p id="formMessage"></p>
+                </form>
+            </section>
+
+            <!-- قائمة التطبيقات -->
+            <section class="apps-management">
+                <h3>التطبيقات المضافة</h3>
+                <div id="adminAppsList" class="admin-apps-grid">
+                    <!-- سيتم تعبئة التطبيقات هنا -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/admin.js"></script>
+    <script type="module" src="js/auth.js"></script>
 </body>
 </html>

@@ -116,11 +116,13 @@ function initializeAddAppForm() {
         }
 
         try {
-            // إضافة رابط الأيقونة إذا تم إدخاله
-            const iconURL = document.getElementById('appIconURL').value.trim();
-            if (iconURL) {
+            // تحميل الأيقونة إذا تم اختيارها
+            const iconFile = document.getElementById('appIcon').files[0];
+            if (iconFile) {
+                console.log("جاري رفع الأيقونة...");
+                const iconURL = await uploadIcon(iconFile);
                 appData.iconURL = iconURL;
-                console.log("تم إضافة رابط الأيقونة:", iconURL);
+                console.log("تم رفع الأيقونة:", iconURL);
             }
 
             // إضافة التطبيق إلى Firebase
@@ -148,13 +150,8 @@ function initializeAddAppForm() {
 
     console.log("تم تهيئة نموذج إضافة التطبيق");
 }
-```
 
-وأيضاً قم بإزالة دالة uploadIcon من admin.js لأننا لن نستخدمها بعد الآن:
-
-```javascript
-// احذف هذه الدالة بالكامل من admin.js
-/*
+// رفع الأيقونة إلى Storage
 async function uploadIcon(file) {
     try {
         // إنشاء اسم فريد للملف

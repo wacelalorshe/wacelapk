@@ -1,15 +1,11 @@
-// js/admin.js - الإصدار المصحح الكامل
+// js/admin.js - الإصدار المحدث باستخدام رابط الصورة
 import { 
     db, 
     collection, 
     addDoc, 
     getDocs, 
     deleteDoc, 
-    doc, 
-    storage, 
-    ref, 
-    uploadBytes, 
-    getDownloadURL 
+    doc
 } from './firebase-config.js';
 
 let apps = [];
@@ -55,8 +51,19 @@ function displayAdminApps() {
     
     container.innerHTML = apps.map(app => `
         <div class="admin-app-card">
-            <h4>${app.name}</h4>
-            <p>${app.description}</p>
+            <div class="app-header">
+                <div class="app-icon">
+                    ${app.iconURL ? 
+                        `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                         <i class="${getAppIcon(app.category)}" style="display: none;"></i>` :
+                        `<i class="${getAppIcon(app.category)}"></i>`
+                    }
+                </div>
+                <div class="app-info">
+                    <h4>${app.name}</h4>
+                    <p>${app.description}</p>
+                </div>
+            </div>
             <div class="app-meta">
                 <span>الإصدار: ${app.version}</span>
                 <span>الحجم: ${app.size} MB</span>
@@ -74,7 +81,7 @@ function displayAdminApps() {
     console.log("تم عرض التطبيقات في لوحة التحكم");
 }
 
-// إضافة تطبيق جديد
+// إضافة تطبيق جديد - الإصدار المحدث باستخدام رابط الصورة
 function initializeAddAppForm() {
     const form = document.getElementById('addAppForm');
     const messageDiv = document.getElementById('formMessage');
@@ -116,13 +123,18 @@ function initializeAddAppForm() {
         }
 
         try {
-            // تحميل الأيقونة إذا تم اختيارها
-            const iconFile = document.getElementById('appIcon').files[0];
-            if (iconFile) {
-                console.log("جاري رفع الأيقونة...");
-                const iconURL = await uploadIcon(iconFile);
-                appData.iconURL = iconURL;
-                console.log("تم رفع الأيقونة:", iconURL);
+            // إضافة رابط الأيقونة إذا تم إدخاله
+            const iconURL = document.getElementById('appIconURL').value.trim();
+            if (iconURL) {
+                // التحقق من صحة الرابط
+                if (isValidURL(iconURL)) {
+                    appData.iconURL = iconURL;
+                    console.log("تم إضافة رابط الأيقونة:", iconURL);
+                } else {
+                    showMessage('رابط الأيقونة غير صالح', 'error');
+                    if (loadingModal) loadingModal.style.display = 'none';
+                    return;
+                }
             }
 
             // إضافة التطبيق إلى Firebase
@@ -151,23 +163,13 @@ function initializeAddAppForm() {
     console.log("تم تهيئة نموذج إضافة التطبيق");
 }
 
-// رفع الأيقونة إلى Storage
-async function uploadIcon(file) {
+// التحقق من صحة الرابط
+function isValidURL(string) {
     try {
-        // إنشاء اسم فريد للملف
-        const fileName = `app-icons/${Date.now()}_${file.name}`;
-        const storageRef = ref(storage, fileName);
-        
-        // رفع الملف
-        const snapshot = await uploadBytes(storageRef, file);
-        console.log("تم رفع الملف:", snapshot);
-        
-        // الحصول على رابط التحميل
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        return downloadURL;
-    } catch (error) {
-        console.error("Error uploading icon:", error);
-        throw error;
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
     }
 }
 
@@ -184,6 +186,32 @@ async function deleteAdminApp(appId) {
         console.error("Error deleting app:", error);
         showMessage('خطأ في حذف التطبيق: ' + error.message, 'error');
     }
+}
+
+// الحصول على أيقونة التطبيق حسب التصنيف
+function getAppIcon(category) {
+    const icons = {
+        'games': 'fas fa-gamepad',
+        'social': 'fas fa-comments',
+        'entertainment': 'fas fa-film',
+        'productivity': 'fas fa-briefcase',
+        'education': 'fas fa-graduation-cap',
+        'utility': 'fas fa-tools'
+    };
+    return icons[category] || 'fas fa-mobile-alt';
+}
+
+// الحصول على اسم التصنيف
+function getCategoryName(category) {
+    const categories = {
+        'games': 'الألعاب',
+        'social': 'التواصل الاجتماعي',
+        'entertainment': 'الترفيه',
+        'productivity': 'الإنتاجية',
+        'education': 'التعليم',
+        'utility': 'الأدوات'
+    };
+    return categories[category] || category;
 }
 
 // عرض الرسائل
@@ -208,17 +236,6 @@ function showMessage(text, type) {
     
     // أيضاً عرض في الكونسول
     console.log(type.toUpperCase() + ":", text);
-}
-
-// الحصول على اسم التصنيف
-function getCategoryName(category) {
-    const categories = {
-        'productivity': 'الإنتاجية',
-        'education': 'التعليم',
-        'entertainment': 'الترفيه',
-        'utility': 'الأدوات'
-    };
-    return categories[category] || category;
 }
 
 // التحقق من تسجيل الدخول

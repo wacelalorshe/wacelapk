@@ -51,12 +51,12 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="appVersion">الإصدار *</label>
-                            <input type="text" id="appVersion" required>
+                            <input type="text" id="appVersion" placeholder="مثال: 1.0.0" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="appSize">الحجم (MB) *</label>
-                            <input type="text" id="appSize" required>
+                            <input type="number" id="appSize" placeholder="مثال: 25" required>
                         </div>
                     </div>
                     
@@ -64,6 +64,7 @@
                         <div class="form-group">
                             <label for="appCategory">التصنيف *</label>
                             <select id="appCategory" required>
+                                <option value="">اختر التصنيف</option>
                                 <option value="productivity">الإنتاجية</option>
                                 <option value="education">التعليم</option>
                                 <option value="entertainment">الترفيه</option>
@@ -73,22 +74,23 @@
                         
                         <div class="form-group">
                             <label for="appRating">التقييم (1-5)</label>
-                            <input type="number" id="appRating" min="1" max="5" step="0.1">
+                            <input type="number" id="appRating" min="1" max="5" step="0.1" placeholder="4.5">
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="appDownloadURL">رابط التحميل *</label>
-                        <input type="url" id="appDownloadURL" required>
+                        <input type="url" id="appDownloadURL" placeholder="https://example.com/app.zip" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="appIcon">أيقونة التطبيق</label>
                         <input type="file" id="appIcon" accept="image/*">
+                        <small>يمكنك ترك هذا الحقل فارغاً</small>
                     </div>
                     
                     <button type="submit" class="submit-btn">إضافة التطبيق</button>
-                    <p id="formMessage"></p>
+                    <div id="formMessage"></div>
                 </form>
             </section>
 
@@ -96,11 +98,19 @@
             <section class="apps-management">
                 <h3>التطبيقات المضافة</h3>
                 <div id="adminAppsList" class="admin-apps-grid">
-                    <!-- سيتم تعبئة التطبيقات هنا -->
+                    <p>جاري تحميل التطبيقات...</p>
                 </div>
             </section>
         </div>
     </main>
+
+    <!-- نافذة التحميل -->
+    <div id="loadingModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>جاري إضافة التطبيق...</h3>
+            <p>يرجى الانتظار</p>
+        </div>
+    </div>
 
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/admin.js"></script>

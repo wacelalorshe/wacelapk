@@ -8,26 +8,26 @@
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
-    <!-- شريط التنقل -->
-    <nav class="navbar">
+    <!-- الشريط العلوي -->
+    <nav class="top-navbar">
         <div class="nav-container">
             <div class="logo-section">
                 <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
             </div>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> الرئيسية</a>
-                <a href="#categories" class="nav-link"><i class="fas fa-th-large"></i> الفئات</a>
-                <button id="loginBtn" class="btn-login"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</button>
-                <button id="logoutBtn" class="btn-logout" style="display:none;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+            <div class="nav-actions">
+                <div class="search-icon-top" id="searchIconTop">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button id="loginBtn" class="btn-login"><i class="fas fa-user"></i></button>
+                <button id="logoutBtn" class="btn-logout" style="display:none;"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
     </nav>
 
-    <!-- قسم الهيرو -->
-    <header class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
-            <p class="hero-subtitle">أفضل التطبيقات المختارة خصيصاً لك</p>
+    <!-- شريط البحث المنبثق -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content search-modal">
+            <span class="close">&times;</span>
             <div class="search-container">
                 <div class="search-bar">
                     <i class="fas fa-search search-icon"></i>
@@ -36,26 +36,36 @@
                 </div>
             </div>
         </div>
-    </header>
+    </div>
 
     <!-- المحتوى الرئيسي -->
     <main class="main-content">
-        <!-- قسم الفئات -->
-        <section class="categories-section" id="categories">
-            <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-th-large"></i> الفئات</h2>
-                <a href="#" class="see-all">عرض الكل</a>
+        <!-- قسم الهيرو -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
+                <p class="hero-subtitle">أفضل التطبيقات المختارة خصيصاً لك</p>
             </div>
+        </section>
+
+        <!-- الفئات -->
+        <section class="categories-section">
             <div class="categories-grid">
+                <div class="category-card" onclick="filterApps('games')">
+                    <div class="category-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <span class="category-name">الألعاب</span>
+                </div>
                 <div class="category-card" onclick="filterApps('social')">
                     <div class="category-icon">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <span class="category-name">التواصل الاجتماعي</span>
+                    <span class="category-name">التواصل</span>
                 </div>
                 <div class="category-card" onclick="filterApps('entertainment')">
                     <div class="category-icon">
-                        <i class="fas fa-gamepad"></i>
+                        <i class="fas fa-film"></i>
                     </div>
                     <span class="category-name">الترفيه</span>
                 </div>
@@ -65,47 +75,52 @@
                     </div>
                     <span class="category-name">الإنتاجية</span>
                 </div>
-                <div class="category-card" onclick="filterApps('education')">
-                    <div class="category-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <span class="category-name">التعليم</span>
-                </div>
-                <div class="category-card" onclick="filterApps('utility')">
-                    <div class="category-icon">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <span class="category-name">الأدوات</span>
-                </div>
             </div>
         </section>
 
         <!-- التطبيقات المقترحة -->
         <section class="featured-section">
             <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-star"></i> مقترحة لك</h2>
-                <a href="#" class="see-all">عرض الكل</a>
+                <h2 class="section-title">مقترحة لك</h2>
             </div>
             <div id="featured-apps" class="apps-grid">
                 <!-- سيتم تعبئة التطبيقات المميزة هنا -->
             </div>
         </section>
 
-        <!-- قائمة الأكثر رواجًا -->
+        <!-- الأكثر رواجاً -->
         <section class="trending-section">
             <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-fire"></i> الأكثر رواجاً</h2>
-                <a href="#" class="see-all">عرض الكل</a>
+                <h2 class="section-title">الأكثر رواجاً</h2>
             </div>
             <div id="trending-apps" class="apps-grid">
                 <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
             </div>
         </section>
 
+        <!-- إعلانات مقترحة -->
+        <section class="ads-section">
+            <div class="section-header">
+                <h2 class="section-title">إعلانات مقترحة لك</h2>
+            </div>
+            <div class="ads-grid">
+                <div class="ad-card">
+                    <div class="ad-badge">2025</div>
+                    <h3>التدريبات المنزلية - بدون معدات</h3>
+                    <p>احصل على جسم مثالي من منزلك</p>
+                </div>
+                <div class="ad-card">
+                    <div class="ad-badge">جديد</div>
+                    <h3>دورات تعليمية مجانية</h3>
+                    <p>طور مهاراتك مع أفضل المدربين</p>
+                </div>
+            </div>
+        </section>
+
         <!-- جميع التطبيقات -->
         <section class="all-apps-section">
             <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-th"></i> جميع التطبيقات</h2>
+                <h2 class="section-title">التطبيقات</h2>
             </div>
             <div id="apps-list" class="apps-grid">
                 <div class="loading-state">
@@ -116,28 +131,23 @@
         </section>
     </main>
 
-    <!-- الفوتر -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4><i class="fas fa-mobile-alt"></i> WacelMarkt</h4>
-                <p>متجرك الأول للتطبيقات المميزة</p>
-            </div>
-            <div class="footer-section">
-                <h4>روابط سريعة</h4>
-                <a href="index.html">الرئيسية</a>
-                <a href="#categories">الفئات</a>
-                <a href="admin.html">لوحة التحكم</a>
-            </div>
-            <div class="footer-section">
-                <h4>التواصل</h4>
-                <p>support@wacelmarkt.com</p>
-            </div>
+    <!-- الشريط السفلي -->
+    <nav class="bottom-navbar">
+        <div class="bottom-nav-container">
+            <a href="#games" class="bottom-nav-item active">
+                <i class="fas fa-gamepad"></i>
+                <span>الألعاب</span>
+            </a>
+            <a href="#apps" class="bottom-nav-item">
+                <i class="fas fa-th-large"></i>
+                <span>التطبيقات</span>
+            </a>
+            <a href="#search" class="bottom-nav-item" id="bottomSearchBtn">
+                <i class="fas fa-search"></i>
+                <span>بحث</span>
+            </a>
         </div>
-        <div class="footer-bottom">
-            <p>© 2024 WacelMarkt. جميع الحقوق محفوظة</p>
-        </div>
-    </footer>
+    </nav>
 
     <!-- نموذج تسجيل الدخول -->
     <div id="loginModal" class="modal">
@@ -168,5 +178,41 @@
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/app.js"></script>
     <script type="module" src="js/auth.js"></script>
+    <script>
+        // إدارة شريط البحث
+        document.getElementById('searchIconTop').addEventListener('click', function() {
+            document.getElementById('searchModal').style.display = 'block';
+        });
+
+        document.getElementById('bottomSearchBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('searchModal').style.display = 'block';
+        });
+
+        // إغلاق النافذة المنبثقة
+        document.querySelectorAll('.close').forEach(function(closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        // إغلاق النافذة عند النقر خارجها
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // التنقل في الشريط السفلي
+        document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.bottom-nav-item').forEach(function(i) {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>

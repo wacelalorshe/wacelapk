@@ -65,9 +65,11 @@
                             <label for="appCategory">التصنيف *</label>
                             <select id="appCategory" required>
                                 <option value="">اختر التصنيف</option>
+                                <option value="games">الألعاب</option>
+                                <option value="social">التواصل الاجتماعي</option>
+                                <option value="entertainment">الترفيه</option>
                                 <option value="productivity">الإنتاجية</option>
                                 <option value="education">التعليم</option>
-                                <option value="entertainment">الترفيه</option>
                                 <option value="utility">الأدوات</option>
                             </select>
                         </div>
@@ -84,9 +86,9 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="appIcon">أيقونة التطبيق</label>
-                        <input type="file" id="appIcon" accept="image/*">
-                        <small>يمكنك ترك هذا الحقل فارغاً</small>
+                        <label for="appIconURL">رابط أيقونة التطبيق</label>
+                        <input type="url" id="appIconURL" placeholder="https://example.com/icon.png">
+                        <small>رابط صورة الأيقونة (اختياري) - يمكنك استخدام روابط من مواقع مثل Flaticon أو Icons8</small>
                     </div>
                     
                     <button type="submit" class="submit-btn">إضافة التطبيق</button>

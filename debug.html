@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تصحيح الأخطاء</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .btn { padding: 10px; margin: 5px; border: none; border-radius: 5px; }
+        .success { background: green; color: white; }
+        .error { background: red; color: white; }
+        .warning { background: orange; color: white; }
+        #output { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🐛 تصحيح المتجر</h1>
+    
+    <button class="btn success" onclick="testFirebase()">اختبار Firebase</button>
+    <button class="btn warning" onclick="testDatabase()">اختبار قاعدة البيانات</button>
+    <button class="btn" onclick="testAddProduct()">اختبار إضافة منتج</button>
+    <button class="btn error" onclick="clearOutput()">مسح النتائج</button>
+    
+    <div id="output"></div>
+    <div id="results"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        // تكوين Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnCeIjj1PHBrDRS-zjw8qLEGc-w4SS1XE",
+            authDomain: "tawsel735.firebaseapp.com",
+            projectId: "tawsel735",
+            storageBucket: "tawsel735.firebasestorage.app",
+            messagingSenderId: "723079637443",
+            appId: "1:723079637443:web:170f06eec77d25e4647576",
+            measurementId: "G-R84FEYXMDJ"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function addOutput(message, type = 'info') {
+            const output = document.getElementById('output');
+            const div = document.createElement('div');
+            div.style.padding = '5px';
+            div.style.margin = '2px';
+            div.style.borderRight = type === 'error' ? '5px solid red' : 
+                                  type === 'success' ? '5px solid green' : '5px solid blue';
+            div.innerHTML = `📱 ${message}`;
+            output.appendChild(div);
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+            document.getElementById('results').innerHTML = '';
+        }
+
+        async function testFirebase() {
+            addOutput('🔥 اختبار Firebase...');
+            
+            if (typeof firebase === 'undefined') {
+                addOutput('❌ Firebase غير محمل', 'error');
+                return false;
+            }
+            
+            if (typeof firebase.firestore === 'undefined') {
+                addOutput('❌ Firestore غير محمل', 'error');
+                return false;
+            }
+            
+            addOutput('✅ Firebase و Firestore جاهزان', 'success');
+            return true;
+        }
+
+        async function testDatabase() {
+            addOutput('🗃️ اختبار قاعدة البيانات...');
+            
+            try {
+                const testRef = db.collection('test');
+                await testRef.add({ 
+                    test: true, 
+                    timestamp: new Date(),
+                    message: 'اختبار من الهاتف'
+                });
+                addOutput('✅ الاتصال بقاعدة البيانات ناجح', 'success');
+                return true;
+            } catch (error) {
+                addOutput(`❌ فشل الاتصال: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testAddProduct() {
+            addOutput('🧪 اختبار إضافة منتج...');
+            
+            const testProduct = {
+                name: "منتج اختبار من الهاتف",
+                price: 999,
+                description: "هذا اختبار من الهاتف",
+                category: "اختبار",
+                image: "https://via.placeholder.com/300x200",
+                dateAdded: new Date().toLocaleDateString('ar-EG')
+            };
+            
+            try {
+                const docRef = await db.collection('products').add(testProduct);
+                addOutput(`✅ تم إضافة المنتج: ${docRef.id}`, 'success');
+                
+                // عرض المنتجات المضافة
+                const snapshot = await db.collection('products').get();
+                const products = [];
+                snapshot.forEach(doc => {
+                    products.push({ id: doc.id, ...doc.data() });
+                });
+                
+                const results = document.getElementById('results');
+                results.innerHTML = `<h3>المنتجات في قاعدة البيانات: ${products.length}</h3>`;
+                products.forEach(product => {
+                    results.innerHTML += `<p>📦 ${product.name} - $${product.price}</p>`;
+                });
+                
+                return true;
+            } catch (error) {
+                addOutput(`❌ فشل إضافة المنتج: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // اختبار تلقائي عند التحميل
+        setTimeout(() => {
+            addOutput('🔧 جاهز للاختبار... اضغط على الأزرار above');
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,191 +1,289 @@
-// js/admin.js - الإصدار المحدث باستخدام رابط الصورة
-import { 
-    db, 
-    collection, 
-    addDoc, 
-    getDocs, 
-    deleteDoc, 
-    doc
-} from './firebase-config.js';
+// js/app.js - الإصدار الكامل والمحدث
+import { db, collection, getDocs, deleteDoc, doc } from './firebase-config.js';
 
-let apps = [];
+let allApps = [];
+let currentFilter = 'all';
 
-// تحميل التطبيقات
-async function loadAdminApps() {
+// بيانات تجريبية للاختبار مع روابط أيقونات
+const sampleApps = [
+    {
+        id: '1',
+        name: 'تطبيق التواصل الاجتماعي',
+        description: 'تطبيق رائع للتواصل مع الأصدقاء والعائلة',
+        version: '1.0.0',
+        size: '25',
+        category: 'social',
+        downloadURL: 'https://example.com/app1.zip',
+        iconURL: 'https://cdn-icons-png.flaticon.com/512/124/124010.png',
+        rating: 4.5,
+        downloads: 1500,
+        featured: true
+    },
+    {
+        id: '2',
+        name: 'تطبيق الألعاب',
+        description: 'ألعاب مسلية ومثيرة للجميع',
+        version: '2.1.0',
+        size: '45',
+        category: 'games',
+        downloadURL: 'https://example.com/app2.zip',
+        iconURL: 'https://cdn-icons-png.flaticon.com/512/686/686589.png',
+        rating: 4.2,
+        downloads: 2300,
+        trending: true
+    },
+    {
+        id: '3',
+        name: 'تطبيق الإنتاجية',
+        description: 'زود إنتاجيتك مع هذا التطبيق المميز',
+        version: '1.5.0',
+        size: '30',
+        category: 'productivity',
+        downloadURL: 'https://example.com/app3.zip',
+        iconURL: 'https://cdn-icons-png.flaticon.com/512/3050/3050526.png',
+        rating: 4.8,
+        downloads: 1800,
+        featured: true
+    },
+    {
+        id: '4',
+        name: 'تطبيق الترفيه',
+        description: 'استمتع بأفضل محتوى ترفيهي',
+        version: '3.0.1',
+        size: '35',
+        category: 'entertainment',
+        downloadURL: 'https://example.com/app4.zip',
+        iconURL: 'https://cdn-icons-png.flaticon.com/512/2997/2997957.png',
+        rating: 4.3,
+        downloads: 1200,
+        trending: true
+    },
+    {
+        id: '5',
+        name: 'تطبيق التعليم',
+        description: 'تعلم مهارات جديدة بسهولة',
+        version: '2.0.0',
+        size: '28',
+        category: 'education',
+        downloadURL: 'https://example.com/app5.zip',
+        iconURL: 'https://cdn-icons-png.flaticon.com/512/761/761773.png',
+        rating: 4.6,
+        downloads: 900
+    },
+    {
+        id: '6',
+        name: 'تطبيق الأدوات',
+        description: 'أدوات مفيدة لحياتك اليومية',
+        version: '1.2.0',
+        size: '22',
+        category: 'utility',
+        downloadURL: 'https://example.com/app6.zip',
+        iconURL: 'https://cdn-icons-png.flaticon.com/512/1265/1265108.png',
+        rating: 4.1,
+        downloads: 750
+    }
+];
+
+// تحميل التطبيقات من Firebase
+async function loadApps() {
     try {
         console.log("بدء تحميل التطبيقات...");
+        
+        const appsContainer = document.getElementById('apps-list');
+        const featuredContainer = document.getElementById('featured-apps');
+        const trendingContainer = document.getElementById('trending-apps');
+        
+        // عرض حالة التحميل
+        if (appsContainer) appsContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات...</p></div>';
+        if (featuredContainer) featuredContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات المميزة...</p></div>';
+        if (trendingContainer) trendingContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات الشائعة...</p></div>';
+
+        // محاولة تحميل التطبيقات من Firebase
         const querySnapshot = await getDocs(collection(db, "apps"));
-        apps = [];
+        allApps = [];
         
-        querySnapshot.forEach((doc) => {
-            apps.push({
-                id: doc.id,
-                ...doc.data()
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+                allApps.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
             });
-        });
+            console.log("تم تحميل التطبيقات من Firebase:", allApps.length);
+        } else {
+            // استخدام البيانات التجريبية إذا لم توجد بيانات في Firebase
+            allApps = sampleApps;
+            console.log("تم استخدام البيانات التجريبية:", allApps.length);
+        }
         
-        console.log("تم تحميل التطبيقات:", apps.length);
-        updateStats();
-        displayAdminApps();
+        // عرض التطبيقات في الأقسام المختلفة
+        displayApps(allApps);
+        displayFeaturedApps();
+        displayTrendingApps();
+        
     } catch (error) {
-        console.error("Error loading apps:", error);
-        document.getElementById('adminAppsList').innerHTML = '<p style="color: red;">خطأ في تحميل التطبيقات: ' + error.message + '</p>';
+        console.error("خطأ في تحميل التطبيقات:", error);
+        
+        // في حالة الخطأ، استخدام البيانات التجريبية
+        allApps = sampleApps;
+        displayApps(allApps);
+        displayFeaturedApps();
+        displayTrendingApps();
+        
+        // عرض رسالة خطأ
+        const appsContainer = document.getElementById('apps-list');
+        if (appsContainer) {
+            appsContainer.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>تم تحميل بيانات تجريبية للعرض</p>
+                    <small>${error.message}</small>
+                </div>
+            `;
+        }
     }
 }
 
-// تحديث الإحصائيات
-function updateStats() {
-    document.getElementById('totalApps').textContent = apps.length;
-    document.getElementById('activeApps').textContent = apps.length;
-    console.log("تم تحديث الإحصائيات:", apps.length);
-}
-
-// عرض التطبيقات في لوحة التحكم
-function displayAdminApps() {
-    const container = document.getElementById('adminAppsList');
+// عرض التطبيقات الرئيسية
+function displayApps(apps) {
+    const appsContainer = document.getElementById('apps-list');
     
-    if (apps.length === 0) {
-        container.innerHTML = '<p>لا توجد تطبيقات مضافة بعد</p>';
+    if (!appsContainer) {
+        console.error("لم يتم العثور على عنصر apps-list");
         return;
     }
     
-    container.innerHTML = apps.map(app => `
-        <div class="admin-app-card">
+    if (apps.length === 0) {
+        appsContainer.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>لا توجد تطبيقات متاحة</p></div>';
+        return;
+    }
+    
+    appsContainer.innerHTML = apps.map(app => createAppCard(app)).join('');
+    console.log("تم عرض التطبيقات الرئيسية:", apps.length);
+}
+
+// عرض التطبيقات المميزة
+function displayFeaturedApps() {
+    const featuredContainer = document.getElementById('featured-apps');
+    
+    if (!featuredContainer) {
+        console.error("لم يتم العثور على عنصر featured-apps");
+        return;
+    }
+    
+    // التطبيقات المميزة هي التي لديها تقييم عالي أو marked as featured
+    const featuredApps = allApps
+        .filter(app => app.featured || (app.rating && app.rating >= 4.0))
+        .slice(0, 4);
+    
+    if (featuredApps.length === 0) {
+        featuredContainer.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>لا توجد تطبيقات مميزة</p></div>';
+        return;
+    }
+    
+    featuredContainer.innerHTML = featuredApps.map(app => createAppCard(app)).join('');
+    console.log("تم عرض التطبيقات المميزة:", featuredApps.length);
+}
+
+// عرض التطبيقات الشائعة
+function displayTrendingApps() {
+    const trendingContainer = document.getElementById('trending-apps');
+    
+    if (!trendingContainer) {
+        console.error("لم يتم العثور على عنصر trending-apps");
+        return;
+    }
+    
+    // التطبيقات الشائعة هي التي لديها تنزيلات عالية أو marked as trending
+    const trendingApps = allApps
+        .filter(app => app.trending || (app.downloads && app.downloads > 1000))
+        .slice(0, 6);
+    
+    if (trendingApps.length === 0) {
+        // إذا لم توجد تطبيقات شائعة، نعرض بعض التطبيقات العشوائية
+        const randomApps = [...allApps].sort(() => 0.5 - Math.random()).slice(0, 4);
+        trendingContainer.innerHTML = randomApps.map(app => createAppCard(app)).join('');
+    } else {
+        trendingContainer.innerHTML = trendingApps.map(app => createAppCard(app)).join('');
+    }
+    
+    console.log("تم عرض التطبيقات الشائعة:", trendingApps.length);
+}
+
+// إنشاء بطاقة تطبيق - الإصدار المحدث لدعم رابط الصورة
+function createAppCard(app) {
+    const ratingStars = generateRatingStars(app.rating);
+    
+    // استخدام رابط الصورة إذا كان موجوداً، وإلا استخدام الأيقونة الافتراضية
+    const iconContent = app.iconURL 
+        ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+           <i class="${getAppIcon(app.category)}" style="display: none;"></i>`
+        : `<i class="${getAppIcon(app.category)}"></i>`;
+
+    return `
+        <div class="app-card" data-category="${app.category}" data-id="${app.id}">
             <div class="app-header">
                 <div class="app-icon">
-                    ${app.iconURL ? 
-                        `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-                         <i class="${getAppIcon(app.category)}" style="display: none;"></i>` :
-                        `<i class="${getAppIcon(app.category)}"></i>`
-                    }
+                    ${iconContent}
                 </div>
                 <div class="app-info">
                     <h4>${app.name}</h4>
-                    <p>${app.description}</p>
+                    <div class="app-category">${getCategoryName(app.category)}</div>
                 </div>
             </div>
+            <p class="app-description">${app.description}</p>
             <div class="app-meta">
-                <span>الإصدار: ${app.version}</span>
-                <span>الحجم: ${app.size} MB</span>
+                <div class="app-version">الإصدار: ${app.version}</div>
+                <div class="app-size">${app.size} MB</div>
             </div>
             <div class="app-meta">
-                <span>التصنيف: ${getCategoryName(app.category)}</span>
-                ${app.rating ? `<span>التقييم: ${app.rating}/5</span>` : ''}
+                <div class="app-rating">
+                    ${ratingStars}
+                    <span>${app.rating || 'غير مقيم'}</span>
+                </div>
+                <div class="app-downloads">${app.downloads || 0} تنزيل</div>
             </div>
-            <div class="admin-app-actions">
-                <button class="btn-delete" onclick="deleteAdminApp('${app.id}')">حذف التطبيق</button>
+            <div class="app-actions">
+                <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
+                    <i class="fas fa-download"></i>
+                    تحميل
+                </button>
+                ${isAdmin() ? `
+                    <button class="delete-btn" onclick="deleteApp('${app.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                ` : ''}
             </div>
         </div>
-    `).join('');
+    `;
+}
+
+// توليد نجوم التقييم
+function generateRatingStars(rating) {
+    if (!rating) return '<span style="color: var(--text-light);">غير مقيم</span>';
     
-    console.log("تم عرض التطبيقات في لوحة التحكم");
-}
-
-// إضافة تطبيق جديد - الإصدار المحدث باستخدام رابط الصورة
-function initializeAddAppForm() {
-    const form = document.getElementById('addAppForm');
-    const messageDiv = document.getElementById('formMessage');
-    const loadingModal = document.getElementById('loadingModal');
-
-    if (!form) {
-        console.error('لم يتم العثور على النموذج!');
-        return;
-    }
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        console.log("تم الضغط على إضافة تطبيق");
-        
-        // إظهار نافذة التحميل
-        if (loadingModal) loadingModal.style.display = 'block';
-        
-        // الحصول على البيانات من النموذج
-        const appData = {
-            name: document.getElementById('appName').value.trim(),
-            description: document.getElementById('appDescription').value.trim(),
-            version: document.getElementById('appVersion').value.trim(),
-            size: document.getElementById('appSize').value.trim(),
-            category: document.getElementById('appCategory').value,
-            downloadURL: document.getElementById('appDownloadURL').value.trim(),
-            rating: document.getElementById('appRating').value || null,
-            createdAt: new Date().toISOString(),
-            downloads: 0
-        };
-
-        console.log("بيانات التطبيق:", appData);
-
-        // التحقق من الحقول المطلوبة
-        if (!appData.name || !appData.description || !appData.version || 
-            !appData.size || !appData.category || !appData.downloadURL) {
-            showMessage('يرجى ملء جميع الحقول المطلوبة', 'error');
-            if (loadingModal) loadingModal.style.display = 'none';
-            return;
-        }
-
-        try {
-            // إضافة رابط الأيقونة إذا تم إدخاله
-            const iconURL = document.getElementById('appIconURL').value.trim();
-            if (iconURL) {
-                // التحقق من صحة الرابط
-                if (isValidURL(iconURL)) {
-                    appData.iconURL = iconURL;
-                    console.log("تم إضافة رابط الأيقونة:", iconURL);
-                } else {
-                    showMessage('رابط الأيقونة غير صالح', 'error');
-                    if (loadingModal) loadingModal.style.display = 'none';
-                    return;
-                }
-            }
-
-            // إضافة التطبيق إلى Firebase
-            console.log("جاري إضافة التطبيق إلى Firebase...");
-            const docRef = await addDoc(collection(db, "apps"), appData);
-            console.log("تم إضافة التطبيق بنجاح! ID:", docRef.id);
-
-            // إظهار رسالة النجاح
-            showMessage('تم إضافة التطبيق بنجاح!', 'success');
-
-            // إعادة تعيين النموذج
-            form.reset();
-
-            // إعادة تحميل القائمة
-            await loadAdminApps();
-
-        } catch (error) {
-            console.error("Error adding app:", error);
-            showMessage('خطأ في إضافة التطبيق: ' + error.message, 'error');
-        } finally {
-            // إخفاء نافذة التحميل
-            if (loadingModal) loadingModal.style.display = 'none';
-        }
-    });
-
-    console.log("تم تهيئة نموذج إضافة التطبيق");
-}
-
-// التحقق من صحة الرابط
-function isValidURL(string) {
-    try {
-        new URL(string);
-        return true;
-    } catch (_) {
-        return false;
-    }
-}
-
-// حذف التطبيق
-async function deleteAdminApp(appId) {
-    if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
     
-    try {
-        console.log("جاري حذف التطبيق:", appId);
-        await deleteDoc(doc(db, "apps", appId));
-        showMessage('تم حذف التطبيق بنجاح', 'success');
-        await loadAdminApps(); // إعادة تحميل القائمة
-    } catch (error) {
-        console.error("Error deleting app:", error);
-        showMessage('خطأ في حذف التطبيق: ' + error.message, 'error');
+    let stars = '';
+    
+    // نجوم كاملة
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star"></i>';
     }
+    
+    // نصف نجمة
+    if (halfStar) {
+        stars += '<i class="fas fa-star-half-alt"></i>';
+    }
+    
+    // نجوم فارغة
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star"></i>';
+    }
+    
+    return stars;
 }
 
 // الحصول على أيقونة التطبيق حسب التصنيف
@@ -214,115 +312,259 @@ function getCategoryName(category) {
     return categories[category] || category;
 }
 
-// عرض الرسائل
-function showMessage(text, type) {
-    const messageDiv = document.getElementById('formMessage');
-    if (messageDiv) {
-        messageDiv.textContent = text;
-        messageDiv.style.color = type === 'success' ? 'green' : 'red';
-        messageDiv.style.padding = '10px';
-        messageDiv.style.margin = '10px 0';
-        messageDiv.style.borderRadius = '5px';
-        messageDiv.style.backgroundColor = type === 'success' ? '#e8f5e8' : '#ffe8e8';
-        messageDiv.style.border = type === 'success' ? '1px solid #27ae60' : '1px solid #e74c3c';
-        
-        // إخفاء الرسالة بعد 5 ثواني
-        setTimeout(() => {
-            messageDiv.textContent = '';
-            messageDiv.style.backgroundColor = 'transparent';
-            messageDiv.style.border = 'none';
-        }, 5000);
+// تصفية التطبيقات حسب الفئة
+function filterApps(category) {
+    console.log("تصفية التطبيقات حسب الفئة:", category);
+    
+    currentFilter = category;
+    
+    // تحديث حالة الأزرار النشطة في الفئات
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    
+    // إضافة active للفئة المحددة
+    const activeCategory = document.querySelector(`.category-card[onclick*="${category}"]`);
+    if (activeCategory) {
+        activeCategory.classList.add('active');
     }
     
-    // أيضاً عرض في الكونسول
-    console.log(type.toUpperCase() + ":", text);
-}
-
-// التحقق من تسجيل الدخول
-function checkAdminAuth() {
-    const user = localStorage.getItem('user');
-    const isAdmin = localStorage.getItem('isAdmin');
+    const filteredApps = category === 'all' 
+        ? allApps 
+        : allApps.filter(app => app.category === category);
     
-    console.log("التحقق من المصادقة:", { user, isAdmin });
+    displayApps(filteredApps);
     
-    if (!user || !isAdmin) {
-        console.log("المستخدم غير مسجل - إعادة التوجيه إلى الصفحة الرئيسية");
-        
-        // عرض رسالة للمستخدم
-        const adminContainer = document.querySelector('.admin-container');
-        if (adminContainer) {
-            adminContainer.innerHTML = `
-                <div style="text-align: center; padding: 50px;">
-                    <h2 style="color: #e74c3c;">يجب تسجيل الدخول أولاً</h2>
-                    <p>يجب أن تكون مسجلاً الدخول للوصول إلى لوحة التحكم</p>
-                    <button onclick="goToLogin()" style="
-                        background: #3498db;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        cursor: pointer;
-                        margin: 10px;
-                    ">تسجيل الدخول</button>
-                    <button onclick="goToHome()" style="
-                        background: #95a5a6;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        cursor: pointer;
-                        margin: 10px;
-                    ">العودة للصفحة الرئيسية</button>
-                </div>
-            `;
-        }
-        
-        return false;
-    }
-    return true;
+    // التمرير إلى قسم التطبيقات
+    document.getElementById('apps-list').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+    });
 }
 
-// الانتقال لتسجيل الدخول
-function goToLogin() {
-    window.location.href = 'index.html';
-}
-
-// الانتقال للصفحة الرئيسية
-function goToHome() {
-    window.location.href = 'index.html';
-}
-
-// تهيئة لوحة التحكم
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("تم تحميل صفحة لوحة التحكم");
+// البحث في التطبيقات
+function searchApps() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    console.log("الببحث عن:", searchTerm);
     
-    // التحقق من تسجيل الدخول أولاً
-    if (!checkAdminAuth()) {
+    if (!searchTerm) {
+        displayApps(allApps);
         return;
     }
     
-    // تهيئة النموذج
-    initializeAddAppForm();
+    const filteredApps = allApps.filter(app => 
+        app.name.toLowerCase().includes(searchTerm) ||
+        app.description.toLowerCase().includes(searchTerm) ||
+        getCategoryName(app.category).toLowerCase().includes(searchTerm)
+    );
+    
+    displayApps(filteredApps);
+    
+    // إغلاق نافذة البحث بعد النتائج
+    const searchModal = document.getElementById('searchModal');
+    if (searchModal) {
+        searchModal.style.display = 'none';
+    }
+    
+    // إظهار عدد النتائج
+    const appsContainer = document.getElementById('apps-list');
+    if (appsContainer && filteredApps.length > 0) {
+        const resultsHeader = document.createElement('div');
+        resultsHeader.className = 'search-results-header';
+        resultsHeader.innerHTML = `<p>عرض ${filteredApps.length} نتيجة للبحث عن: "${searchTerm}"</p>`;
+        appsContainer.insertBefore(resultsHeader, appsContainer.firstChild);
+    }
+}
+
+// البحث المباشر (عند الضغط على Enter)
+function performSearch() {
+    searchApps();
+}
+
+// تحميل التطبيق
+function downloadApp(downloadURL, appId) {
+    console.log("تحميل التطبيق:", appId);
+    
+    // زيادة عداد التنزيلات محلياً
+    const app = allApps.find(app => app.id === appId);
+    if (app) {
+        app.downloads = (app.downloads || 0) + 1;
+        
+        // تحديث واجهة المستخدم
+        const appCard = document.querySelector(`.app-card[data-id="${appId}"]`);
+        if (appCard) {
+            const downloadsElement = appCard.querySelector('.app-downloads');
+            if (downloadsElement) {
+                downloadsElement.textContent = `${app.downloads} تنزيل`;
+            }
+        }
+    }
+    
+    // فتح رابط التحميل في نافذة جديدة
+    if (downloadURL && downloadURL !== 'https://example.com/app1.zip') {
+        window.open(downloadURL, '_blank');
+    } else {
+        // إذا كان الرابط تجريبي، عرض رسالة
+        alert('هذا رابط تجريبي. في التطبيق الحقيقي، سيبدأ التحميل.');
+    }
+    
+    // إظهار رسالة نجاح
+    showTempMessage('جاري تحميل التطبيق...', 'success');
+}
+
+// حذف التطبيق (للمسؤول فقط)
+async function deleteApp(appId) {
+    if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
+    
+    try {
+        console.log("جاري حذف التطبيق:", appId);
+        
+        // حذف من Firebase إذا كان التطبيق مخزناً هناك
+        const app = allApps.find(app => app.id === appId);
+        if (app && !sampleApps.some(sample => sample.id === appId)) {
+            await deleteDoc(doc(db, "apps", appId));
+        }
+        
+        // إزالة من المصفوفة المحلية
+        allApps = allApps.filter(app => app.id !== appId);
+        
+        // إعادة تحميل القوائم
+        displayApps(allApps);
+        displayFeaturedApps();
+        displayTrendingApps();
+        
+        showTempMessage('تم حذف التطبيق بنجاح', 'success');
+        
+    } catch (error) {
+        console.error("خطأ في حذف التطبيق:", error);
+        showTempMessage('خطأ في حذف التطبيق', 'error');
+    }
+}
+
+// التحقق إذا كان المستخدم مسؤولاً
+function isAdmin() {
+    return localStorage.getItem('isAdmin') === 'true';
+}
+
+// عرض رسالة مؤقتة
+function showTempMessage(text, type) {
+    // إنشاء عنصر الرسالة
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `temp-message ${type}`;
+    messageDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i>
+        <span>${text}</span>
+    `;
+    
+    // إضافة الأنماط
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: var(--shadow-lg);
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    // إضافة الرسالة إلى الصفحة
+    document.body.appendChild(messageDiv);
+    
+    // إزالة الرسالة بعد 3 ثواني
+    setTimeout(() => {
+        messageDiv.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// إعداد التنقل في الشريط السفلي
+function setupBottomNavigation() {
+    const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
+    
+    bottomNavItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // إزالة النشاط من جميع العناصر
+            bottomNavItems.forEach(i => i.classList.remove('active'));
+            
+            // إضافة النشاط للعنصر الحالي
+            this.classList.add('active');
+            
+            const target = this.getAttribute('href');
+            console.log("النقر على:", target);
+            
+            // تنفيذ الإجراء المناسب
+            switch(target) {
+                case '#games':
+                    filterApps('games');
+                    break;
+                case '#apps':
+                    filterApps('all');
+                    break;
+                case '#search':
+                    document.getElementById('searchModal').style.display = 'block';
+                    break;
+            }
+        });
+    });
+}
+
+// إعداد أحداث الفئات
+function setupCategoryEvents() {
+    const categoryCards = document.querySelectorAll('.category-card');
+    
+    categoryCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // إزالة النشاط من جميع الفئات
+            categoryCards.forEach(c => c.classList.remove('active'));
+            
+            // إضافة النشاط للفئة المحددة
+            this.classList.add('active');
+        });
+    });
+}
+
+// تهيئة الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("تهيئة صفحة المتجر...");
     
     // تحميل التطبيقات
-    loadAdminApps();
+    loadApps();
     
-    // إعداد زر تسجيل الخروج
-    const logoutBtn = document.getElementById('adminLogoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            if (confirm('هل تريد تسجيل الخروج؟')) {
-                localStorage.removeItem('user');
-                localStorage.removeItem('isAdmin');
-                window.location.href = 'index.html';
+    // إعداد مستمعات الأحداث للبحث
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
             }
         });
     }
     
-    console.log("تم تهيئة لوحة التحكم بالكامل");
+    // إعداد التنقل في الشريط السفلي
+    setupBottomNavigation();
+    
+    // إعداد أحداث الفئات
+    setupCategoryEvents();
+    
+    console.log("تم تهيئة صفحة المتجر بالكامل");
 });
 
 // جعل الدوال متاحة globally
-window.goToLogin = goToLogin;
-window.goToHome = goToHome;
-window.deleteAdminApp = deleteAdminApp;
+window.filterApps = filterApps;
+window.searchApps = searchApps;
+window.performSearch = performSearch;
+window.downloadApp = downloadApp;
+window.deleteApp = deleteApp;

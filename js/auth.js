@@ -52,8 +52,6 @@ if (loginForm) {
             }));
             
             // تحديد إذا كان المستخدم مسؤولاً
-            // في هذا المثال، أي مستخدم مسجل يمكنه الوصول للوحة التحكم
-            // يمكنك تغيير هذا لاحقاً حسب احتياجك
             localStorage.setItem('isAdmin', 'true');
             
             if (message) {
@@ -69,11 +67,8 @@ if (loginForm) {
                 if (loginModal) loginModal.style.display = 'none';
                 if (loginForm) loginForm.reset();
                 
-                // إذا كان على صفحة الرئيسية، يمكننا إظهار رابط لوحة التحكم
-                if (window.location.pathname.includes('index.html') || 
-                    window.location.pathname === '/') {
-                    showAdminLink();
-                }
+                // إظهار رابط لوحة التحكم
+                showAdminLink();
             }, 1000);
             
         } catch (error) {

@@ -204,16 +204,21 @@ function displayTrendingApps() {
     console.log("تم عرض التطبيقات الشائعة:", trendingApps.length);
 }
 
-// إنشاء بطاقة تطبيق
+// إنشاء بطاقة تطبيق - الإصدار المعدل لدعم رابط الصورة
 function createAppCard(app) {
-    const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
     
+    // استخدام رابط الصورة إذا كان موجوداً، وإلا استخدام الأيقونة الافتراضية
+    const iconContent = app.iconURL 
+        ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+           <i class="${getAppIcon(app.category)}" style="display: none;"></i>`
+        : `<i class="${getAppIcon(app.category)}"></i>`;
+
     return `
         <div class="app-card" data-category="${app.category}" data-id="${app.id}">
             <div class="app-header">
                 <div class="app-icon">
-                    <i class="${iconClass}"></i>
+                    ${iconContent}
                 </div>
                 <div class="app-info">
                     <h4>${app.name}</h4>

@@ -1,4 +1,4 @@
-// js/app.js
+// js/app.js - الإصدار المصحح الكامل
 import { db, collection, getDocs, deleteDoc, doc } from './firebase-config.js';
 
 let allApps = [];
@@ -42,7 +42,7 @@ function displayApps(apps) {
             <p>${app.description}</p>
             <div class="app-meta">
                 <span>الإصدار: ${app.version}</span>
-                <span>الحجم: ${app.size}</span>
+                <span>الحجم: ${app.size} MB</span>
             </div>
             <div class="app-meta">
                 <span>التصنيف: ${getCategoryName(app.category)}</span>
@@ -114,7 +114,6 @@ function getCategoryName(category) {
 
 // التحقق إذا كان المستخدم مسؤولاً
 function isAdmin() {
-    // يمكنك إضافة منطق التحقق من صلاحية المستخدم
     return localStorage.getItem('isAdmin') === 'true';
 }
 
@@ -123,7 +122,10 @@ document.addEventListener('DOMContentLoaded', function() {
     loadApps();
     
     // إضافة مستمع حدث للبحث أثناء الكتابة
-    document.getElementById('searchInput').addEventListener('input', searchApps);
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', searchApps);
+    }
 });
 
 // جعل الدوال متاحة globally

@@ -1,4 +1,4 @@
-// js/admin.js - الإصدار المصحح
+// js/admin.js - الإصدار المصحح الكامل
 import { 
     db, 
     collection, 
@@ -66,7 +66,7 @@ function displayAdminApps() {
                 ${app.rating ? `<span>التقييم: ${app.rating}/5</span>` : ''}
             </div>
             <div class="admin-app-actions">
-                <button class="btn-delete" onclick="deleteAdminApp('${app.id}')">حذف</button>
+                <button class="btn-delete" onclick="deleteAdminApp('${app.id}')">حذف التطبيق</button>
             </div>
         </div>
     `).join('');
@@ -74,7 +74,7 @@ function displayAdminApps() {
     console.log("تم عرض التطبيقات في لوحة التحكم");
 }
 
-// إضافة تطبيق جديد - الكود المصحح
+// إضافة تطبيق جديد
 function initializeAddAppForm() {
     const form = document.getElementById('addAppForm');
     const messageDiv = document.getElementById('formMessage');
@@ -196,11 +196,13 @@ function showMessage(text, type) {
         messageDiv.style.margin = '10px 0';
         messageDiv.style.borderRadius = '5px';
         messageDiv.style.backgroundColor = type === 'success' ? '#e8f5e8' : '#ffe8e8';
+        messageDiv.style.border = type === 'success' ? '1px solid #27ae60' : '1px solid #e74c3c';
         
         // إخفاء الرسالة بعد 5 ثواني
         setTimeout(() => {
             messageDiv.textContent = '';
             messageDiv.style.backgroundColor = 'transparent';
+            messageDiv.style.border = 'none';
         }, 5000);
     }
     
@@ -224,12 +226,53 @@ function checkAdminAuth() {
     const user = localStorage.getItem('user');
     const isAdmin = localStorage.getItem('isAdmin');
     
+    console.log("التحقق من المصادقة:", { user, isAdmin });
+    
     if (!user || !isAdmin) {
-        alert('يجب تسجيل الدخول كمسؤول للوصول إلى لوحة التحكم');
-        window.location.href = 'index.html';
+        console.log("المستخدم غير مسجل - إعادة التوجيه إلى الصفحة الرئيسية");
+        
+        // عرض رسالة للمستخدم
+        const adminContainer = document.querySelector('.admin-container');
+        if (adminContainer) {
+            adminContainer.innerHTML = `
+                <div style="text-align: center; padding: 50px;">
+                    <h2 style="color: #e74c3c;">يجب تسجيل الدخول أولاً</h2>
+                    <p>يجب أن تكون مسجلاً الدخول للوصول إلى لوحة التحكم</p>
+                    <button onclick="goToLogin()" style="
+                        background: #3498db;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 10px;
+                    ">تسجيل الدخول</button>
+                    <button onclick="goToHome()" style="
+                        background: #95a5a6;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 10px;
+                    ">العودة للصفحة الرئيسية</button>
+                </div>
+            `;
+        }
+        
         return false;
     }
     return true;
+}
+
+// الانتقال لتسجيل الدخول
+function goToLogin() {
+    window.location.href = 'index.html';
+}
+
+// الانتقال للصفحة الرئيسية
+function goToHome() {
+    window.location.href = 'index.html';
 }
 
 // تهيئة لوحة التحكم
@@ -251,9 +294,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('adminLogoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function() {
-            localStorage.removeItem('user');
-            localStorage.removeItem('isAdmin');
-            window.location.href = 'index.html';
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('isAdmin');
+                window.location.href = 'index.html';
+            }
         });
     }
     
@@ -261,4 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // جعل الدوال متاحة globally
+window.goToLogin = goToLogin;
+window.goToHome = goToHome;
 window.deleteAdminApp = deleteAdminApp;

@@ -14,7 +14,6 @@
             <div class="nav-links">
                 <a href="index.html">الرئيسية</a>
                 <a href="#categories">التصنيفات</a>
-                <a href="admin.html">لوحة التحكم</a>
                 <button id="loginBtn" class="btn-login">تسجيل الدخول</button>
                 <button id="logoutBtn" class="btn-logout" style="display:none;">تسجيل الخروج</button>
             </div>
@@ -49,7 +48,7 @@
         <section class="apps-section">
             <h3>أحدث التطبيقات</h3>
             <div id="apps-list" class="apps-grid">
-                <!-- سيتم تعبئة التطبيقات هنا -->
+                <p>جاري تحميل التطبيقات...</p>
             </div>
         </section>
     </main>
@@ -65,11 +64,21 @@
             <span class="close">&times;</span>
             <h3>تسجيل الدخول</h3>
             <form id="loginForm">
-                <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
-                <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
-                <button type="submit">تسجيل الدخول</button>
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+                </div>
+                <button type="submit" class="submit-btn">تسجيل الدخول</button>
             </form>
             <p id="loginMessage"></p>
+            
+            <div class="test-credentials">
+                <h4>بيانات اختبار للمسؤول:</h4>
+                <p><strong>البريد:</strong> admin@wacelmarkt.com</p>
+                <p><strong>كلمة المرور:</strong> Admin123456</p>
+            </div>
         </div>
     </div>
 

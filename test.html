@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnCeIjj1PHBrDRS-zjw8qLEGc-w4SS1XE",
+            authDomain: "tawsel735.firebaseapp.com",
+            projectId: "tawsel735",
+            storageBucket: "tawsel735.firebasestorage.app",
+            messagingSenderId: "723079637443",
+            appId: "1:723079637443:web:170f06eec77d25e4647576"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        async function addTest() {
+            await db.collection('test').add({message: "test", time: new Date()});
+            alert('تمت الإضافة!');
+        }
+    </script>
+</head>
+<body>
+    <button onclick="addTest()">اختبار بسيط</button>
+</body>
+</html>

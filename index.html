@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متجر التطبيقات - WacelMarkt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-container">
-            <h1 class="logo">WacelMarkt</h1>
+            <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
             <div class="nav-links">
-                <a href="index.html">الرئيسية</a>
-                <a href="#categories">التصنيفات</a>
-                <button id="loginBtn" class="btn-login">تسجيل الدخول</button>
-                <button id="logoutBtn" class="btn-logout" style="display:none;">تسجيل الخروج</button>
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a>
+                <a href="#categories" class="nav-link"><i class="fas fa-th-large"></i> الفئات</a>
+                <button id="loginBtn" class="btn-login"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</button>
+                <button id="logoutBtn" class="btn-logout" style="display:none;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
             </div>
         </div>
     </nav>
@@ -23,30 +24,85 @@
     <!-- قسم الهيرو -->
     <header class="hero">
         <div class="hero-content">
-            <h2>مرحباً بك في متجر التطبيقات</h2>
-            <p>اكتشف أفضل التطبيقات واحصل عليها الآن</p>
+            <h2>اكتشف عالم التطبيقات</h2>
+            <p>أفضل التطبيقات المختارة خصيصاً لك</p>
             <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
                 <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
-                <button onclick="searchApps()">بحث</button>
+                <button class="search-btn" onclick="searchApps()">بحث</button>
             </div>
         </div>
     </header>
 
-    <!-- قسم التطبيقات -->
+    <!-- المحتوى الرئيسي -->
     <main class="main-content">
-        <section class="categories" id="categories">
-            <h3>التصنيفات</h3>
-            <div class="category-filters">
-                <button class="filter-btn active" onclick="filterApps('all')">الكل</button>
-                <button class="filter-btn" onclick="filterApps('productivity')">الإنتاجية</button>
-                <button class="filter-btn" onclick="filterApps('education')">التعليم</button>
-                <button class="filter-btn" onclick="filterApps('entertainment')">الترفيه</button>
-                <button class="filter-btn" onclick="filterApps('utility')">الأدوات</button>
+        <!-- قسم الفئات -->
+        <section class="categories-section" id="categories">
+            <div class="section-header">
+                <h3><i class="fas fa-th-large"></i> الفئات</h3>
+                <a href="#" class="see-all">عرض الكل</a>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card" onclick="filterApps('social')">
+                    <div class="category-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span>التواصل الاجتماعي</span>
+                </div>
+                <div class="category-card" onclick="filterApps('entertainment')">
+                    <div class="category-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <span>الترفيه</span>
+                </div>
+                <div class="category-card" onclick="filterApps('productivity')">
+                    <div class="category-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <span>الإنتاجية</span>
+                </div>
+                <div class="category-card" onclick="filterApps('education')">
+                    <div class="category-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <span>التعليم</span>
+                </div>
+                <div class="category-card" onclick="filterApps('utility')">
+                    <div class="category-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <span>الأدوات</span>
+                </div>
             </div>
         </section>
 
-        <section class="apps-section">
-            <h3>أحدث التطبيقات</h3>
+        <!-- التطبيقات المقترحة -->
+        <section class="featured-section">
+            <div class="section-header">
+                <h3><i class="fas fa-star"></i> مقترحة لك</h3>
+                <a href="#" class="see-all">عرض الكل</a>
+            </div>
+            <div id="featured-apps" class="apps-grid">
+                <!-- سيتم تعبئة التطبيقات المميزة هنا -->
+            </div>
+        </section>
+
+        <!-- قائمة الأكثر رواجًا -->
+        <section class="trending-section">
+            <div class="section-header">
+                <h3><i class="fas fa-fire"></i> الأكثر رواجاً</h3>
+                <a href="#" class="see-all">عرض الكل</a>
+            </div>
+            <div id="trending-apps" class="apps-grid">
+                <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
+            </div>
+        </section>
+
+        <!-- جميع التطبيقات -->
+        <section class="all-apps-section">
+            <div class="section-header">
+                <h3><i class="fas fa-th"></i> جميع التطبيقات</h3>
+            </div>
             <div id="apps-list" class="apps-grid">
                 <p>جاري تحميل التطبيقات...</p>
             </div>
@@ -55,14 +111,32 @@
 
     <!-- الفوتر -->
     <footer class="footer">
-        <p>© 2024 WacelMarkt. جميع الحقوق محفوظة</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4><i class="fas fa-mobile-alt"></i> WacelMarkt</h4>
+                <p>متجرك الأول للتطبيقات المميزة</p>
+            </div>
+            <div class="footer-section">
+                <h4>روابط سريعة</h4>
+                <a href="index.html">الرئيسية</a>
+                <a href="#categories">الفئات</a>
+                <a href="admin.html">لوحة التحكم</a>
+            </div>
+            <div class="footer-section">
+                <h4>التواصل</h4>
+                <p>support@wacelmarkt.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 WacelMarkt. جميع الحقوق محفوظة</p>
+        </div>
     </footer>
 
     <!-- نموذج تسجيل الدخول -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3>تسجيل الدخول</h3>
+            <h3><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</h3>
             <form id="loginForm">
                 <div class="form-group">
                     <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
@@ -70,12 +144,14 @@
                 <div class="form-group">
                     <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
                 </div>
-                <button type="submit" class="submit-btn">تسجيل الدخول</button>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                </button>
             </form>
             <p id="loginMessage"></p>
             
             <div class="test-credentials">
-                <h4>بيانات اختبار للمسؤول:</h4>
+                <h4><i class="fas fa-info-circle"></i> بيانات الاختبار:</h4>
                 <p><strong>البريد:</strong> admin@wacelmarkt.com</p>
                 <p><strong>كلمة المرور:</strong> Admin123456</p>
             </div>

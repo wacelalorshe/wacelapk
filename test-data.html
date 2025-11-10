@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار البيانات</title>
+</head>
+<body>
+    <h1>🧪 اختبار بيانات المتجر</h1>
+    <button onclick="testLocalStorage()">اختبار localStorage</button>
+    <button onclick="clearData()">مسح جميع البيانات</button>
+    <button onclick="addTestData()">إضافة بيانات تجريبية</button>
+    
+    <div id="output" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        function testLocalStorage() {
+            const products = JSON.parse(localStorage.getItem('storeProducts')) || [];
+            const output = document.getElementById('output');
+            output.innerHTML = `
+                <h3>نتائج الاختبار:</h3>
+                <p>عدد المنتجات: ${products.length}</p>
+                <pre>${JSON.stringify(products, null, 2)}</pre>
+            `;
+            console.log('📦 المنتجات:', products);
+        }
+
+        function clearData() {
+            localStorage.removeItem('storeProducts');
+            localStorage.removeItem('storeCart');
+            alert('✅ تم مسح جميع البيانات');
+            testLocalStorage();
+        }
+
+        function addTestData() {
+            const testProducts = [
+                {
+                    id: 1,
+                    name: "هاتف ذكي",
+                    price: 1500,
+                    description: "هاتف ذكي بمواصفات عالية",
+                    category: "إلكترونيات",
+                    image: "https://via.placeholder.com/300x200/007bff/ffffff?text=هاتف+ذكي"
+                },
+                {
+                    id: 2,
+                    name: "لابتوب",
+                    price: 3000,
+                    description: "لابتوب للأعمال والالعاب",
+                    category: "إلكترونيات", 
+                    image: "https://via.placeholder.com/300x200/28a745/ffffff?text=لابتوب"
+                }
+            ];
+            
+            localStorage.setItem('storeProducts', JSON.stringify(testProducts));
+            alert('✅ تم إضافة بيانات تجريبية');
+            testLocalStorage();
+        }
+
+        // اختبار تلقائي عند التحميل
+        testLocalStorage();
+    </script>
+</body>
+</html>

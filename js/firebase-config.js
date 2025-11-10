@@ -1,8 +1,7 @@
-// js/firebase-config.js
+// js/firebase-config.js - الإصدار المحدث
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC6h-oOG7xteSiJt2jDpSyGitiPp0aDimI",
@@ -17,13 +16,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const storage = getStorage(app);
 
 export { 
     app,
     db, 
     auth, 
-    storage, 
     collection, 
     addDoc, 
     getDocs, 
@@ -32,8 +29,5 @@ export {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     signOut,
-    onAuthStateChanged,
-    ref, 
-    uploadBytes, 
-    getDownloadURL 
+    onAuthStateChanged
 };

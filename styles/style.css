@@ -731,3 +731,95 @@ body {
         margin: 15% auto;
     }
 }
+
+/* أنماط إضافية لصور الأيقونات */
+.app-icon-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+}
+
+/* تحسين عرض الأيقونات في حالة الخطأ */
+.app-icon {
+    position: relative;
+}
+
+.app-icon i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* تحسين التصميم للنموذج */
+.form-group small {
+    color: var(--text-light);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* تحسين عرض الرسائل */
+#formMessage {
+    transition: all 0.3s ease;
+}
+
+/* حالات التحميل والخطأ */
+.loading-state, .empty-state, .error-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-secondary);
+}
+
+.loading-state i, .empty-state i, .error-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+.error-state i {
+    color: #ef4444;
+}
+
+.search-results-header {
+    background: var(--primary-light);
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    text-align: center;
+    color: var(--primary);
+    font-weight: 500;
+    grid-column: 1 / -1;
+}
+
+/* رسائل مؤقتة */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* تحسين التصميم للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .app-icon-image {
+        border-radius: 10px;
+    }
+}

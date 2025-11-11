@@ -412,3 +412,65 @@ small {
     height: 100%;
     object-fit: cover;
 }
+
+
+
+/* styles/admin.css - إضافة أنماط المشاركة في لوحة التحكم */
+
+/* قسم المشاركة في لوحة التحكم */
+.share-section {
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin: 1rem 0;
+    border: 1px solid var(--border);
+}
+
+.share-section label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.share-link-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.share-link-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    font-size: 0.9rem;
+    direction: ltr;
+    text-overflow: ellipsis;
+}
+
+.copy-share-link {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.copy-share-link:hover {
+    background: var(--primary-dark);
+}
+
+/* أزرار المشاركة الاجتماعية في الأدمن */
+.admin-app-card .social-share-buttons {
+    justify-content: flex-start;
+}
+
+.admin-app-card .social-share-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+}

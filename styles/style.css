@@ -291,7 +291,8 @@ body {
 }
 
 .app-card {
-    background: var(--bg-card);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.9);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
     border-radius: var(--radius);
     padding: 1.25rem;
     box-shadow: var(--shadow);
@@ -311,6 +312,8 @@ body {
     align-items: flex-start;
     gap: 1rem;
     margin-bottom: 1rem;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.9);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
 }
 
 .app-icon {

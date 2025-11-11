@@ -712,22 +712,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// دالة لإنشاء أيقونة افتراضية
-function createFallbackIcon(container, type = 'app') {
-    const icon = document.createElement('div');
-    icon.className = 'fallback-icon';
-    icon.innerHTML = type === 'app' ? '📱' : '📁';
-    icon.style.cssText = `
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        border-radius: inherit;
-    `;
-    container.appendChild(icon);
-}
-

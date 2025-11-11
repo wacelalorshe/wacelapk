@@ -1,4 +1,4 @@
-// js/admin.js - الإصدار المصحح مع رابط الأيقونة المباشر
+// js/admin.js - الإصدار المصحح مع رابط الأيقونة المباشر وخاصية المشاركة
 import { 
     db, 
     collection, 
@@ -49,7 +49,10 @@ function displayAdminApps() {
         return;
     }
     
-    container.innerHTML = apps.map(app => `
+    container.innerHTML = apps.map(app => {
+        const shareableLink = generateAdminShareableLink(app);
+        
+        return `
         <div class="admin-app-card">
             <div class="app-header">
                 ${app.iconURL ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-img">` : 
@@ -72,13 +75,100 @@ function displayAdminApps() {
                 ${app.trending ? '<span class="badge trending">شائع</span>' : ''}
                 <span class="downloads">${app.downloads || 0} تنزيل</span>
             </div>
+            <!-- رابط المشاركة في لوحة التحكم -->
+            <div class="share-section">
+                <label>رابط المشاركة:</label>
+                <div class="share-link-container">
+                    <input type="text" value="${shareableLink}" readonly class="share-link-input" id="share-link-${app.id}">
+                    <button class="copy-share-link" onclick="copyAdminShareLink('${app.id}', '${app.name}')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="social-share-buttons">
+                    <button class="social-share-btn whatsapp" onclick="shareAdminAppSocial('${app.id}', 'whatsapp')">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
+                    <button class="social-share-btn twitter" onclick="shareAdminAppSocial('${app.id}', 'twitter')">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                    <button class="social-share-btn facebook" onclick="shareAdminAppSocial('${app.id}', 'facebook')">
+                        <i class="fab fa-facebook"></i>
+                    </button>
+                    <button class="social-share-btn telegram" onclick="shareAdminAppSocial('${app.id}', 'telegram')">
+                        <i class="fab fa-telegram"></i>
+                    </button>
+                </div>
+            </div>
             <div class="admin-app-actions">
                 <button class="btn-delete" onclick="deleteAdminApp('${app.id}')">حذف التطبيق</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
     
     console.log("تم عرض التطبيقات في لوحة التحكم");
+}
+
+// إنشاء رابط مشاركة في لوحة التحكم
+function generateAdminShareableLink(app) {
+    const baseUrl = window.location.origin + '/index.html'; // التوجيه للصفحة الرئيسية
+    return `${baseUrl}?app=${app.id}&ref=share`;
+}
+
+// نسخ رابط المشاركة في لوحة التحكم
+function copyAdminShareLink(appId, appName) {
+    const shareLinkInput = document.getElementById(`share-link-${appId}`);
+    
+    if (shareLinkInput) {
+        shareLinkInput.select();
+        shareLinkInput.setSelectionRange(0, 99999);
+        
+        try {
+            navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+                showMessage(`تم نسخ رابط مشاركة ${appName}`, 'success');
+            }).catch(() => {
+                // الطريقة البديلة
+                const textArea = document.createElement("textarea");
+                textArea.value = shareLinkInput.value;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showMessage(`تم نسخ رابط مشاركة ${appName}`, 'success');
+            });
+        } catch (error) {
+            showMessage('فشل نسخ الرابط', 'error');
+        }
+    }
+}
+
+// مشاركة عبر الوسائط الاجتماعية من لوحة التحكم
+function shareAdminAppSocial(appId, platform) {
+    const app = apps.find(app => app.id === appId);
+    if (!app) return;
+    
+    const shareableLink = generateAdminShareableLink(app);
+    const shareText = `تحميل تطبيق ${app.name} - ${app.description}`;
+    
+    let shareUrl = '';
+    
+    switch(platform) {
+        case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareableLink)}`;
+            break;
+        case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareableLink)}`;
+            break;
+        case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareableLink)}&quote=${encodeURIComponent(shareText)}`;
+            break;
+        case 'telegram':
+            shareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareableLink)}&text=${encodeURIComponent(shareText)}`;
+            break;
+        default:
+            return;
+    }
+    
+    window.open(shareUrl, '_blank', 'width=600,height=400');
 }
 
 // إضافة تطبيق جديد
@@ -271,7 +361,7 @@ function goToLogin() {
     window.location.href = 'index.html';
 }
 
-// الانتقال للصفحة الرئيسية
+// الانتقال للالصفحة الرئيسية
 function goToHome() {
     window.location.href = 'index.html';
 }
@@ -306,7 +396,103 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("تم تهيئة لوحة التحكم بالكامل");
 });
 
+// إضافة أنماط CSS للمشاركة في لوحة التحكم
+const adminStyles = `
+.share-section {
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin: 1rem 0;
+    border: 1px solid var(--border);
+}
+
+.share-section label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.share-link-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.share-link-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    font-size: 0.9rem;
+    direction: ltr;
+    text-overflow: ellipsis;
+}
+
+.copy-share-link {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.copy-share-link:hover {
+    background: var(--primary-dark);
+}
+
+.social-share-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.social-share-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    font-size: 1.1rem;
+}
+
+.social-share-btn:hover {
+    transform: scale(1.1);
+}
+
+.social-share-btn.whatsapp {
+    background: #25D366;
+}
+
+.social-share-btn.twitter {
+    background: #1DA1F2;
+}
+
+.social-share-btn.facebook {
+    background: #4267B2;
+}
+
+.social-share-btn.telegram {
+    background: #0088cc;
+}
+`;
+
+// إضافة الأنماط إلى الصفحة
+const adminStyleSheet = document.createElement('style');
+adminStyleSheet.textContent = adminStyles;
+document.head.appendChild(adminStyleSheet);
+
 // جعل الدوال متاحة globally
 window.goToLogin = goToLogin;
 window.goToHome = goToHome;
 window.deleteAdminApp = deleteAdminApp;
+window.copyAdminShareLink = copyAdminShareLink;
+window.shareAdminAppSocial = shareAdminAppSocial;

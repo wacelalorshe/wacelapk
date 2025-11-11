@@ -1,4 +1,4 @@
-// js/admin.js - الإصدار المصحح مع رابط الأيقونة المباشر وخاصية المشاركة
+// js/admin.js - الإصدار المصحح بالكامل
 import { 
     db, 
     collection, 
@@ -10,8 +10,70 @@ import {
 
 let apps = [];
 
+// التحقق من تسجيل الدخول بشكل صارم
+function checkAdminAuth() {
+    const user = localStorage.getItem('user');
+    const isAdmin = localStorage.getItem('isAdmin');
+    
+    console.log("التحقق من المصادقة:", { user, isAdmin });
+    
+    if (!user || isAdmin !== 'true') {
+        console.log("المستخدم غير مسجل أو ليس مسؤولاً - إعادة التوجيه");
+        showAuthError();
+        return false;
+    }
+    
+    return true;
+}
+
+// عرض رسالة خطأ المصادقة
+function showAuthError() {
+    const adminContainer = document.querySelector('.admin-container');
+    if (adminContainer) {
+        adminContainer.innerHTML = `
+            <div style="text-align: center; padding: 50px;">
+                <h2 style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> صلاحية غير كافية</h2>
+                <p>يجب أن تكون مسؤولاً للوصول إلى لوحة التحكم</p>
+                <div style="margin: 20px 0;">
+                    <button onclick="goToLogin()" style="
+                        background: #3498db;
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 10px;
+                        font-size: 16px;
+                    ">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                    <button onclick="goToHome()" style="
+                        background: #95a5a6;
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 10px;
+                        font-size: 16px;
+                    ">
+                        <i class="fas fa-home"></i> العودة للصفحة الرئيسية
+                    </button>
+                </div>
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
+                    <h4>بيانات الاختبار للمسؤول:</h4>
+                    <p><strong>البريد:</strong> admin@wacelmarkt.com</p>
+                    <p><strong>كلمة المرور:</strong> Admin123456</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
 // تحميل التطبيقات
 async function loadAdminApps() {
+    if (!checkAdminAuth()) return;
+    
     try {
         console.log("بدء تحميل التطبيقات...");
         const querySnapshot = await getDocs(collection(db, "apps"));
@@ -43,6 +105,11 @@ function updateStats() {
 // عرض التطبيقات في لوحة التحكم
 function displayAdminApps() {
     const container = document.getElementById('adminAppsList');
+    
+    if (!container) {
+        console.error("لم يتم العثور على عنصر adminAppsList");
+        return;
+    }
     
     if (apps.length === 0) {
         container.innerHTML = '<p>لا توجد تطبيقات مضافة بعد</p>';
@@ -110,7 +177,7 @@ function displayAdminApps() {
 
 // إنشاء رابط مشاركة في لوحة التحكم
 function generateAdminShareableLink(app) {
-    const baseUrl = window.location.origin + '/index.html'; // التوجيه للصفحة الرئيسية
+    const baseUrl = window.location.origin + '/index.html';
     return `${baseUrl}?app=${app.id}&ref=share`;
 }
 
@@ -194,15 +261,22 @@ function initializeAddAppForm() {
             name: document.getElementById('appName').value.trim(),
             description: document.getElementById('appDescription').value.trim(),
             version: document.getElementById('appVersion').value.trim(),
-            size: document.getElementById('appSize').value.trim(),
+            size: parseFloat(document.getElementById('appSize').value.trim()),
             category: document.getElementById('appCategory').value,
             downloadURL: document.getElementById('appDownloadURL').value.trim(),
-            rating: document.getElementById('appRating').value || null,
-            featured: document.getElementById('appFeatured').checked,
-            trending: document.getElementById('appTrending').checked,
             createdAt: new Date().toISOString(),
             downloads: 0
         };
+
+        // الحصول على التقييم إذا كان موجوداً
+        const ratingValue = document.getElementById('appRating').value;
+        if (ratingValue) {
+            appData.rating = parseFloat(ratingValue);
+        }
+
+        // الحصول على الخيارات
+        appData.featured = document.getElementById('appFeatured').checked;
+        appData.trending = document.getElementById('appTrending').checked;
 
         // الحصول على رابط الأيقونة إذا تم إدخاله
         const iconURL = document.getElementById('appIconURL').value.trim();
@@ -312,56 +386,12 @@ function showMessage(text, type) {
     console.log(type.toUpperCase() + ":", text);
 }
 
-// التحقق من تسجيل الدخول
-function checkAdminAuth() {
-    const user = localStorage.getItem('user');
-    const isAdmin = localStorage.getItem('isAdmin');
-    
-    console.log("التحقق من المصادقة:", { user, isAdmin });
-    
-    if (!user || !isAdmin) {
-        console.log("المستخدم غير مسجل - إعادة التوجيه إلى الصفحة الرئيسية");
-        
-        // عرض رسالة للمستخدم
-        const adminContainer = document.querySelector('.admin-container');
-        if (adminContainer) {
-            adminContainer.innerHTML = `
-                <div style="text-align: center; padding: 50px;">
-                    <h2 style="color: #e74c3c;">يجب تسجيل الدخول أولاً</h2>
-                    <p>يجب أن تكون مسجلاً الدخول للوصول إلى لوحة التحكم</p>
-                    <button onclick="goToLogin()" style="
-                        background: #3498db;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        cursor: pointer;
-                        margin: 10px;
-                    ">تسجيل الدخول</button>
-                    <button onclick="goToHome()" style="
-                        background: #95a5a6;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        cursor: pointer;
-                        margin: 10px;
-                    ">العودة للصفحة الرئيسية</button>
-                </div>
-            `;
-        }
-        
-        return false;
-    }
-    return true;
-}
-
 // الانتقال لتسجيل الدخول
 function goToLogin() {
     window.location.href = 'index.html';
 }
 
-// الانتقال للالصفحة الرئيسية
+// الانتقال للصفحة الرئيسية
 function goToHome() {
     window.location.href = 'index.html';
 }
@@ -399,18 +429,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // إضافة أنماط CSS للمشاركة في لوحة التحكم
 const adminStyles = `
 .share-section {
-    background: var(--bg-light);
+    background: #f8f9fa;
     padding: 1rem;
-    border-radius: var(--radius);
+    border-radius: 8px;
     margin: 1rem 0;
-    border: 1px solid var(--border);
+    border: 1px solid #dee2e6;
 }
 
 .share-section label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: #333;
 }
 
 .share-link-container {
@@ -422,8 +452,8 @@ const adminStyles = `
 .share-link-input {
     flex: 1;
     padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border: 1px solid #ced4da;
+    border-radius: 5px;
     background: white;
     font-size: 0.9rem;
     direction: ltr;
@@ -431,17 +461,17 @@ const adminStyles = `
 }
 
 .copy-share-link {
-    background: var(--primary);
+    background: #3498db;
     color: white;
     border: none;
     padding: 0.75rem 1rem;
-    border-radius: var(--radius);
+    border-radius: 5px;
     cursor: pointer;
-    transition: var(--transition);
+    transition: background 0.3s;
 }
 
 .copy-share-link:hover {
-    background: var(--primary-dark);
+    background: #2980b9;
 }
 
 .social-share-buttons {
@@ -460,7 +490,7 @@ const adminStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition);
+    transition: transform 0.3s;
     font-size: 1.1rem;
 }
 
@@ -482,6 +512,202 @@ const adminStyles = `
 
 .social-share-btn.telegram {
     background: #0088cc;
+}
+
+.admin-app-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.app-icon-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.app-icon {
+    width: 50px;
+    height: 50px;
+    background: #3498db;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.app-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.app-meta {
+    display: flex;
+    gap: 1rem;
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+}
+
+.app-meta span {
+    background: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.badge {
+    background: #e74c3c;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.badge.featured {
+    background: #f39c12;
+}
+
+.badge.trending {
+    background: #9b59b6;
+}
+
+.app-description {
+    color: #666;
+    line-height: 1.5;
+    margin: 1rem 0;
+}
+
+.admin-app-actions {
+    margin-top: 1rem;
+    text-align: left;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.stat-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.app-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 2rem 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.submit-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background: #219a52;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 15% auto;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
 }
 `;
 

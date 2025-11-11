@@ -35,66 +35,80 @@
             </div>
 
             <!-- نموذج إضافة تطبيق -->
-<section class="add-app-section">
-    <h3>إضافة تطبيق جديد</h3>
-    <form id="addAppForm" class="app-form">
-        <div class="form-group">
-            <label for="appName">اسم التطبيق *</label>
-            <input type="text" id="appName" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="appDescription">وصف التطبيق *</label>
-            <textarea id="appDescription" rows="3" required></textarea>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="appVersion">الإصدار *</label>
-                <input type="text" id="appVersion" placeholder="مثال: 1.0.0" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="appSize">الحجم (MB) *</label>
-                <input type="number" id="appSize" placeholder="مثال: 25" required>
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="appCategory">التصنيف *</label>
-                <select id="appCategory" required>
-                    <option value="">اختر التصنيف</option>
-                    <option value="games">الألعاب</option>
-                    <option value="social">التواصل الاجتماعي</option>
-                    <option value="entertainment">الترفيه</option>
-                    <option value="productivity">الإنتاجية</option>
-                    <option value="education">التعليم</option>
-                    <option value="utility">الأدوات</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="appRating">التقييم (1-5)</label>
-                <input type="number" id="appRating" min="1" max="5" step="0.1" placeholder="4.5">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="appDownloadURL">رابط التحميل *</label>
-            <input type="url" id="appDownloadURL" placeholder="https://example.com/app.zip" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="appIconURL">رابط أيقونة التطبيق</label>
-            <input type="url" id="appIconURL" placeholder="https://example.com/icon.png">
-            <small>رابط صورة الأيقونة (اختياري)</small>
-        </div>
-        
-        <button type="submit" class="submit-btn">إضافة التطبيق</button>
-        <div id="formMessage"></div>
-    </form>
-</section>
+            <section class="add-app-section">
+                <h3>إضافة تطبيق جديد</h3>
+                <form id="addAppForm" class="app-form">
+                    <div class="form-group">
+                        <label for="appName">اسم التطبيق *</label>
+                        <input type="text" id="appName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appDescription">وصف التطبيق *</label>
+                        <textarea id="appDescription" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appVersion">الإصدار *</label>
+                            <input type="text" id="appVersion" placeholder="مثال: 1.0.0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appSize">الحجم (MB) *</label>
+                            <input type="number" id="appSize" placeholder="مثال: 25" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appCategory">التصنيف *</label>
+                            <select id="appCategory" required>
+                                <option value="">اختر التصنيف</option>
+                                <option value="productivity">الإنتاجية</option>
+                                <option value="education">التعليم</option>
+                                <option value="entertainment">الترفيه</option>
+                                <option value="utility">الأدوات</option>
+                                <option value="games">الألعاب</option>
+                                <option value="social">التواصل الاجتماعي</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appRating">التقييم (1-5)</label>
+                            <input type="number" id="appRating" min="1" max="5" step="0.1" placeholder="4.5">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appDownloadURL">رابط التحميل *</label>
+                        <input type="url" id="appDownloadURL" placeholder="https://example.com/app.zip" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appIconURL">رابط الأيقونة (اختياري)</label>
+                        <input type="url" id="appIconURL" placeholder="https://example.com/icon.png">
+                        <small>يمكنك استخدام رابط مباشر لأيقونة التطبيق</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="appFeatured"> تطبيق مميز
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="appTrending"> تطبيق شائع
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">إضافة التطبيق</button>
+                    <div id="formMessage"></div>
+                </form>
+            </section>
 
             <!-- قائمة التطبيقات -->
             <section class="apps-management">
@@ -116,6 +130,5 @@
 
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/admin.js"></script>
-    <script type="module" src="js/auth.js"></script>
 </body>
 </html>

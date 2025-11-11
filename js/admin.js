@@ -1,15 +1,11 @@
-// js/admin.js - الإصدار المصحح الكامل
+// js/admin.js - الإصدار المصحح مع رابط الأيقونة المباشر
 import { 
     db, 
     collection, 
     addDoc, 
     getDocs, 
     deleteDoc, 
-    doc, 
-    storage, 
-    ref, 
-    uploadBytes, 
-    getDownloadURL 
+    doc
 } from './firebase-config.js';
 
 let apps = [];
@@ -55,15 +51,26 @@ function displayAdminApps() {
     
     container.innerHTML = apps.map(app => `
         <div class="admin-app-card">
-            <h4>${app.name}</h4>
-            <p>${app.description}</p>
-            <div class="app-meta">
-                <span>الإصدار: ${app.version}</span>
-                <span>الحجم: ${app.size} MB</span>
+            <div class="app-header">
+                ${app.iconURL ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-img">` : 
+                  `<div class="app-icon"><i class="${getAppIcon(app.category)}"></i></div>`}
+                <div class="app-info">
+                    <h4>${app.name}</h4>
+                    <div class="app-meta">
+                        <span>الإصدار: ${app.version}</span>
+                        <span>الحجم: ${app.size} MB</span>
+                    </div>
+                </div>
             </div>
+            <p class="app-description">${app.description}</p>
             <div class="app-meta">
                 <span>التصنيف: ${getCategoryName(app.category)}</span>
                 ${app.rating ? `<span>التقييم: ${app.rating}/5</span>` : ''}
+            </div>
+            <div class="app-meta">
+                ${app.featured ? '<span class="badge featured">مميز</span>' : ''}
+                ${app.trending ? '<span class="badge trending">شائع</span>' : ''}
+                <span class="downloads">${app.downloads || 0} تنزيل</span>
             </div>
             <div class="admin-app-actions">
                 <button class="btn-delete" onclick="deleteAdminApp('${app.id}')">حذف التطبيق</button>
@@ -101,9 +108,17 @@ function initializeAddAppForm() {
             category: document.getElementById('appCategory').value,
             downloadURL: document.getElementById('appDownloadURL').value.trim(),
             rating: document.getElementById('appRating').value || null,
+            featured: document.getElementById('appFeatured').checked,
+            trending: document.getElementById('appTrending').checked,
             createdAt: new Date().toISOString(),
             downloads: 0
         };
+
+        // الحصول على رابط الأيقونة إذا تم إدخاله
+        const iconURL = document.getElementById('appIconURL').value.trim();
+        if (iconURL) {
+            appData.iconURL = iconURL;
+        }
 
         console.log("بيانات التطبيق:", appData);
 
@@ -116,15 +131,6 @@ function initializeAddAppForm() {
         }
 
         try {
-            // تحميل الأيقونة إذا تم اختيارها
-            const iconFile = document.getElementById('appIcon').files[0];
-            if (iconFile) {
-                console.log("جاري رفع الأيقونة...");
-                const iconURL = await uploadIcon(iconFile);
-                appData.iconURL = iconURL;
-                console.log("تم رفع الأيقونة:", iconURL);
-            }
-
             // إضافة التطبيق إلى Firebase
             console.log("جاري إضافة التطبيق إلى Firebase...");
             const docRef = await addDoc(collection(db, "apps"), appData);
@@ -151,26 +157,6 @@ function initializeAddAppForm() {
     console.log("تم تهيئة نموذج إضافة التطبيق");
 }
 
-// رفع الأيقونة إلى Storage
-async function uploadIcon(file) {
-    try {
-        // إنشاء اسم فريد للملف
-        const fileName = `app-icons/${Date.now()}_${file.name}`;
-        const storageRef = ref(storage, fileName);
-        
-        // رفع الملف
-        const snapshot = await uploadBytes(storageRef, file);
-        console.log("تم رفع الملف:", snapshot);
-        
-        // الحصول على رابط التحميل
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        return downloadURL;
-    } catch (error) {
-        console.error("Error uploading icon:", error);
-        throw error;
-    }
-}
-
 // حذف التطبيق
 async function deleteAdminApp(appId) {
     if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
@@ -184,6 +170,32 @@ async function deleteAdminApp(appId) {
         console.error("Error deleting app:", error);
         showMessage('خطأ في حذف التطبيق: ' + error.message, 'error');
     }
+}
+
+// الحصول على أيقونة التطبيق حسب التصنيف
+function getAppIcon(category) {
+    const icons = {
+        'games': 'fas fa-gamepad',
+        'social': 'fas fa-comments',
+        'entertainment': 'fas fa-film',
+        'productivity': 'fas fa-briefcase',
+        'education': 'fas fa-graduation-cap',
+        'utility': 'fas fa-tools'
+    };
+    return icons[category] || 'fas fa-mobile-alt';
+}
+
+// الحصول على اسم التصنيف
+function getCategoryName(category) {
+    const categories = {
+        'games': 'الألعاب',
+        'social': 'التواصل الاجتماعي',
+        'entertainment': 'الترفيه',
+        'productivity': 'الإنتاجية',
+        'education': 'التعليم',
+        'utility': 'الأدوات'
+    };
+    return categories[category] || category;
 }
 
 // عرض الرسائل
@@ -208,17 +220,6 @@ function showMessage(text, type) {
     
     // أيضاً عرض في الكونسول
     console.log(type.toUpperCase() + ":", text);
-}
-
-// الحصول على اسم التصنيف
-function getCategoryName(category) {
-    const categories = {
-        'productivity': 'الإنتاجية',
-        'education': 'التعليم',
-        'entertainment': 'الترفيه',
-        'utility': 'الأدوات'
-    };
-    return categories[category] || category;
 }
 
 // التحقق من تسجيل الدخول

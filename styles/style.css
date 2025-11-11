@@ -78,8 +78,8 @@ body {
 }
 
 .search-icon-top {
-    width: 40px;
-    height: 40px;
+    width: clamp(2rem, 10vw, 2.5rem);
+    height: clamp(2rem, 10vw, 2.5rem);
     background: var(--bg-secondary);
     border-radius: 50%;
     display: flex;
@@ -90,6 +90,10 @@ body {
     color: var(--text-secondary);
 }
 
+.search-icon-top i {
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+}
+
 .search-icon-top:hover {
     background: var(--primary-light);
     color: var(--primary);
@@ -97,8 +101,8 @@ body {
 }
 
 .btn-login, .btn-logout {
-    width: 40px;
-    height: 40px;
+    width: clamp(2rem, 10vw, 2.5rem);
+    height: clamp(2rem, 10vw, 2.5rem);
     background: var(--primary);
     color: white;
     border: none;
@@ -108,6 +112,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.btn-login i, .btn-logout i {
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
 }
 
 .btn-login:hover, .btn-logout:hover {
@@ -146,16 +154,16 @@ body {
     transition: all 0.3s ease;
     padding: 0.5rem;
     border-radius: var(--radius);
-    min-width: 60px;
+    min-width: clamp(3rem, 15vw, 4rem);
 }
 
 .bottom-nav-item i {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 4vw, 1.4rem);
     margin-bottom: 0.25rem;
 }
 
 .bottom-nav-item span {
-    font-size: 0.75rem;
+    font-size: clamp(0.6rem, 2.5vw, 0.85rem);
     font-weight: 500;
 }
 
@@ -226,8 +234,8 @@ body {
 }
 
 .category-icon {
-    width: 50px;
-    height: 50px;
+    width: clamp(2.5rem, 8vw, 3.5rem);
+    height: clamp(2.5rem, 8vw, 3.5rem);
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-radius: 14px;
     display: flex;
@@ -235,7 +243,7 @@ body {
     justify-content: center;
     margin: 0 auto 0.75rem;
     color: white;
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 4vw, 1.5rem);
     box-shadow: var(--shadow-md);
 }
 
@@ -296,15 +304,15 @@ body {
 }
 
 .app-icon {
-    width: 50px;
-    height: 50px;
+    width: clamp(2.5rem, 7vw, 3rem);
+    height: clamp(2.5rem, 7vw, 3rem);
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.2rem;
+    font-size: clamp(0.9rem, 3.5vw, 1.3rem);
     box-shadow: var(--shadow-md);
     flex-shrink: 0;
 }
@@ -696,16 +704,16 @@ body {
     }
     
     .bottom-nav-item {
-        min-width: 50px;
-        padding: 0.25rem;
+        min-width: clamp(2.5rem, 12vw, 3.5rem);
+        padding: 0.3rem;
     }
     
     .bottom-nav-item i {
-        font-size: 1.1rem;
+        font-size: clamp(0.9rem, 3.5vw, 1.3rem);
     }
     
     .bottom-nav-item span {
-        font-size: 0.7rem;
+        font-size: clamp(0.55rem, 2vw, 0.75rem);
     }
 }
 
@@ -730,10 +738,44 @@ body {
     .search-modal {
         margin: 15% auto;
     }
+    
+    .category-icon {
+        width: clamp(2rem, 12vw, 3rem);
+        height: clamp(2rem, 12vw, 3rem);
+        font-size: clamp(0.8rem, 5vw, 1.2rem);
+    }
+    
+    .app-icon {
+        width: clamp(2rem, 10vw, 2.8rem);
+        height: clamp(2rem, 10vw, 2.8rem);
+        font-size: clamp(0.8rem, 4vw, 1.1rem);
+    }
+}
+
+@media (min-width: 1200px) {
+    .category-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .app-icon {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.3rem;
+    }
+    
+    .bottom-nav-item i {
+        font-size: 1.4rem;
+    }
+    
+    .bottom-nav-item span {
+        font-size: 0.85rem;
+    }
 }
 
 /* أنماط إضافية لصور الأيقونات */
-.app-icon-image {
+.app-icon-image, .category-icon-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -741,11 +783,11 @@ body {
 }
 
 /* تحسين عرض الأيقونات في حالة الخطأ */
-.app-icon {
+.app-icon, .category-icon {
     position: relative;
 }
 
-.app-icon i {
+.app-icon i, .category-icon i {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -819,7 +861,7 @@ body {
 
 /* تحسين التصميم للشاشات الصغيرة */
 @media (max-width: 768px) {
-    .app-icon-image {
+    .app-icon-image, .category-icon-image {
         border-radius: 10px;
     }
 }

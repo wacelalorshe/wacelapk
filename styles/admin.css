@@ -1,4 +1,4 @@
-/* styles/admin.css - الإصدار المحدث بمقاسات الأيقونات */
+/* styles/admin.css - الإصدار المحدث بمقاسات الأيقونات المتجاوبة */
 .admin-main {
     margin-top: 80px;
     padding: 2rem 0;
@@ -16,7 +16,7 @@
     text-align: center;
     margin-bottom: 2rem;
     color: var(--text-primary);
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
 }
 
 /* إحصائيات */
@@ -29,7 +29,7 @@
 
 .stat-card {
     background: white;
-    padding: 1.5rem;
+    padding: clamp(1rem, 3vw, 1.5rem);
     border-radius: 10px;
     box-shadow: var(--shadow);
     text-align: center;
@@ -43,12 +43,12 @@
 
 .stat-card h3 {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
     margin-bottom: 0.5rem;
 }
 
 .stat-card p {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 6vw, 2rem);
     font-weight: bold;
     color: var(--text-primary);
 }
@@ -56,7 +56,7 @@
 /* نموذج إضافة تطبيق */
 .add-app-section {
     background: white;
-    padding: 2rem;
+    padding: clamp(1rem, 4vw, 2rem);
     border-radius: 10px;
     box-shadow: var(--shadow);
     margin-bottom: 2rem;
@@ -68,7 +68,7 @@
     color: var(--text-primary);
     border-bottom: 2px solid var(--primary);
     padding-bottom: 0.5rem;
-    font-size: 1.3rem;
+    font-size: clamp(1.1rem, 4vw, 1.3rem);
 }
 
 .app-form {
@@ -90,15 +90,15 @@ label {
     margin-bottom: 0.5rem;
     font-weight: bold;
     color: var(--text-primary);
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
 }
 
 input, select, textarea {
     width: 100%;
-    padding: 0.75rem;
+    padding: clamp(0.6rem, 2vw, 0.75rem);
     border: 1px solid var(--border);
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 3vw, 1rem);
     font-family: inherit;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
@@ -118,9 +118,9 @@ textarea {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 1rem 2rem;
+    padding: clamp(0.8rem, 3vw, 1rem) clamp(1.5rem, 4vw, 2rem);
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 3vw, 1rem);
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
@@ -141,7 +141,7 @@ textarea {
 /* إدارة التطبيقات */
 .apps-management {
     background: white;
-    padding: 2rem;
+    padding: clamp(1rem, 4vw, 2rem);
     border-radius: 10px;
     box-shadow: var(--shadow);
 }
@@ -151,7 +151,7 @@ textarea {
     color: var(--text-primary);
     border-bottom: 2px solid var(--primary);
     padding-bottom: 0.5rem;
-    font-size: 1.3rem;
+    font-size: clamp(1.1rem, 4vw, 1.3rem);
 }
 
 .admin-apps-grid {
@@ -162,7 +162,7 @@ textarea {
 
 .admin-app-card {
     background: white;
-    padding: 1.5rem;
+    padding: clamp(1rem, 3vw, 1.5rem);
     border-radius: 10px;
     box-shadow: var(--shadow);
     border-left: 4px solid var(--primary);
@@ -178,20 +178,20 @@ textarea {
 .admin-app-card .app-header {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
+    gap: clamp(0.75rem, 2vw, 1rem);
     margin-bottom: 1rem;
 }
 
 .admin-app-card .app-icon {
-    width: 50px;
-    height: 50px;
+    width: clamp(2.5rem, 8vw, 3.5rem);
+    height: clamp(2.5rem, 8vw, 3.5rem);
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 4vw, 1.4rem);
     box-shadow: var(--shadow);
     flex-shrink: 0;
     position: relative;
@@ -208,14 +208,14 @@ textarea {
 .admin-app-card h4 {
     color: var(--text-primary);
     margin-bottom: 0.5rem;
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 4vw, 1.2rem);
 }
 
 .admin-app-card p {
     color: var(--text-secondary);
     margin-bottom: 1rem;
     line-height: 1.5;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
 }
 
 .admin-app-actions {
@@ -228,12 +228,12 @@ textarea {
     background: #f39c12;
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: clamp(0.4rem, 2vw, 0.5rem) clamp(0.8rem, 2.5vw, 1rem);
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;
     flex: 1;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
 }
 
 .btn-edit:hover {
@@ -244,12 +244,12 @@ textarea {
     background: #e74c3c;
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: clamp(0.4rem, 2vw, 0.5rem) clamp(0.8rem, 2.5vw, 1rem);
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;
     flex: 1;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
 }
 
 .btn-delete:hover {
@@ -263,15 +263,23 @@ textarea {
     border-radius: 5px;
     text-align: center;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
 }
 
 /* نصوص مساعدة */
 small {
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
     display: block;
     margin-top: 0.25rem;
+}
+
+/* تحسينات للأيقونات في حالة الخطأ */
+.admin-app-card .app-icon i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /* التصميم المتجاوب */
@@ -282,6 +290,7 @@ small {
     
     .admin-apps-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
     .admin-app-actions {
@@ -300,10 +309,15 @@ small {
         padding: 1rem;
     }
     
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    
     .admin-app-card .app-icon {
-        width: 44px;
-        height: 44px;
-        font-size: 1.1rem;
+        width: clamp(2.2rem, 9vw, 3rem);
+        height: clamp(2.2rem, 9vw, 3rem);
+        font-size: clamp(0.9rem, 3.5vw, 1.2rem);
     }
 }
 
@@ -314,6 +328,7 @@ small {
     
     .admin-main {
         margin-top: 120px;
+        padding: 1rem 0;
     }
     
     .admin-container h2 {
@@ -321,8 +336,69 @@ small {
     }
     
     .admin-app-card .app-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
+        width: clamp(2rem, 10vw, 2.8rem);
+        height: clamp(2rem, 10vw, 2.8rem);
+        font-size: clamp(0.8rem, 3vw, 1.1rem);
+    }
+    
+    .admin-app-card .app-header {
+        gap: 0.5rem;
+    }
+    
+    .admin-app-actions {
+        gap: 0.3rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .admin-app-card .app-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 1.4rem;
+    }
+    
+    .admin-container h2 {
+        font-size: 2rem;
+    }
+    
+    .stat-card p {
+        font-size: 2rem;
+    }
+    
+    .add-app-section h3,
+    .apps-management h3 {
+        font-size: 1.3rem;
+    }
+}
+
+/* تحسينات للشاشات متوسطة الحجم */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .admin-apps-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+}
+
+/* تحسينات إضافية للأزرار في الشاشات الصغيرة */
+@media (max-width: 360px) {
+    .btn-edit,
+    .btn-delete {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .admin-app-card {
+        padding: 0.8rem;
+    }
+    
+    .admin-app-card h4 {
+        font-size: 0.9rem;
+    }
+    
+    .admin-app-card p {
+        font-size: 0.75rem;
     }
 }

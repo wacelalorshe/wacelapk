@@ -1,25 +1,26 @@
 /* styles/style.css - التصميم المحدث بمقاسات صور متجانسة */
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --primary-light: #dbeafe;
-    --secondary: #f59e0b;
-    --accent: #10b981;
-    --text-primary: #1f2937;
-    --text-secondary: #6b7280;
-    --text-light: #9ca3af;
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    --bg-tertiary: #f1f5f9;
-    --bg-card: #ffffff;
-    --border: #e5e7eb;
-    --border-light: #f3f4f6;
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --radius: 12px;
-    --radius-lg: 16px;
-}
+            --primary: #006CFF;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.8), 0 1px 20px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
 
 * {
     margin: 0;
@@ -37,17 +38,18 @@ body {
 }
 
 /* الشريط العلوي */
-.top-navbar {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    padding: 1rem 0;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    box-shadow: var(--shadow);
-    border-bottom: 1px solid var(--border-light);
-}
+   .top-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.9);
+            border-bottom: 1px solid var(--border-black);
+        }
+
 
 .nav-container {
     max-width: 1200px;
@@ -58,14 +60,15 @@ body {
     padding: 0 1.5rem;
 }
 
-.logo {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+     .logo {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
 
 .logo i {
     color: var(--secondary);
@@ -101,19 +104,19 @@ body {
 }
 
 .btn-login, .btn-logout {
-    width: clamp(2rem, 10vw, 2.5rem);
-    height: clamp(2rem, 10vw, 2.5rem);
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+            width: clamp(2rem, 7vw, 2.5rem);
+            height: clamp(2rem, 7vw, 2.5rem);
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
 .btn-login i, .btn-logout i {
     font-size: clamp(0.9rem, 4vw, 1.1rem);
 }
@@ -216,16 +219,19 @@ body {
     margin-bottom: 1rem;
 }
 
-.category-card {
-    background: var(--bg-card);
-    padding: 1.5rem 0.5rem;
-    border-radius: var(--radius);
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-light);
-}
+    .category-card {
+            background: var(--bg-card);
+            padding: 1.5rem 0.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 40px rgba(0,0,0, 4.9);
+            border-bottom: 6px groove  #000; 
+    border-top: 6px   groove  #000; 
+border-left: 0px ridge #000;
+border-right: 0px groove #000;
+        }
 
 .category-card:hover {
     transform: translateY(-3px);
@@ -258,10 +264,10 @@ body {
 }
 
 .category-name {
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 0.85rem;
-}
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.99rem;
+        }
 
 /* أقسام التطبيقات */
 .featured-section,
@@ -288,19 +294,27 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.9);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    
 }
 
 .app-card {
-    box-shadow: 0 5px 10px rgba(0,0,0,0.9);
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    box-shadow: var(--shadow);
-    transition: all 0.3s ease;
-    border: 3px solid var(--border-dark);
-    position: relative;
-}
-
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            
+            padding: 2.25rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            
+box-shadow: 0 0px 40px rgba(0,0,0,0.9);
+border-bottom: 6px groove #000;
+    border-top: 9px  groove  #000; 
+border-left: 0px ridge #000;
+border-right: 0px groove #000;
+            position: relative;
+        }
+        
 .app-card:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
@@ -352,13 +366,13 @@ body {
 }
 
 .app-info h4 {
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
 .app-category {
     color: var(--text-secondary);
     font-size: 0.8rem;
@@ -712,169 +726,170 @@ body {
 }
 
 /* معالجة الصور المفقودة أو التالفة */
-.app-icon:not(:has(img)),
-.category-icon:not(:has(img)) {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
+/* معالجة الصور المفقودة أو التالفة */
+        .app-icon:not(:has(img)),
+        .category-icon:not(:has(img)) {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
 
-.app-icon:not(:has(img))::before,
-.category-icon:not(:has(img))::before {
-    content: "📱";
-    font-size: clamp(1rem, 4vw, 1.4rem);
-}
+        .app-icon:not(:has(img))::before,
+        .category-icon:not(:has(img))::before {
+            content: "📱";
+            font-size: clamp(1rem, 4vw, 1.4rem);
+        }
 
-/* تحسين تحميل الصور */
-.app-icon img,
-.category-icon img {
-    transition: opacity 0.3s ease;
-}
+        /* تحسين تحميل الصور */
+        .app-icon img,
+        .category-icon img {
+            transition: opacity 0.3s ease;
+        }
 
-.app-icon img[src=""],
-.app-icon img:not([src]),
-.category-icon img[src=""],
-.category-icon img:not([src]) {
-    opacity: 0;
-}
+        .app-icon img[src=""],
+        .app-icon img:not([src]),
+        .category-icon img[src=""],
+        .category-icon img:not([src]) {
+            opacity: 0;
+        }
 
-/* التصميم المتجاوب */
-@media (max-width: 768px) {
-    .nav-container {
-        padding: 0 1rem;
-    }
-    
-    .main-content {
-        padding: 4rem 1rem 2rem;
-    }
-    
-    .hero-title {
-        font-size: 1.75rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-    
-    .categories-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-    }
-    
-    .apps-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .ads-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .bottom-nav-container {
-        padding: 0 0.5rem;
-    }
-    
-    .bottom-nav-item {
-        min-width: clamp(2.5rem, 12vw, 3.5rem);
-        padding: 0.3rem;
-    }
-    
-    .bottom-nav-item i {
-        font-size: clamp(0.9rem, 3.5vw, 1.3rem);
-    }
-    
-    .bottom-nav-item span {
-        font-size: clamp(0.55rem, 2vw, 0.75rem);
-    }
-    
-    .app-icon {
-        width: clamp(2.8rem, 9vw, 3.2rem);
-        height: clamp(2.8rem, 9vw, 3.2rem);
-        font-size: clamp(1rem, 3.5vw, 1.3rem);
-    }
-    
-    .category-icon {
-        width: clamp(2.5rem, 11vw, 3.5rem);
-        height: clamp(2.5rem, 11vw, 3.5rem);
-        font-size: clamp(1rem, 4vw, 1.4rem);
-    }
-}
+        /* التصميم المتجاوب */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 4rem 1rem 2rem;
+            }
+            
+            .hero-title {
+                font-size: 1.75rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ads-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bottom-nav-container {
+                padding: 0 0.5rem;
+            }
+            
+            .bottom-nav-item {
+                min-width: clamp(2.5rem, 12vw, 3.5rem);
+                padding: 0.3rem;
+            }
+            
+            .bottom-nav-item i {
+                font-size: clamp(0.9rem, 3.5vw, 1.3rem);
+            }
+            
+            .bottom-nav-item span {
+                font-size: clamp(0.55rem, 2vw, 0.75rem);
+            }
+            
+            /* تحسينات الصور للشاشات الصغيرة */
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 56px;
+                height: 56px;
+            }
+        }
 
-@media (max-width: 480px) {
-    .hero-title {
-        font-size: 1.5rem;
-    }
-    
-    .categories-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .section-title {
-        font-size: 1.2rem;
-    }
-    
-    .modal-content {
-        margin: 25% auto;
-        padding: 1.5rem;
-    }
-    
-    .search-modal {
-        margin: 15% auto;
-    }
-    
-    .app-icon {
-        width: clamp(2.5rem, 10vw, 3rem);
-        height: clamp(2.5rem, 10vw, 3rem);
-        font-size: clamp(0.9rem, 3vw, 1.2rem);
-    }
-    
-    .category-icon {
-        width: clamp(2.2rem, 12vw, 3rem);
-        height: clamp(2.2rem, 12vw, 3rem);
-        font-size: clamp(0.9rem, 4vw, 1.3rem);
-    }
-}
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.5rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .modal-content {
+                margin: 25% auto;
+                padding: 1.5rem;
+            }
+            
+            .search-modal {
+                margin: 15% auto;
+            }
+            
+            /* تحسينات الصور للشاشات الصغيرة جداً */
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 48px;
+                height: 48px;
+            }
+        }
 
-@media (min-width: 1200px) {
-    .app-icon {
-        width: 3.5rem;
-        height: 3.5rem;
-        font-size: 1.4rem;
-    }
-    
-    .category-icon {
-        width: 4rem;
-        height: 4rem;
-        font-size: 1.6rem;
-    }
-    
-    .bottom-nav-item i {
-        font-size: 1.4rem;
-    }
-    
-    .bottom-nav-item span {
-        font-size: 0.85rem;
-    }
-}
+        @media (min-width: 12000px) {
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .bottom-nav-item i {
+                font-size: 1.4rem;
+            }
+            
+            .bottom-nav-item span {
+                font-size: 0.85rem;
+            }
+        }
 
-/* تحسينات إضافية للصور */
-.app-icon img,
-.category-icon img {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-}
+        /* تحسينات إضافية للصور */
+        .app-icon img,
+        .category-icon img {
+            background: transparent;
+        }
 
-/* ضمان تناسق جميع الصور */
-.apps-grid,
-.categories-grid {
-    container-type: inline-size;
-}
+        /* ضمان تناسق جميع الصور */
+        .apps-grid,
+        .categories-grid {
+            container-type: inline-size;
+        }
 
-@container (max-width: 300px) {
-    .app-icon {
-        width: 2.8rem;
-        height: 2.8rem;
-    }
+        @container (max-width: 3000px) {
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 90px;
+                height: 90px;
     
     .category-icon {
         width: 3rem;

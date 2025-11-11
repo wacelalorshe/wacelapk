@@ -1,4 +1,4 @@
-// js/app.js - الإصدار الكامل والمحدث
+// js/app.js - الإصدار الكامل والمحدث مع خاصية المشاركة
 import { db, collection, getDocs, deleteDoc, doc } from './firebase-config.js';
 
 let allApps = [];
@@ -205,7 +205,6 @@ function displayTrendingApps() {
 }
 
 // إنشاء بطاقة تطبيق
-// إنشاء بطاقة تطبيق
 function createAppCard(app) {
     const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
@@ -214,6 +213,9 @@ function createAppCard(app) {
     const appIcon = app.iconURL 
         ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-img">`
         : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
+    
+    // إنشاء رابط المشاركة الفريد
+    const shareableLink = generateShareableLink(app);
     
     return `
         <div class="app-card" data-category="${app.category}" data-id="${app.id}">
@@ -243,12 +245,18 @@ function createAppCard(app) {
                     <i class="fas fa-download"></i>
                     تحميل
                 </button>
+                <button class="share-btn" onclick="shareApp('${app.id}', '${app.name}')">
+                    <i class="fas fa-share-alt"></i>
+                    مشاركة
+                </button>
                 ${isAdmin() ? `
                     <button class="delete-btn" onclick="deleteApp('${app.id}')">
                         <i class="fas fa-trash"></i>
                     </button>
                 ` : ''}
             </div>
+            <!-- رابط المشاركة المخفي -->
+            <input type="text" id="share-link-${app.id}" value="${shareableLink}" style="position: absolute; left: -9999px;">
         </div>
     `;
 }
@@ -305,6 +313,130 @@ function getCategoryName(category) {
         'utility': 'الأدوات'
     };
     return categories[category] || category;
+}
+
+// إنشاء رابط مشاركة فريد للتطبيق
+function generateShareableLink(app) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}?app=${app.id}&ref=share`;
+}
+
+// مشاركة التطبيق
+function shareApp(appId, appName) {
+    const shareLinkInput = document.getElementById(`share-link-${appId}`);
+    
+    if (shareLinkInput) {
+        // نسخ الرابط إلى الحافظة
+        shareLinkInput.select();
+        shareLinkInput.setSelectionRange(0, 99999); // للجوال
+        
+        try {
+            navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+                showTempMessage(`تم نسخ رابط مشاركة ${appName}`, 'success');
+            }).catch(() => {
+                // إذا فشل clipboard API، استخدم الطريقة القديمة
+                fallbackCopyText(shareLinkInput.value, appName);
+            });
+        } catch (error) {
+            fallbackCopyText(shareLinkInput.value, appName);
+        }
+    }
+}
+
+// طريقة بديلة لنسخ النص
+function fallbackCopyText(text, appName) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showTempMessage(`تم نسخ رابط مشاركة ${appName}`, 'success');
+    } catch (error) {
+        console.error('فشل نسخ الرابط:', error);
+        showTempMessage('فشل نسخ الرابط', 'error');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// مشاركة عبر الوسائط الاجتماعية
+function shareOnSocialMedia(appId, platform) {
+    const app = allApps.find(app => app.id === appId);
+    if (!app) return;
+    
+    const shareableLink = generateShareableLink(app);
+    const shareText = `تحميل تطبيق ${app.name} - ${app.description}`;
+    
+    let shareUrl = '';
+    
+    switch(platform) {
+        case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareableLink)}`;
+            break;
+        case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareableLink)}`;
+            break;
+        case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareableLink)}&quote=${encodeURIComponent(shareText)}`;
+            break;
+        case 'telegram':
+            shareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareableLink)}&text=${encodeURIComponent(shareText)}`;
+            break;
+        default:
+            return;
+    }
+    
+    window.open(shareUrl, '_blank', 'width=600,height=400');
+}
+
+// معالجة روابط المشاركة عند تحميل الصفحة
+function handleShareLinks() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedAppId = urlParams.get('app');
+    const ref = urlParams.get('ref');
+    
+    if (sharedAppId && ref === 'share') {
+        // البحث عن التطبيق المشترك
+        const sharedApp = allApps.find(app => app.id === sharedAppId);
+        if (sharedApp) {
+            // إظهار التطبيق المشترك بشكل مميز
+            highlightSharedApp(sharedAppId);
+            
+            // إظهار رسالة ترحيب
+            setTimeout(() => {
+                showTempMessage(`مرحباً! هذا تطبيق ${sharedApp.name} تمت مشاركته معك`, 'success');
+            }, 1000);
+        }
+    }
+}
+
+// تمييز التطبيق المشترك
+function highlightSharedApp(appId) {
+    const appCard = document.querySelector(`.app-card[data-id="${appId}"]`);
+    if (appCard) {
+        appCard.style.border = '2px solid var(--primary)';
+        appCard.style.boxShadow = '0 0 20px rgba(52, 152, 219, 0.3)';
+        
+        // التمرير إلى التطبيق
+        setTimeout(() => {
+            appCard.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 500);
+        
+        // إزالة التمييز بعد 5 ثواني
+        setTimeout(() => {
+            appCard.style.border = '';
+            appCard.style.boxShadow = '';
+        }, 5000);
+    }
 }
 
 // تصفية التطبيقات حسب الفئة
@@ -483,7 +615,84 @@ function showTempMessage(text, type) {
     }, 3000);
 }
 
-// إضافة أنماط CSS للرسائل المتحركة
+// إعداد التنقل في الشريط السفلي
+function setupBottomNavigation() {
+    const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
+    
+    bottomNavItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // إزالة النشاط من جميع العناصر
+            bottomNavItems.forEach(i => i.classList.remove('active'));
+            
+            // إضافة النشاط للعنصر الحالي
+            this.classList.add('active');
+            
+            const target = this.getAttribute('href');
+            console.log("النقر على:", target);
+            
+            // تنفيذ الإجراء المناسب
+            switch(target) {
+                case '#games':
+                    filterApps('games');
+                    break;
+                case '#apps':
+                    filterApps('all');
+                    break;
+                case '#search':
+                    document.getElementById('searchModal').style.display = 'block';
+                    break;
+            }
+        });
+    });
+}
+
+// إعداد أحداث الفئات
+function setupCategoryEvents() {
+    const categoryCards = document.querySelectorAll('.category-card');
+    
+    categoryCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // إزالة النشاط من جميع الفئات
+            categoryCards.forEach(c => c.classList.remove('active'));
+            
+            // إضافة النشاط للفئة المحددة
+            this.classList.add('active');
+        });
+    });
+}
+
+// تهيئة الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("تهيئة صفحة المتجر...");
+    
+    // تحميل التطبيقات
+    loadApps();
+    
+    // إعداد مستمعات الأحداث للبحث
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+    
+    // إعداد التنقل في الشريط السفلي
+    setupBottomNavigation();
+    
+    // إعداد أحداث الفئات
+    setupCategoryEvents();
+    
+    // معالجة روابط المشاركة
+    setTimeout(handleShareLinks, 1500);
+    
+    console.log("تم تهيئة صفحة المتجر بالكامل");
+});
+
+// إضافة أنماط CSS للرسائل المتحركة والبحث
 const messageStyles = `
 @keyframes slideIn {
     from {
@@ -541,6 +750,41 @@ const messageStyles = `
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
 }
+
+.app-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.app-actions .download-btn {
+    flex: 2;
+}
+
+.app-actions .share-btn {
+    flex: 1;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.app-actions .share-btn:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-2px);
+}
+
+.app-actions .delete-btn {
+    flex: 0.5;
+}
 `;
 
 // إضافة الأنماط إلى الصفحة
@@ -548,185 +792,14 @@ const styleSheet = document.createElement('style');
 styleSheet.textContent = messageStyles;
 document.head.appendChild(styleSheet);
 
-// تهيئة الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("تهيئة صفحة المتجر...");
-    
-    // تحميل التطبيقات
-    loadApps();
-    
-    // إعداد مستمعات الأحداث للبحث
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-    }
-    
-    // إعداد التنقل في الشريط السفلي
-    setupBottomNavigation();
-    
-    // إعداد أحداث الفئات
-    setupCategoryEvents();
-    
-    console.log("تم تهيئة صفحة المتجر بالكامل");
-});
-
-// إعداد التنقل في الشريط السفلي
-function setupBottomNavigation() {
-    const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
-    
-    bottomNavItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // إزالة النشاط من جميع العناصر
-            bottomNavItems.forEach(i => i.classList.remove('active'));
-            
-            // إضافة النشاط للعنصر الحالي
-            this.classList.add('active');
-            
-            const target = this.getAttribute('href');
-            console.log("النقر على:", target);
-            
-            // تنفيذ الإجراء المناسب
-            switch(target) {
-                case '#games':
-                    filterApps('games');
-                    break;
-                case '#apps':
-                    filterApps('all');
-                    break;
-                case '#search':
-                    document.getElementById('searchModal').style.display = 'block';
-                    break;
-            }
-        });
-    });
-}
-
-// إعداد أحداث الفئات
-function setupCategoryEvents() {
-    const categoryCards = document.querySelectorAll('.category-card');
-    
-    categoryCards.forEach(card => {
-        card.addEventListener('click', function() {
-            // إزالة النشاط من جميع الفئات
-            categoryCards.forEach(c => c.classList.remove('active'));
-            
-            // إضافة النشاط للفئة المحددة
-            this.classList.add('active');
-        });
-    });
-}
-
 // جعل الدوال متاحة globally
 window.filterApps = filterApps;
 window.searchApps = searchApps;
 window.performSearch = performSearch;
 window.downloadApp = downloadApp;
 window.deleteApp = deleteApp;
+window.shareApp = shareApp;
+window.shareOnSocialMedia = shareOnSocialMedia;
 
 // تصدير الدوال للاستخدام في ملفات أخرى
 export { loadApps, filterApps, searchApps, downloadApp, deleteApp };
-
-
-// نظام إدارة الصور المحسن
-function initializeImageSystem() {
-    // معالجة جميع الصور في الموقع
-    const allImages = document.querySelectorAll('.app-icon img, .category-icon img');
-    
-    allImages.forEach(img => {
-        // إضافة معالج للأخطاء
-        img.addEventListener('error', function() {
-            this.style.display = 'none';
-            const parent = this.closest('.app-icon, .category-icon');
-            if (parent) {
-                parent.classList.add('image-error');
-            }
-        });
-        
-        // إضافة معالج للتحميل الناجح
-        img.addEventListener('load', function() {
-            this.style.opacity = '1';
-            const parent = this.closest('.app-icon, .category-icon');
-            if (parent) {
-                parent.classList.remove('image-error');
-            }
-        });
-        
-        // معالجة الصور الفارغة
-        if (!img.src || img.src === '' || img.complete && img.naturalHeight === 0) {
-            img.style.display = 'none';
-            const parent = img.closest('.app-icon, .category-icon');
-            if (parent) {
-                parent.classList.add('image-error');
-            }
-        }
-    });
-}
-
-// دالة لتحميل الصور بكفاءة
-function loadImagesEfficiently() {
-    const imageContainers = document.querySelectorAll('.app-icon, .category-icon');
-    
-    imageContainers.forEach(container => {
-        const img = container.querySelector('img');
-        if (img && img.dataset.src) {
-            // تحميل الصور باستخدام Intersection Observer للتحميل الكسول
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-            
-            observer.observe(img);
-        }
-    });
-}
-
-// تهيئة النظام عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    initializeImageSystem();
-    loadImagesEfficiently();
-    
-    // إعادة تهيئة عند إضافة محتوى جديد
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length) {
-                setTimeout(initializeImageSystem, 100);
-            }
-        });
-    });
-    
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-});
-
-// دالة لإنشاء أيقونة افتراضية
-function createFallbackIcon(container, type = 'app') {
-    const icon = document.createElement('div');
-    icon.className = 'fallback-icon';
-    icon.innerHTML = type === 'app' ? '📱' : '📁';
-    icon.style.cssText = `
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.2rem;
-        
-        color: white;
-        border-radius: inherit;
-    `;
-    container.appendChild(icon);
-}

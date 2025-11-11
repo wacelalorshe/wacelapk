@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء مسؤول - WacelMarkt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        .admin-setup {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .admin-setup h2 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        .admin-setup .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        .admin-credentials {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            text-align: right;
+        }
+        .setup-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+        .setup-btn:hover {
+            background: #c0392b;
+        }
+        .nav-links {
+            margin-top: 2rem;
+        }
+        .nav-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="admin-setup">
+            <h2><i class="fas fa-user-shield"></i> إعداد المسؤول</h2>
+            
+            <div class="warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>تنبيه:</strong> هذه الصفحة لإنشاء المستخدم المسؤول الأول فقط. 
+                شغلها مرة واحدة ثم احذف الملف من السيرفر.
+            </div>
+            
+            <div class="admin-credentials">
+                <h3>بيانات المسؤول:</h3>
+                <p><strong>البريد الإلكتروني:</strong> admin@wacelmarkt.com</p>
+                <p><strong>كلمة المرور:</strong> Admin123456</p>
+            </div>
+            
+            <button id="createAdminBtn" class="setup-btn">
+                <i class="fas fa-user-plus"></i> إنشاء المستخدم المسؤول
+            </button>
+            
+            <div id="setupMessage" style="margin: 1rem 0;"></div>
+            
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+                <a href="admin.html"><i class="fas fa-cog"></i> لوحة التحكم</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/create-admin.js"></script>
+</body>
+</html>

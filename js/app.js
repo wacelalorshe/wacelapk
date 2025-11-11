@@ -204,22 +204,21 @@ function displayTrendingApps() {
     console.log("تم عرض التطبيقات الشائعة:", trendingApps.length);
 }
 
-// إنشاء بطاقة تطبيق - الإصدار المعدل لدعم رابط الصورة
+// إنشاء بطاقة تطبيق
+// إنشاء بطاقة تطبيق
 function createAppCard(app) {
+    const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
     
-    // استخدام رابط الصورة إذا كان موجوداً، وإلا استخدام الأيقونة الافتراضية
-    const iconContent = app.iconURL 
-        ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-           <i class="${getAppIcon(app.category)}" style="display: none;"></i>`
-        : `<i class="${getAppIcon(app.category)}"></i>`;
-
+    // استخدام الأيقونة المخصصة إذا كانت متاحة
+    const appIcon = app.iconURL 
+        ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-img">`
+        : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
+    
     return `
         <div class="app-card" data-category="${app.category}" data-id="${app.id}">
             <div class="app-header">
-                <div class="app-icon">
-                    ${iconContent}
-                </div>
+                ${appIcon}
                 <div class="app-info">
                     <h4>${app.name}</h4>
                     <div class="app-category">${getCategoryName(app.category)}</div>
@@ -237,6 +236,8 @@ function createAppCard(app) {
                 </div>
                 <div class="app-downloads">${app.downloads || 0} تنزيل</div>
             </div>
+            ${app.featured ? '<div class="featured-badge">مميز</div>' : ''}
+            ${app.trending ? '<div class="trending-badge">شائع</div>' : ''}
             <div class="app-actions">
                 <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
                     <i class="fas fa-download"></i>

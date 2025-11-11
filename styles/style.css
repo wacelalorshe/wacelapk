@@ -1,4 +1,4 @@
-/* styles/style.css - التصميم الجديد مع الشريط السفلي */
+/* styles/style.css - التصميم المحدث بمقاسات صور متجانسة */
 :root {
     --primary: #2563eb;
     --primary-dark: #1d4ed8;
@@ -33,7 +33,7 @@ body {
     color: var(--text-primary);
     background: var(--bg-primary);
     direction: rtl;
-    padding-bottom: 80px; /* مساحة للشريط السفلي */
+    padding-bottom: 80px;
 }
 
 /* الشريط العلوي */
@@ -234,17 +234,27 @@ body {
 }
 
 .category-icon {
-    width: clamp(2.5rem, 8vw, 3.5rem);
-    height: clamp(2.5rem, 8vw, 3.5rem);
+    width: clamp(3rem, 10vw, 4rem);
+    height: clamp(3rem, 10vw, 4rem);
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 14px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 0.75rem;
     color: white;
-    font-size: clamp(1rem, 4vw, 1.5rem);
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
     box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.category-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
 }
 
 .category-name {
@@ -304,17 +314,27 @@ body {
 }
 
 .app-icon {
-    width: clamp(2.5rem, 7vw, 3rem);
-    height: clamp(2.5rem, 7vw, 3rem);
+    width: clamp(3rem, 8vw, 3.5rem);
+    height: clamp(3rem, 8vw, 3.5rem);
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 12px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: clamp(0.9rem, 3.5vw, 1.3rem);
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
     box-shadow: var(--shadow-md);
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
 }
 
 .app-info {
@@ -668,6 +688,49 @@ body {
     background: var(--primary-dark);
 }
 
+/* نظام إدارة الصور المحسن */
+.image-container {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* معالجة الصور المفقودة أو التالفة */
+.app-icon:not(:has(img)),
+.category-icon:not(:has(img)) {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.app-icon:not(:has(img))::before,
+.category-icon:not(:has(img))::before {
+    content: "📱";
+    font-size: clamp(1rem, 4vw, 1.4rem);
+}
+
+/* تحسين تحميل الصور */
+.app-icon img,
+.category-icon img {
+    transition: opacity 0.3s ease;
+}
+
+.app-icon img[src=""],
+.app-icon img:not([src]),
+.category-icon img[src=""],
+.category-icon img:not([src]) {
+    opacity: 0;
+}
+
 /* التصميم المتجاوب */
 @media (max-width: 768px) {
     .nav-container {
@@ -715,6 +778,18 @@ body {
     .bottom-nav-item span {
         font-size: clamp(0.55rem, 2vw, 0.75rem);
     }
+    
+    .app-icon {
+        width: clamp(2.8rem, 9vw, 3.2rem);
+        height: clamp(2.8rem, 9vw, 3.2rem);
+        font-size: clamp(1rem, 3.5vw, 1.3rem);
+    }
+    
+    .category-icon {
+        width: clamp(2.5rem, 11vw, 3.5rem);
+        height: clamp(2.5rem, 11vw, 3.5rem);
+        font-size: clamp(1rem, 4vw, 1.4rem);
+    }
 }
 
 @media (max-width: 480px) {
@@ -739,30 +814,30 @@ body {
         margin: 15% auto;
     }
     
-    .category-icon {
-        width: clamp(2rem, 12vw, 3rem);
-        height: clamp(2rem, 12vw, 3rem);
-        font-size: clamp(0.8rem, 5vw, 1.2rem);
+    .app-icon {
+        width: clamp(2.5rem, 10vw, 3rem);
+        height: clamp(2.5rem, 10vw, 3rem);
+        font-size: clamp(0.9rem, 3vw, 1.2rem);
     }
     
-    .app-icon {
-        width: clamp(2rem, 10vw, 2.8rem);
-        height: clamp(2rem, 10vw, 2.8rem);
-        font-size: clamp(0.8rem, 4vw, 1.1rem);
+    .category-icon {
+        width: clamp(2.2rem, 12vw, 3rem);
+        height: clamp(2.2rem, 12vw, 3rem);
+        font-size: clamp(0.9rem, 4vw, 1.3rem);
     }
 }
 
 @media (min-width: 1200px) {
-    .category-icon {
+    .app-icon {
         width: 3.5rem;
         height: 3.5rem;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
     
-    .app-icon {
-        width: 3rem;
-        height: 3rem;
-        font-size: 1.3rem;
+    .category-icon {
+        width: 4rem;
+        height: 4rem;
+        font-size: 1.6rem;
     }
     
     .bottom-nav-item i {
@@ -774,244 +849,26 @@ body {
     }
 }
 
-/* أنماط إضافية لصور الأيقونات */
-.app-icon-image, .category-icon-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: inherit;
-}
-
-/* تحسين عرض الأيقونات في حالة الخطأ */
-.app-icon, .category-icon {
-    position: relative;
-}
-
-.app-icon i, .category-icon i {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* تحسين التصميم للنموذج */
-.form-group small {
-    color: var(--text-light);
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
-    display: block;
-}
-
-/* تحسين عرض الرسائل */
-#formMessage {
-    transition: all 0.3s ease;
-}
-
-/* حالات التحميل والخطأ */
-.loading-state, .empty-state, .error-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 3rem 2rem;
-    color: var(--text-secondary);
-}
-
-.loading-state i, .empty-state i, .error-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: var(--text-light);
-}
-
-.error-state i {
-    color: #ef4444;
-}
-
-.search-results-header {
-    background: var(--primary-light);
-    padding: 1rem;
-    border-radius: var(--radius);
-    margin-bottom: 1rem;
-    text-align: center;
-    color: var(--primary);
-    font-weight: 500;
-    grid-column: 1 / -1;
-}
-
-/* رسائل مؤقتة */
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-/* تحسين التصميم للشاشات الصغيرة */
-@media (max-width: 768px) {
-    .app-icon-image, .category-icon-image {
-        border-radius: 10px;
-    }
-}
-/* تحسينات شاملة للصور والأيقونات */
-.app-icon,
-.category-icon {
-    position: relative;
-    overflow: hidden;
-    aspect-ratio: 1 / 1;
-}
-
-.app-icon-image,
-.category-icon-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: inherit;
-    display: block;
-}
-
-/* أيقونات احتياطية في حالة عدم تحميل الصور */
-.app-icon.fallback::before,
-.category-icon.fallback::before {
-    content: "📱";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(0.9rem, 3.5vw, 1.3rem);
-    color: white;
-}
-
-/* ضمان تناسق جميع الصور في الشبكات */
-.apps-grid,
-.categories-grid,
-.admin-apps-grid {
-    container-type: inline-size;
-}
-
-/* تحسينات للصور في بطاقات التطبيقات */
-.app-card .app-icon,
-.admin-app-card .app-icon {
-    width: clamp(2.5rem, 8vw, 3.5rem);
-    height: clamp(2.5rem, 8vw, 3.5rem);
-    flex-shrink: 0;
-}
-
-/* تحسينات للصور في الفئات */
-.category-card .category-icon {
-    width: clamp(2.5rem, 10vw, 4rem);
-    height: clamp(2.5rem, 10vw, 4rem);
-}
-
-/* معالجة خاصة للصور التالفة أو غير المحملة */
-.app-icon-image:not([src]),
-.app-icon-image[src=""],
-.category-icon-image:not([src]),
-.category-icon-image[src=""] {
-    display: none;
-}
-
-.app-icon:not(.has-image)::before,
-.category-icon:not(.has-image)::before {
-    content: "📱";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(0.9rem, 3.5vw, 1.3rem);
-    color: white;
-}
-
-/* تحسينات للأداء والتحميل */
-.app-icon-image,
-.category-icon-image {
+/* تحسينات إضافية للصور */
+.app-icon img,
+.category-icon img {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
-/* تحميل تدريجي للصور */
-.app-icon-image[data-src],
-.category-icon-image[data-src] {
-    opacity: 0;
-    transition: opacity 0.3s ease;
+/* ضمان تناسق جميع الصور */
+.apps-grid,
+.categories-grid {
+    container-type: inline-size;
 }
 
-.app-icon-image.loaded,
-.category-icon-image.loaded {
-    opacity: 1;
-}
-
-/* تحسينات للشاشات المختلفة */
-@container (max-width: 400px) {
-    .app-card .app-icon {
-        width: clamp(2rem, 9vw, 3rem);
-        height: clamp(2rem, 9vw, 3rem);
+@container (max-width: 300px) {
+    .app-icon {
+        width: 2.8rem;
+        height: 2.8rem;
     }
     
-    .category-card .category-icon {
-        width: clamp(2.2rem, 11vw, 3.5rem);
-        height: clamp(2.2rem, 11vw, 3.5rem);
-    }
-}
-
-/* ضمان تناسق الصور في الإعلانات */
-.ad-card img {
-    width: 100%;
-    height: auto;
-    max-height: 200px;
-    object-fit: cover;
-    border-radius: var(--radius);
-}
-
-/* تحسينات للشريط السفلي */
-.bottom-nav-item img {
-    width: clamp(1rem, 4vw, 1.4rem);
-    height: clamp(1rem, 4vw, 1.4rem);
-    object-fit: contain;
-}
-
-/* معالجة الصور في محتوى التطبيقات */
-.app-screenshot {
-    width: 100%;
-    height: auto;
-    max-height: 300px;
-    object-fit: contain;
-    border-radius: 10px;
-    margin: 0.5rem 0;
-}
-
-/* تحسينات إضافية للاستجابة */
-@media (max-width: 480px) {
-    .app-card .app-icon {
-        width: clamp(2.2rem, 10vw, 3rem);
-        height: clamp(2.2rem, 10vw, 3rem);
-    }
-    
-    .category-card .category-icon {
-        width: clamp(2.5rem, 12vw, 3.5rem);
-        height: clamp(2.5rem, 12vw, 3.5rem);
-    }
-}
-
-@media (min-width: 1200px) {
-    .app-card .app-icon {
-        width: 3.5rem;
-        height: 3.5rem;
-    }
-    
-    .category-card .category-icon {
-        width: 4rem;
-        height: 4rem;
+    .category-icon {
+        width: 3rem;
+        height: 3rem;
     }
 }

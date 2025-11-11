@@ -631,3 +631,103 @@ window.deleteApp = deleteApp;
 
 // تصدير الدوال للاستخدام في ملفات أخرى
 export { loadApps, filterApps, searchApps, downloadApp, deleteApp };
+
+
+// نظام إدارة الصور المحسن
+function initializeImageSystem() {
+    // معالجة جميع الصور في الموقع
+    const allImages = document.querySelectorAll('.app-icon img, .category-icon img');
+    
+    allImages.forEach(img => {
+        // إضافة معالج للأخطاء
+        img.addEventListener('error', function() {
+            this.style.display = 'none';
+            const parent = this.closest('.app-icon, .category-icon');
+            if (parent) {
+                parent.classList.add('image-error');
+            }
+        });
+        
+        // إضافة معالج للتحميل الناجح
+        img.addEventListener('load', function() {
+            this.style.opacity = '1';
+            const parent = this.closest('.app-icon, .category-icon');
+            if (parent) {
+                parent.classList.remove('image-error');
+            }
+        });
+        
+        // معالجة الصور الفارغة
+        if (!img.src || img.src === '' || img.complete && img.naturalHeight === 0) {
+            img.style.display = 'none';
+            const parent = img.closest('.app-icon, .category-icon');
+            if (parent) {
+                parent.classList.add('image-error');
+            }
+        }
+    });
+}
+
+// دالة لتحميل الصور بكفاءة
+function loadImagesEfficiently() {
+    const imageContainers = document.querySelectorAll('.app-icon, .category-icon');
+    
+    imageContainers.forEach(container => {
+        const img = container.querySelector('img');
+        if (img && img.dataset.src) {
+            // تحميل الصور باستخدام Intersection Observer للتحميل الكسول
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            
+            observer.observe(img);
+        }
+    });
+}
+
+// تهيئة النظام عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    initializeImageSystem();
+    loadImagesEfficiently();
+    
+    // إعادة تهيئة عند إضافة محتوى جديد
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                setTimeout(initializeImageSystem, 100);
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+
+// دالة لإنشاء أيقونة افتراضية
+function createFallbackIcon(container, type = 'app') {
+    const icon = document.createElement('div');
+    icon.className = 'fallback-icon';
+    icon.innerHTML = type === 'app' ? '📱' : '📁';
+    icon.style.cssText = `
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border-radius: inherit;
+    `;
+    container.appendChild(icon);
+}
+

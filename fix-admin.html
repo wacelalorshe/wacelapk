@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>إصلاح المسؤول</title>
+    <script>
+        function createAdmin() {
+            localStorage.setItem('user', 'admin@wacelmarkt.com');
+            localStorage.setItem('isAdmin', 'true');
+            alert('تم إصلاح الصلاحيات! انتقل إلى لوحة التحكم الآن.');
+            window.location.href = 'admin.html';
+        }
+    </script>
+</head>
+<body style="text-align: center; padding: 50px; font-family: Arial;">
+    <h2>إصلاح صلاحيات المسؤول</h2>
+    <button onclick="createAdmin()" style="padding: 15px 30px; font-size: 18px;">
+        إصلاح الصلاحيات والدخول للوحة التحكم
+    </button>
+</body>
+</html>

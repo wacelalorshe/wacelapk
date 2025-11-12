@@ -1,5 +1,14 @@
 // js/app.js - الإصدار المصحح والمحدث
-import { db, collection, getDocs, deleteDoc, doc, updateDoc } from './firebase-config.js';
+import { db } from './firebase-config.js';
+
+// استيراد دوال Firebase مباشرة
+import { 
+    collection, 
+    getDocs, 
+    deleteDoc, 
+    doc, 
+    updateDoc 
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 let allApps = [];
 let currentFilter = 'all';
@@ -78,7 +87,6 @@ async function shareApp(appId, appName) {
         
         // إعادة تحميل القوائم لتحديث عدد المشاركات
         displayApps(allApps);
-        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         
@@ -125,7 +133,6 @@ async function loadApps() {
         
         // عرض التطبيقات في الأقسام المختلفة
         displayApps(allApps);
-        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         
@@ -135,7 +142,6 @@ async function loadApps() {
         // في حالة الخطأ، استخدام البيانات التجريبية
         allApps = sampleApps;
         displayApps(allApps);
-        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         
@@ -168,20 +174,9 @@ function displayApps(apps) {
     }
     
     appsContainer.innerHTML = apps.map(app => createAppCard(app)).join('');
+    setupDescriptionToggle();
     console.log("تم عرض التطبيقات الرئيسية:", apps.length);
 }
-
-// إضافة مستمعات الأحداث لعرض المزيد في الصفحة الرئيسية
-function setupDescriptionToggle() {
-    document.querySelectorAll('.show-more').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const description = this.previousElementSibling;
-            description.classList.toggle('expanded');
-            this.textContent = description.classList.contains('expanded') ? 'عرض أقل' : 'عرض المزيد';
-        });
-    });
-}
-
 
 // عرض التطبيقات المميزة
 function displayFeaturedApps() {
@@ -203,6 +198,7 @@ function displayFeaturedApps() {
     }
     
     featuredContainer.innerHTML = featuredApps.map(app => createAppCard(app)).join('');
+    setupDescriptionToggle();
     console.log("تم عرض التطبيقات المميزة:", featuredApps.length);
 }
 
@@ -228,6 +224,7 @@ function displayTrendingApps() {
         trendingContainer.innerHTML = trendingApps.map(app => createAppCard(app)).join('');
     }
     
+    setupDescriptionToggle();
     console.log("تم عرض التطبيقات الشائعة:", trendingApps.length);
 }
 
@@ -251,9 +248,9 @@ function createAppCard(app) {
                 </div>
             </div>
             <div class="app-description-container">
-    <p class="app-description">${app.description}</p>
-    ${app.description && app.description.length > 100 ? '<span class="show-more">عرض المزيد</span>' : ''}
-</div>
+                <p class="app-description">${app.description}</p>
+                ${app.description && app.description.length > 100 ? '<span class="show-more">عرض المزيد</span>' : ''}
+            </div>
             <div class="app-meta">
                 <div class="app-version">الإصدار: ${app.version}</div>
                 <div class="app-size">${app.size} MB</div>
@@ -290,6 +287,17 @@ function createAppCard(app) {
             </div>
         </div>
     `;
+}
+
+// إضافة مستمعات الأحداث لعرض المزيد في الصفحة الرئيسية
+function setupDescriptionToggle() {
+    document.querySelectorAll('.show-more').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const description = this.previousElementSibling;
+            description.classList.toggle('expanded');
+            this.textContent = description.classList.contains('expanded') ? 'عرض أقل' : 'عرض المزيد';
+        });
+    });
 }
 
 // توليد نجوم التقييم
@@ -464,7 +472,6 @@ async function deleteApp(appId) {
         
         // إعادة تحميل القوائم
         displayApps(allApps);
-        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         
@@ -522,96 +529,6 @@ function showTempMessage(text, type) {
         }, 300);
     }, 3000);
 }
-
-// إضافة أنماط CSS للرسائل المتحركة
-const messageStyles = `
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-.search-results-header {
-    background: var(--primary-light);
-    padding: 1rem;
-    border-radius: var(--radius);
-    margin-bottom: 1rem;
-    text-align: center;
-    color: var(--primary);
-    font-weight: 500;
-    grid-column: 1 / -1;
-}
-
-.empty-state, .error-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 3rem 2rem;
-    color: var(--text-secondary);
-}
-
-.empty-state i, .error-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: var(--text-light);
-}
-
-.error-state i {
-    color: #ef4444;
-}
-
-.category-card.active {
-    border-color: var(--primary);
-    background: var(--primary-light);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-}
-
-.temp-message {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    box-shadow: var(--shadow-lg);
-    z-index: 3000;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    animation: slideIn 0.3s ease-out;
-}
-
-.temp-message.success {
-    background: #10b981;
-    color: white;
-}
-
-.temp-message.error {
-    background: #ef4444;
-    color: white;
-}
-`;
-
-// إضافة الأنماط إلى الصفحة
-const styleSheet = document.createElement('style');
-styleSheet.textContent = messageStyles;
-document.head.appendChild(styleSheet);
 
 // إعداد التنقل في الشريط السفلي
 function setupBottomNavigation() {

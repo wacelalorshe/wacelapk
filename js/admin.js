@@ -1,5 +1,15 @@
-// js/admin.js - الإصدار المحدث مع خاصية التعديل
-// ... الاستيرادات الحالية تبقى كما هي ...
+// js/admin.js - الإصدار المصحح مع خاصية التعديل
+import { db } from './firebase-config.js';
+
+// استيراد دوال Firebase مباشرة
+import { 
+    collection, 
+    addDoc, 
+    getDocs, 
+    deleteDoc, 
+    doc,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 let apps = [];
 let currentEditingApp = null;
@@ -94,6 +104,7 @@ function copyShareLink(appId) {
             navigator.clipboard.writeText(shareInput.value).then(() => {
                 showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
             }).catch(() => {
+                // Fallback for older browsers
                 document.execCommand('copy');
                 showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
             });
@@ -108,7 +119,7 @@ function copyShareLink(appId) {
 async function generateNewShareLink(appId) {
     try {
         showMessage('تم تحديث رابط المشاركة', 'success');
-        displayAdminApps();
+        displayAdminApps(); // إعادة تحميل القائمة
     } catch (error) {
         console.error("Error updating share link:", error);
         showMessage('خطأ في تحديث رابط المشاركة: ' + error.message, 'error');
@@ -316,7 +327,7 @@ async function deleteAdminApp(appId) {
         console.log("جاري حذف التطبيق:", appId);
         await deleteDoc(doc(db, "apps", appId));
         showMessage('تم حذف التطبيق بنجاح', 'success');
-        await loadAdminApps();
+        await loadAdminApps(); // إعادة تحميل القائمة
     } catch (error) {
         console.error("Error deleting app:", error);
         showMessage('خطأ في حذف التطبيق: ' + error.message, 'error');
@@ -361,6 +372,7 @@ function showMessage(text, type) {
         messageDiv.style.backgroundColor = type === 'success' ? '#e8f5e8' : '#ffe8e8';
         messageDiv.style.border = type === 'success' ? '1px solid #27ae60' : '1px solid #e74c3c';
         
+        // إخفاء الرسالة بعد 5 ثواني
         setTimeout(() => {
             messageDiv.textContent = '';
             messageDiv.style.backgroundColor = 'transparent';
@@ -368,6 +380,7 @@ function showMessage(text, type) {
         }, 5000);
     }
     
+    // أيضاً عرض في الكونسول
     console.log(type.toUpperCase() + ":", text);
 }
 
@@ -381,6 +394,7 @@ function checkAdminAuth() {
     if (!user || !isAdmin) {
         console.log("المستخدم غير مسجل - إعادة التوجيه إلى الصفحة الرئيسية");
         
+        // عرض رسالة للمستخدم
         const adminContainer = document.querySelector('.admin-container');
         if (adminContainer) {
             adminContainer.innerHTML = `

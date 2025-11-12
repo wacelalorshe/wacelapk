@@ -1,223 +1,194 @@
-// js/auth.js - الإصدار المصحح
-import { 
-    auth, 
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut 
-} from './firebase-config.js';
+// js/auth.js - الإصدار المصحح الكامل
+import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from './firebase-config.js';
 
-// إعداد مستمع حالة المصادقة
-onAuthStateChanged(auth, (user) => {
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    if (user) {
-        // المستخدم مسجل الدخول
-        console.log("المستخدم مسجل الدخول:", user.email);
+// عناصر واجهة المستخدم
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginModal = document.getElementById('loginModal');
+const loginForm = document.getElementById('loginForm');
+const closeModal = document.querySelector('.close');
+
+// فتح نافذة تسجيل الدخول
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        if (loginModal) loginModal.style.display = 'block';
+    });
+}
+
+// إغلاق نافذة تسجيل الدخول
+if (closeModal) {
+    closeModal.addEventListener('click', () => {
+        if (loginModal) loginModal.style.display = 'none';
+    });
+}
+
+// إغلاق النافذة عند النقر خارجها
+window.addEventListener('click', (e) => {
+    if (e.target === loginModal) {
+        if (loginModal) loginModal.style.display = 'none';
+    }
+});
+
+// تسجيل الدخول
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        // تخزين بيانات المستخدم
-        localStorage.setItem('user', user.email);
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const message = document.getElementById('loginMessage');
         
-        // التحقق إذا كان مسؤولاً
-        const isAdmin = user.email === 'admin@wacelmarkt.com';
-        localStorage.setItem('isAdmin', isAdmin);
-        
-        // تحديث واجهة المستخدم
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'block';
-        
-        // إذا كان في صفحة لوحة التحكم، تحميل المحتوى
-        if (window.location.pathname.includes('admin.html')) {
-            loadAdminContent();
+        try {
+            console.log("محاولة تسجيل الدخول بـ:", email);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            
+            console.log("تم تسجيل الدخول بنجاح:", user.email);
+            
+            // حفظ بيانات المستخدم في localStorage
+            localStorage.setItem('user', JSON.stringify({
+                uid: user.uid,
+                email: user.email
+            }));
+            
+            // تحديد إذا كان المستخدم مسؤولاً
+            localStorage.setItem('isAdmin', 'true');
+            
+            if (message) {
+                message.textContent = 'تم تسجيل الدخول بنجاح!';
+                message.style.color = 'green';
+            }
+            
+            // تحديث واجهة المستخدم
+            updateAuthUI(true);
+            
+            // إغلاق النافذة بعد ثانية
+            setTimeout(() => {
+                if (loginModal) loginModal.style.display = 'none';
+                if (loginForm) loginForm.reset();
+                
+                // إظهار رابط لوحة التحكم
+                showAdminLink();
+            }, 1000);
+            
+        } catch (error) {
+            console.error("خطأ في تسجيل الدخول:", error);
+            if (message) {
+                message.textContent = getAuthErrorMessage(error.code);
+                message.style.color = 'red';
+            }
         }
-        
+    });
+}
+
+// تسجيل الخروج
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            localStorage.removeItem('user');
+            localStorage.removeItem('isAdmin');
+            updateAuthUI(false);
+            hideAdminLink();
+            
+            // إذا كان في لوحة التحكم، ارجع للصفحة الرئيسية
+            if (window.location.pathname.includes('admin.html')) {
+                window.location.href = 'index.html';
+            }
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    });
+}
+
+// تحديث واجهة المستخدم بناءً على حالة المصادقة
+function updateAuthUI(isLoggedIn) {
+    if (loginBtn && logoutBtn) {
+        if (isLoggedIn) {
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'block';
+        } else {
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+        }
+    }
+}
+
+// إظهار رابط لوحة التحكم للمستخدمين المسجلين
+function showAdminLink() {
+    let adminLink = document.querySelector('a[href="admin.html"]');
+    if (!adminLink) {
+        // إنشاء رابط لوحة التحكم إذا لم يكن موجوداً
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks) {
+            adminLink = document.createElement('a');
+            adminLink.href = 'admin.html';
+            adminLink.textContent = 'لوحة التحكم';
+            adminLink.style.marginRight = '15px';
+            navLinks.insertBefore(adminLink, loginBtn);
+        }
+    }
+}
+
+// إخفاء رابط لوحة التحكم
+function hideAdminLink() {
+    const adminLink = document.querySelector('a[href="admin.html"]');
+    if (adminLink && adminLink.textContent === 'لوحة التحكم') {
+        adminLink.remove();
+    }
+}
+
+// الحصول على رسالة الخطأ
+function getAuthErrorMessage(errorCode) {
+    const errorMessages = {
+        'auth/invalid-email': 'البريد الإلكتروني غير صالح',
+        'auth/user-disabled': 'هذا الحساب معطل',
+        'auth/user-not-found': 'لم يتم العثور على حساب بهذا البريد',
+        'auth/wrong-password': 'كلمة المرور غير صحيحة',
+        'auth/too-many-requests': 'محاولات تسجيل دخول كثيرة، حاول لاحقاً',
+        'auth/network-request-failed': 'خطأ في الاتصال بالشبكة'
+    };
+    return errorMessages[errorCode] || 'حدث خطأ غير متوقع: ' + errorCode;
+}
+
+// التحقق من حالة المصادقة عند تحميل الصفحة
+function checkAuthState() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = localStorage.getItem('isAdmin');
+    
+    if (user && isAdmin) {
+        updateAuthUI(true);
+        showAdminLink();
+        console.log("المستخدم مسجل دخول:", user.email);
     } else {
-        // المستخدم غير مسجل الدخول
-        console.log("المستخدم غير مسجل الدخول");
-        
-        // مسح بيانات التخزين
+        updateAuthUI(false);
+        hideAdminLink();
+        console.log("لا يوجد مستخدم مسجل");
+    }
+}
+
+// مراقبة تغييرات حالة المصادقة
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log("تغيير حالة المصادقة: مستخدم مسجل", user.email);
+        localStorage.setItem('user', JSON.stringify({
+            uid: user.uid,
+            email: user.email
+        }));
+        localStorage.setItem('isAdmin', 'true');
+        updateAuthUI(true);
+        showAdminLink();
+    } else {
+        console.log("تغيير حالة المصادقة: لا يوجد مستخدم");
         localStorage.removeItem('user');
         localStorage.removeItem('isAdmin');
-        
-        // تحديث واجهة المستخدم
-        if (loginBtn) loginBtn.style.display = 'block';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        
-        // إذا كان في صفحة لوحة التحكم، إعادة التوجيه
-        if (window.location.pathname.includes('admin.html')) {
-            redirectToLogin();
-        }
+        updateAuthUI(false);
+        hideAdminLink();
     }
 });
 
-// تحميل محتوى لوحة التحكم
-function loadAdminContent() {
-    console.log("تحميل محتوى لوحة التحكم...");
-    // سيتم تحميل المحتوى من خلال admin.js
-}
-
-// إعادة التوجيه لتسجيل الدخول
-function redirectToLogin() {
-    const adminContainer = document.querySelector('.admin-container');
-    if (adminContainer) {
-        adminContainer.innerHTML = `
-            <div style="text-align: center; padding: 50px;">
-                <h2 style="color: #e74c3c;">يجب تسجيل الدخول أولاً</h2>
-                <p>يجب أن تكون مسجلاً الدخول للوصول إلى لوحة التحكم</p>
-                <button onclick="goToLogin()" style="
-                    background: #3498db;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    margin: 10px;
-                ">تسجيل الدخول</button>
-                <button onclick="goToHome()" style="
-                    background: #95a5a6;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    margin: 10px;
-                ">العودة للصفحة الرئيسية</button>
-            </div>
-        `;
-    }
-}
-
-// تهيئة نموذج تسجيل الدخول
+// تهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("تهيئة نظام المصادقة...");
-    
-    const loginForm = document.getElementById('loginForm');
-    const loginModal = document.getElementById('loginModal');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    // فتح نافذة تسجيل الدخول
-    if (loginBtn) {
-        loginBtn.addEventListener('click', function() {
-            if (loginModal) {
-                loginModal.style.display = 'block';
-            }
-        });
-    }
-    
-    // تسجيل الخروج
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            if (confirm('هل تريد تسجيل الخروج؟')) {
-                signOut(auth).then(() => {
-                    console.log("تم تسجيل الخروج بنجاح");
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('isAdmin');
-                    window.location.reload();
-                }).catch((error) => {
-                    console.error("خطأ في تسجيل الخروج:", error);
-                });
-            }
-        });
-    }
-    
-    // معالجة تسجيل الدخول
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const messageDiv = document.getElementById('loginMessage');
-            
-            if (!email || !password) {
-                showLoginMessage('يرجى ملء جميع الحقول', 'error');
-                return;
-            }
-            
-            try {
-                console.log("محاولة تسجيل الدخول:", email);
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log("تم تسجيل الدخول بنجاح:", userCredential.user.email);
-                
-                showLoginMessage('تم تسجيل الدخول بنجاح!', 'success');
-                
-                // إغلاق النافذة بعد نجاح التسجيل
-                setTimeout(() => {
-                    if (loginModal) {
-                        loginModal.style.display = 'none';
-                    }
-                    loginForm.reset();
-                }, 1500);
-                
-            } catch (error) {
-                console.error("خطأ في تسجيل الدخول:", error);
-                let errorMessage = 'خطأ في تسجيل الدخول';
-                
-                switch (error.code) {
-                    case 'auth/invalid-email':
-                        errorMessage = 'البريد الإلكتروني غير صحيح';
-                        break;
-                    case 'auth/user-disabled':
-                        errorMessage = 'هذا الحساب معطل';
-                        break;
-                    case 'auth/user-not-found':
-                        errorMessage = 'لم يتم العثور على حساب بهذا البريد';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessage = 'كلمة المرور غير صحيحة';
-                        break;
-                    default:
-                        errorMessage = error.message;
-                }
-                
-                showLoginMessage(errorMessage, 'error');
-            }
-        });
-    }
-    
-    // إغلاق نافذة تسجيل الدخول
-    const closeButtons = document.querySelectorAll('.close');
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
+    console.log("تم تحميل صفحة المصادقة");
+    checkAuthState();
 });
-
-// عرض رسائل تسجيل الدخول
-function showLoginMessage(text, type) {
-    const messageDiv = document.getElementById('loginMessage');
-    if (messageDiv) {
-        messageDiv.textContent = text;
-        messageDiv.style.color = type === 'success' ? 'green' : 'red';
-        messageDiv.style.padding = '10px';
-        messageDiv.style.margin = '10px 0';
-        messageDiv.style.borderRadius = '5px';
-        messageDiv.style.backgroundColor = type === 'success' ? '#e8f5e8' : '#ffe8e8';
-        messageDiv.style.border = type === 'success' ? '1px solid #27ae60' : '1px solid #e74c3c';
-        
-        setTimeout(() => {
-            messageDiv.textContent = '';
-            messageDiv.style.backgroundColor = 'transparent';
-            messageDiv.style.border = 'none';
-        }, 5000);
-    }
-}
-
-// الانتقال لتسجيل الدخول
-function goToLogin() {
-    window.location.href = 'index.html';
-}
-
-// الانتقال للصفحة الرئيسية
-function goToHome() {
-    window.location.href = 'index.html';
-}
-
-// جعل الدوال متاحة globally
-window.goToLogin = goToLogin;
-window.goToHome = goToHome;

@@ -138,6 +138,117 @@ async function loadApps() {
     }
 }
 
+// إنشاء رابط المشاركة
+function generateShareLink(appId) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}share.html?app=${appId}`;
+}
+
+// مشاركة التطبيق
+async function shareApp(appId, appName) {
+    const shareUrl = generateShareLink(appId);
+    
+    try {
+        // زيادة عداد المشاركات في قاعدة البيانات
+        const appRef = doc(db, "apps", appId);
+        const app = allApps.find(a => a.id === appId);
+        const currentShares = app.shareCount || 0;
+        
+        await updateDoc(appRef, {
+            shareCount: currentShares + 1
+        });
+
+        // تحديث البيانات المحلية
+        app.shareCount = currentShares + 1;
+
+        if (navigator.share) {
+            // استخدام Web Share API إذا متاح
+            await navigator.share({
+                title: `تحميل ${appName}`,
+                text: `اكتشف هذا التطبيق الرائع: ${appName}`,
+                url: shareUrl,
+            });
+            showTempMessage('تم مشاركة التطبيق بنجاح!', 'success');
+        } else {
+            // نسخ الرابط إلى الحافظة
+            await navigator.clipboard.writeText(shareUrl);
+            showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
+        }
+        
+        // إعادة تحميل القوائم لتحديث عدد المشاركات
+        displayApps(allApps);
+        displayFeaturedApps();
+        displayTrendingApps();
+        
+    } catch (error) {
+        console.error('Error sharing app:', error);
+        if (error.name !== 'AbortError') {
+            // Fallback: فتح نافذة المشاركة
+            window.open(`https://twitter.com/intent/tweet?text=اكتشف هذا التطبيق الرائع: ${appName}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        }
+    }
+}
+
+// إنشاء بطاقة تطبيق
+function createAppCard(app) {
+    const iconClass = getAppIcon(app.category);
+    const ratingStars = generateRatingStars(app.rating);
+    
+    // استخدام الأيقونة المخصصة إذا كانت متاحة
+    const appIcon = app.iconURL 
+        ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-img">`
+        : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
+    
+    return `
+        <div class="app-card" data-category="${app.category}" data-id="${app.id}">
+            <div class="app-header">
+                ${appIcon}
+                <div class="app-info">
+                    <h4>${app.name}</h4>
+                    <div class="app-category">${getCategoryName(app.category)}</div>
+                </div>
+            </div>
+            <p class="app-description">${app.description}</p>
+            <div class="app-meta">
+                <div class="app-version">الإصدار: ${app.version}</div>
+                <div class="app-size">${app.size} MB</div>
+            </div>
+            <div class="app-meta">
+                <div class="app-rating">
+                    ${ratingStars}
+                    <span>${app.rating || 'غير مقيم'}</span>
+                </div>
+                <div class="app-downloads">${app.downloads || 0} تنزيل</div>
+            </div>
+            <div class="app-meta">
+                <div class="app-shares">
+                    <i class="fas fa-share"></i>
+                    <span>${app.shareCount || 0} مشاركة</span>
+                </div>
+            </div>
+            ${app.featured ? '<div class="featured-badge">مميز</div>' : ''}
+            ${app.trending ? '<div class="trending-badge">شائع</div>' : ''}
+            <div class="app-actions">
+                <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
+                    <i class="fas fa-download"></i>
+                    تحميل
+                </button>
+                <button class="share-btn" onclick="shareApp('${app.id}', '${app.name}')">
+                    <i class="fas fa-share-alt"></i>
+                    مشاركة
+                </button>
+                ${isAdmin() ? `
+                    <button class="delete-btn" onclick="deleteApp('${app.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+
+
 // عرض التطبيقات الرئيسية
 function displayApps(apps) {
     const appsContainer = document.getElementById('apps-list');
@@ -631,102 +742,3 @@ window.deleteApp = deleteApp;
 
 // تصدير الدوال للاستخدام في ملفات أخرى
 export { loadApps, filterApps, searchApps, downloadApp, deleteApp };
-
-
-// نظام إدارة الصور المحسن
-function initializeImageSystem() {
-    // معالجة جميع الصور في الموقع
-    const allImages = document.querySelectorAll('.app-icon img, .category-icon img');
-    
-    allImages.forEach(img => {
-        // إضافة معالج للأخطاء
-        img.addEventListener('error', function() {
-            this.style.display = 'none';
-            const parent = this.closest('.app-icon, .category-icon');
-            if (parent) {
-                parent.classList.add('image-error');
-            }
-        });
-        
-        // إضافة معالج للتحميل الناجح
-        img.addEventListener('load', function() {
-            this.style.opacity = '1';
-            const parent = this.closest('.app-icon, .category-icon');
-            if (parent) {
-                parent.classList.remove('image-error');
-            }
-        });
-        
-        // معالجة الصور الفارغة
-        if (!img.src || img.src === '' || img.complete && img.naturalHeight === 0) {
-            img.style.display = 'none';
-            const parent = img.closest('.app-icon, .category-icon');
-            if (parent) {
-                parent.classList.add('image-error');
-            }
-        }
-    });
-}
-
-// دالة لتحميل الصور بكفاءة
-function loadImagesEfficiently() {
-    const imageContainers = document.querySelectorAll('.app-icon, .category-icon');
-    
-    imageContainers.forEach(container => {
-        const img = container.querySelector('img');
-        if (img && img.dataset.src) {
-            // تحميل الصور باستخدام Intersection Observer للتحميل الكسول
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-            
-            observer.observe(img);
-        }
-    });
-}
-
-// تهيئة النظام عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    initializeImageSystem();
-    loadImagesEfficiently();
-    
-    // إعادة تهيئة عند إضافة محتوى جديد
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length) {
-                setTimeout(initializeImageSystem, 100);
-            }
-        });
-    });
-    
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-});
-
-// دالة لإنشاء أيقونة افتراضية
-function createFallbackIcon(container, type = 'app') {
-    const icon = document.createElement('div');
-    icon.className = 'fallback-icon';
-    icon.innerHTML = type === 'app' ? '📱' : '📁';
-    icon.style.cssText = `
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.2rem;
-        
-        color: white;
-        border-radius: inherit;
-    `;
-    container.appendChild(icon);
-}

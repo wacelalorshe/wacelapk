@@ -45,12 +45,31 @@
             <div class="hero-content">
                 <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
                 <p class="hero-subtitle">أفضل التطبيقات المختارة خصيصاً لك</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number" id="totalAppsCount">0</span>
+                        <span class="stat-label">تطبيق</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="totalDownloadsCount">0</span>
+                        <span class="stat-label">تنزيل</span>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- الفئات -->
         <section class="categories-section">
+            <div class="section-header">
+                <h2 class="section-title">تصفح حسب التصنيف</h2>
+            </div>
             <div class="categories-grid">
+                <div class="category-card" onclick="filterApps('all')">
+                    <div class="category-icon">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <span class="category-name">الكل</span>
+                </div>
                 <div class="category-card" onclick="filterApps('games')">
                     <div class="category-icon">
                         <i class="fas fa-gamepad"></i>
@@ -75,15 +94,28 @@
                     </div>
                     <span class="category-name">الإنتاجية</span>
                 </div>
+                <div class="category-card" onclick="filterApps('education')">
+                    <div class="category-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <span class="category-name">التعليم</span>
+                </div>
+                <div class="category-card" onclick="filterApps('utility')">
+                    <div class="category-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <span class="category-name">الأدوات</span>
+                </div>
             </div>
         </section>
 
-        <!-- التطبيقات المقترحة -->
+        <!-- التطبيقات المميزة -->
         <section class="featured-section">
             <div class="section-header">
-                <h2 class="section-title">مقترحة لك</h2>
+                <h2 class="section-title">🌟 التطبيقات المميزة</h2>
+                <span class="section-badge">مختارة بعناية</span>
             </div>
-            <div id="featured-apps" class="apps-grid">
+            <div id="featured-apps" class="apps-grid featured-grid">
                 <!-- سيتم تعبئة التطبيقات المميزة هنا -->
             </div>
         </section>
@@ -91,42 +123,43 @@
         <!-- الأكثر رواجاً -->
         <section class="trending-section">
             <div class="section-header">
-                <h2 class="section-title">الأكثر رواجاً</h2>
+                <h2 class="section-title">🔥 الأكثر رواجاً</h2>
+                <span class="section-badge">الأكثر تحميلاً</span>
             </div>
-            <div id="trending-apps" class="apps-grid">
+            <div id="trending-apps" class="apps-grid trending-grid">
                 <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
-            </div>
-        </section>
-
-        <!-- إعلانات مقترحة -->
-        <section class="ads-section">
-            <div class="section-header">
-                <h2 class="section-title">إعلانات مقترحة لك</h2>
-            </div>
-            <div class="ads-grid">
-                <div class="ad-card">
-                    <div class="ad-badge">2025</div>
-                    <h3>التدريبات المنزلية - بدون معدات</h3>
-                    <p>احصل على جسم مثالي من منزلك</p>
-                </div>
-                <div class="ad-card">
-                    <div class="ad-badge">جديد</div>
-                    <h3>دورات تعليمية مجانية</h3>
-                    <p>طور مهاراتك مع أفضل المدربين</p>
-                </div>
             </div>
         </section>
 
         <!-- جميع التطبيقات -->
         <section class="all-apps-section">
             <div class="section-header">
-                <h2 class="section-title">التطبيقات</h2>
+                <h2 class="section-title">📱 جميع التطبيقات</h2>
+                <span class="section-badge" id="allAppsCount">0 تطبيق</span>
             </div>
-            <div id="apps-list" class="apps-grid">
+            <div id="apps-list" class="apps-grid all-apps-grid">
                 <div class="loading-state">
                     <i class="fas fa-spinner fa-spin"></i>
                     <p>جاري تحميل التطبيقات...</p>
                 </div>
+            </div>
+            <div class="load-more-container">
+                <button id="loadMoreBtn" class="load-more-btn" onclick="loadMoreApps()">
+                    <i class="fas fa-plus"></i>
+                    عرض المزيد من التطبيقات
+                </button>
+            </div>
+        </section>
+
+        <!-- دعوة للعمل -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>هل لديك تطبيق تريد نشره؟</h2>
+                <p>انضم إلى منصتنا ووصل إلى آلاف المستخدمين</p>
+                <button class="cta-btn" onclick="goToAdmin()">
+                    <i class="fas fa-rocket"></i>
+                    ابدأ الآن
+                </button>
             </div>
         </section>
     </main>
@@ -134,13 +167,17 @@
     <!-- الشريط السفلي -->
     <nav class="bottom-navbar">
         <div class="bottom-nav-container">
-            <a href="#games" class="bottom-nav-item active">
-                <i class="fas fa-gamepad"></i>
-                <span>الألعاب</span>
+            <a href="#home" class="bottom-nav-item active" onclick="scrollToTop()">
+                <i class="fas fa-home"></i>
+                <span>الرئيسية</span>
             </a>
-            <a href="#apps" class="bottom-nav-item">
+            <a href="#categories" class="bottom-nav-item" onclick="scrollToSection('categories-section')">
                 <i class="fas fa-th-large"></i>
-                <span>التطبيقات</span>
+                <span>الفئات</span>
+            </a>
+            <a href="#featured" class="bottom-nav-item" onclick="scrollToSection('featured-section')">
+                <i class="fas fa-star"></i>
+                <span>مميزة</span>
             </a>
             <a href="#search" class="bottom-nav-item" id="bottomSearchBtn">
                 <i class="fas fa-search"></i>
@@ -213,6 +250,32 @@
                 this.classList.add('active');
             });
         });
+
+        // وظائف التمرير
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function goToAdmin() {
+            if (localStorage.getItem('isAdmin') === 'true') {
+                window.location.href = 'admin.html';
+            } else {
+                document.getElementById('loginModal').style.display = 'block';
+            }
+        }
+
+        // تحديث الإحصائيات في الهيرو
+        function updateHeroStats(totalApps, totalDownloads) {
+            document.getElementById('totalAppsCount').textContent = totalApps;
+            document.getElementById('totalDownloadsCount').textContent = totalDownloads.toLocaleString();
+        }
     </script>
 </body>
 </html>

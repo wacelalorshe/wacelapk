@@ -1,5 +1,5 @@
-// js/app.js - الإصدار الكامل والمحدث
-import { db, collection, getDocs, deleteDoc, doc } from './firebase-config.js';
+// js/app.js - الإصدار الكامل والمحدث مع خاصية المشاركة
+import { db, collection, getDocs, deleteDoc, doc, updateDoc } from './firebase-config.js';
 
 let allApps = [];
 let currentFilter = 'all';
@@ -16,7 +16,8 @@ const sampleApps = [
         downloadURL: 'https://example.com/app1.zip',
         rating: 4.5,
         downloads: 1500,
-        featured: true
+        featured: true,
+        shareCount: 45
     },
     {
         id: '2',
@@ -28,7 +29,8 @@ const sampleApps = [
         downloadURL: 'https://example.com/app2.zip',
         rating: 4.2,
         downloads: 2300,
-        trending: true
+        trending: true,
+        shareCount: 67
     },
     {
         id: '3',
@@ -40,7 +42,8 @@ const sampleApps = [
         downloadURL: 'https://example.com/app3.zip',
         rating: 4.8,
         downloads: 1800,
-        featured: true
+        featured: true,
+        shareCount: 32
     },
     {
         id: '4',
@@ -52,7 +55,8 @@ const sampleApps = [
         downloadURL: 'https://example.com/app4.zip',
         rating: 4.3,
         downloads: 1200,
-        trending: true
+        trending: true,
+        shareCount: 28
     },
     {
         id: '5',
@@ -63,7 +67,8 @@ const sampleApps = [
         category: 'education',
         downloadURL: 'https://example.com/app5.zip',
         rating: 4.6,
-        downloads: 900
+        downloads: 900,
+        shareCount: 15
     },
     {
         id: '6',
@@ -74,9 +79,61 @@ const sampleApps = [
         category: 'utility',
         downloadURL: 'https://example.com/app6.zip',
         rating: 4.1,
-        downloads: 750
+        downloads: 750,
+        shareCount: 12
     }
 ];
+
+// إنشاء رابط المشاركة
+function generateShareLink(appId) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}share.html?app=${appId}`;
+}
+
+// مشاركة التطبيق
+async function shareApp(appId, appName) {
+    const shareUrl = generateShareLink(appId);
+    
+    try {
+        // زيادة عداد المشاركات في قاعدة البيانات
+        const appRef = doc(db, "apps", appId);
+        const app = allApps.find(a => a.id === appId);
+        const currentShares = app.shareCount || 0;
+        
+        await updateDoc(appRef, {
+            shareCount: currentShares + 1
+        });
+
+        // تحديث البيانات المحلية
+        app.shareCount = currentShares + 1;
+
+        if (navigator.share) {
+            // استخدام Web Share API إذا متاح
+            await navigator.share({
+                title: `تحميل ${appName}`,
+                text: `اكتشف هذا التطبيق الرائع: ${appName}`,
+                url: shareUrl,
+            });
+            showTempMessage('تم مشاركة التطبيق بنجاح!', 'success');
+        } else {
+            // نسخ الرابط إلى الحافظة
+            await navigator.clipboard.writeText(shareUrl);
+            showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
+        }
+        
+        // إعادة تحميل القوائم لتحديث عدد المشاركات
+        displayApps(allApps);
+        displayFeaturedApps();
+        displayTrendingApps();
+        
+    } catch (error) {
+        console.error('Error sharing app:', error);
+        if (error.name !== 'AbortError') {
+            // Fallback: فتح نافذة المشاركة
+            window.open(`https://twitter.com/intent/tweet?text=اكتشف هذا التطبيق الرائع: ${appName}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        }
+    }
+}
 
 // تحميل التطبيقات من Firebase
 async function loadApps() {
@@ -205,7 +262,6 @@ function displayTrendingApps() {
 }
 
 // إنشاء بطاقة تطبيق
-// إنشاء بطاقة تطبيق
 function createAppCard(app) {
     const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
@@ -234,33 +290,34 @@ function createAppCard(app) {
                     ${ratingStars}
                     <span>${app.rating || 'غير مقيم'}</span>
                 </div>
-        <div class="app-meta">
-    <div class="app-shares">
-        <i class="fas fa-share"></i>
-        <span>${app.shareCount || 0} مشاركة</span>
-    </div>
-</div>
-                
                 <div class="app-downloads">${app.downloads || 0} تنزيل</div>
+            </div>
+            <div class="app-meta">
+                <div class="app-shares">
+                    <i class="fas fa-share"></i>
+                    <span>${app.shareCount || 0} مشاركة</span>
+                </div>
             </div>
             ${app.featured ? '<div class="featured-badge">مميز</div>' : ''}
             ${app.trending ? '<div class="trending-badge">شائع</div>' : ''}
-            // استبدل قسم app-actions الحالي بهذا الكود:
-<div class="app-actions">
-    <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
-        <i class="fas fa-download"></i>
-        تحميل
-    </button>
-    <button class="share-btn" onclick="shareApp('${app.id}', '${app.name}')">
-        <i class="fas fa-share-alt"></i>
-        مشاركة
-    </button>
-    ${isAdmin() ? `
-        <button class="delete-btn" onclick="deleteApp('${app.id}')">
-            <i class="fas fa-trash"></i>
-        </button>
-    ` : ''}
-</div>
+            <div class="app-actions">
+                <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
+                    <i class="fas fa-download"></i>
+                    تحميل
+                </button>
+                <button class="share-btn" onclick="shareApp('${app.id}', '${app.name}')">
+                    <i class="fas fa-share-alt"></i>
+                    مشاركة
+                </button>
+                ${isAdmin() ? `
+                    <button class="delete-btn" onclick="deleteApp('${app.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
 
 // توليد نجوم التقييم
 function generateRatingStars(rating) {
@@ -637,64 +694,7 @@ window.searchApps = searchApps;
 window.performSearch = performSearch;
 window.downloadApp = downloadApp;
 window.deleteApp = deleteApp;
-
-
-// أضف هذه الدوال قبل التصدير
-
-// إنشاء رابط المشاركة
-function generateShareLink(appId) {
-    const baseUrl = window.location.origin + window.location.pathname;
-    return `${baseUrl}share.html?app=${appId}`;
-}
-
-// مشاركة التطبيق
-async function shareApp(appId, appName) {
-    const shareUrl = generateShareLink(appId);
-    
-    try {
-        // زيادة عداد المشاركات في قاعدة البيانات
-        const appRef = doc(db, "apps", appId);
-        const app = allApps.find(a => a.id === appId);
-        const currentShares = app.shareCount || 0;
-        
-        await updateDoc(appRef, {
-            shareCount: currentShares + 1
-        });
-
-        // تحديث البيانات المحلية
-        app.shareCount = currentShares + 1;
-
-        if (navigator.share) {
-            // استخدام Web Share API إذا متاح
-            await navigator.share({
-                title: `تحميل ${appName}`,
-                text: `اكتشف هذا التطبيق الرائع: ${appName}`,
-                url: shareUrl,
-            });
-            showTempMessage('تم مشاركة التطبيق بنجاح!', 'success');
-        } else {
-            // نسخ الرابط إلى الحافظة
-            await navigator.clipboard.writeText(shareUrl);
-            showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
-        }
-        
-        // إعادة تحميل القوائم لتحديث عدد المشاركات
-        displayApps(allApps);
-        displayFeaturedApps();
-        displayTrendingApps();
-        
-    } catch (error) {
-        console.error('Error sharing app:', error);
-        if (error.name !== 'AbortError') {
-            // Fallback: فتح نافذة المشاركة
-            window.open(`https://twitter.com/intent/tweet?text=اكتشف هذا التطبيق الرائع: ${appName}&url=${encodeURIComponent(shareUrl)}`, '_blank');
-        }
-    }
-}
-
+window.shareApp = shareApp;
 
 // تصدير الدوال للاستخدام في ملفات أخرى
-export { loadApps, filterApps, searchApps, downloadApp, deleteApp };
-
-// أضف دالة shareApp للتصدير
 export { loadApps, filterApps, searchApps, downloadApp, deleteApp, shareApp };

@@ -2,20 +2,217 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إصلاح المسؤول</title>
-    <script>
-        function createAdmin() {
-            localStorage.setItem('user', 'admin@wacelmarkt.com');
-            localStorage.setItem('isAdmin', 'true');
-            alert('تم إصلاح الصلاحيات! انتقل إلى لوحة التحكم الآن.');
-            window.location.href = 'admin.html';
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WacelMarkt - متجر التطبيقات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css">
 </head>
-<body style="text-align: center; padding: 50px; font-family: Arial;">
-    <h2>إصلاح صلاحيات المسؤول</h2>
-    <button onclick="createAdmin()" style="padding: 15px 30px; font-size: 18px;">
-        إصلاح الصلاحيات والدخول للوحة التحكم
-    </button>
+<body>
+    <!-- الشريط العلوي -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
+            </div>
+            <div class="nav-actions">
+                <div class="search-icon-top" id="searchIconTop">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button id="loginBtn" class="btn-login"><i class="fas fa-user"></i></button>
+                <button id="logoutBtn" class="btn-logout" style="display:none;"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- شريط البحث المنبثق -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content search-modal">
+            <span class="close">&times;</span>
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
+                    <button class="search-btn" onclick="searchApps()">بحث</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- قسم الهيرو -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
+                <p class="hero-subtitle">أفضل التطبيقات المختارة خصيصاً لك</p>
+            </div>
+        </section>
+
+        <!-- الفئات -->
+        <section class="categories-section">
+            <div class="categories-grid">
+                <div class="category-card" onclick="filterApps('games')">
+                    <div class="category-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <span class="category-name">الألعاب</span>
+                </div>
+                <div class="category-card" onclick="filterApps('social')">
+                    <div class="category-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="category-name">التواصل</span>
+                </div>
+                <div class="category-card" onclick="filterApps('entertainment')">
+                    <div class="category-icon">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <span class="category-name">الترفيه</span>
+                </div>
+                <div class="category-card" onclick="filterApps('productivity')">
+                    <div class="category-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <span class="category-name">الإنتاجية</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- التطبيقات المقترحة -->
+        <section class="featured-section">
+            <div class="section-header">
+                <h2 class="section-title">مقترحة لك</h2>
+            </div>
+            <div id="featured-apps" class="apps-grid">
+                <!-- سيتم تعبئة التطبيقات المميزة هنا -->
+            </div>
+        </section>
+
+        <!-- الأكثر رواجاً -->
+        <section class="trending-section">
+            <div class="section-header">
+                <h2 class="section-title">الأكثر رواجاً</h2>
+            </div>
+            <div id="trending-apps" class="apps-grid">
+                <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
+            </div>
+        </section>
+
+        <!-- إعلانات مقترحة -->
+        <section class="ads-section">
+            <div class="section-header">
+                <h2 class="section-title">إعلانات مقترحة لك</h2>
+            </div>
+            <div class="ads-grid">
+                <div class="ad-card">
+                    <div class="ad-badge">2025</div>
+                    <h3>التدريبات المنزلية - بدون معدات</h3>
+                    <p>احصل على جسم مثالي من منزلك</p>
+                </div>
+                <div class="ad-card">
+                    <div class="ad-badge">جديد</div>
+                    <h3>دورات تعليمية مجانية</h3>
+                    <p>طور مهاراتك مع أفضل المدربين</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- جميع التطبيقات -->
+        <section class="all-apps-section">
+            <div class="section-header">
+                <h2 class="section-title">التطبيقات</h2>
+            </div>
+            <div id="apps-list" class="apps-grid">
+                <div class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحميل التطبيقات...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- الشريط السفلي -->
+    <nav class="bottom-navbar">
+        <div class="bottom-nav-container">
+            <a href="#games" class="bottom-nav-item active">
+                <i class="fas fa-gamepad"></i>
+                <span>الألعاب</span>
+            </a>
+            <a href="#apps" class="bottom-nav-item">
+                <i class="fas fa-th-large"></i>
+                <span>التطبيقات</span>
+            </a>
+            <a href="#search" class="bottom-nav-item" id="bottomSearchBtn">
+                <i class="fas fa-search"></i>
+                <span>بحث</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- نموذج تسجيل الدخول -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                </button>
+            </form>
+            <div id="loginMessage"></div>
+            
+            <div class="test-credentials">
+                <h4><i class="fas fa-info-circle"></i> بيانات الاختبار:</h4>
+                <p><strong>البريد:</strong> admin@wacelmarkt.com</p>
+                <p><strong>كلمة المرور:</strong> Admin123456</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script>
+        // إدارة شريط البحث
+        document.getElementById('searchIconTop').addEventListener('click', function() {
+            document.getElementById('searchModal').style.display = 'block';
+        });
+
+        document.getElementById('bottomSearchBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('searchModal').style.display = 'block';
+        });
+
+        // إغلاق النافذة المنبثقة
+        document.querySelectorAll('.close').forEach(function(closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        // إغلاق النافذة عند النقر خارجها
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // التنقل في الشريط السفلي
+        document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.bottom-nav-item').forEach(function(i) {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>

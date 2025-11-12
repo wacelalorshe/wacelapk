@@ -168,7 +168,7 @@ function displayAdminApps() {
     container.innerHTML = apps.map(app => `
         <div class="admin-app-card">
             <div class="app-header">
-                ${app.iconURL ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-img">` : 
+                ${app.iconURL ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}"></div>` : 
                   `<div class="app-icon"><i class="${getAppIcon(app.category)}"></i></div>`}
                 <div class="app-info">
                     <h4>${app.name}</h4>

@@ -1,4 +1,4 @@
-// js/app.js - الإصدار الكامل والمحدث مع خاصية المشاركة
+// js/app.js - الإصدار المصحح والمحدث
 import { db, collection, getDocs, deleteDoc, doc, updateDoc } from './firebase-config.js';
 
 let allApps = [];
@@ -31,56 +31,6 @@ const sampleApps = [
         downloads: 2300,
         trending: true,
         shareCount: 67
-    },
-    {
-        id: '3',
-        name: 'تطبيق الإنتاجية',
-        description: 'زود إنتاجيتك مع هذا التطبيق المميز',
-        version: '1.5.0',
-        size: '30',
-        category: 'productivity',
-        downloadURL: 'https://example.com/app3.zip',
-        rating: 4.8,
-        downloads: 1800,
-        featured: true,
-        shareCount: 32
-    },
-    {
-        id: '4',
-        name: 'تطبيق الترفيه',
-        description: 'استمتع بأفضل محتوى ترفيهي',
-        version: '3.0.1',
-        size: '35',
-        category: 'entertainment',
-        downloadURL: 'https://example.com/app4.zip',
-        rating: 4.3,
-        downloads: 1200,
-        trending: true,
-        shareCount: 28
-    },
-    {
-        id: '5',
-        name: 'تطبيق التعليم',
-        description: 'تعلم مهارات جديدة بسهولة',
-        version: '2.0.0',
-        size: '28',
-        category: 'education',
-        downloadURL: 'https://example.com/app5.zip',
-        rating: 4.6,
-        downloads: 900,
-        shareCount: 15
-    },
-    {
-        id: '6',
-        name: 'تطبيق الأدوات',
-        description: 'أدوات مفيدة لحياتك اليومية',
-        version: '1.2.0',
-        size: '22',
-        category: 'utility',
-        downloadURL: 'https://example.com/app6.zip',
-        rating: 4.1,
-        downloads: 750,
-        shareCount: 12
     }
 ];
 
@@ -100,9 +50,14 @@ async function shareApp(appId, appName) {
         const app = allApps.find(a => a.id === appId);
         const currentShares = app.shareCount || 0;
         
-        await updateDoc(appRef, {
-            shareCount: currentShares + 1
-        });
+        // تحديث في Firebase
+        try {
+            await updateDoc(appRef, {
+                shareCount: currentShares + 1
+            });
+        } catch (error) {
+            console.log('لا يمكن تحديث Firebase، استخدام البيانات المحلية');
+        }
 
         // تحديث البيانات المحلية
         app.shareCount = currentShares + 1;
@@ -607,38 +562,37 @@ const messageStyles = `
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
 }
+
+.temp-message {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    animation: slideIn 0.3s ease-out;
+}
+
+.temp-message.success {
+    background: #10b981;
+    color: white;
+}
+
+.temp-message.error {
+    background: #ef4444;
+    color: white;
+}
 `;
 
 // إضافة الأنماط إلى الصفحة
 const styleSheet = document.createElement('style');
 styleSheet.textContent = messageStyles;
 document.head.appendChild(styleSheet);
-
-// تهيئة الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("تهيئة صفحة المتجر...");
-    
-    // تحميل التطبيقات
-    loadApps();
-    
-    // إعداد مستمعات الأحداث للبحث
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-    }
-    
-    // إعداد التنقل في الشريط السفلي
-    setupBottomNavigation();
-    
-    // إعداد أحداث الفئات
-    setupCategoryEvents();
-    
-    console.log("تم تهيئة صفحة المتجر بالكامل");
-});
 
 // إعداد التنقل في الشريط السفلي
 function setupBottomNavigation() {
@@ -688,6 +642,32 @@ function setupCategoryEvents() {
     });
 }
 
+// تهيئة الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("تهيئة صفحة المتجر...");
+    
+    // تحميل التطبيقات
+    loadApps();
+    
+    // إعداد مستمعات الأحداث للبحث
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+    
+    // إعداد التنقل في الشريط السفلي
+    setupBottomNavigation();
+    
+    // إعداد أحداث الفئات
+    setupCategoryEvents();
+    
+    console.log("تم تهيئة صفحة المتجر بالكامل");
+});
+
 // جعل الدوال متاحة globally
 window.filterApps = filterApps;
 window.searchApps = searchApps;
@@ -695,6 +675,3 @@ window.performSearch = performSearch;
 window.downloadApp = downloadApp;
 window.deleteApp = deleteApp;
 window.shareApp = shareApp;
-
-// تصدير الدوال للاستخدام في ملفات أخرى
-export { loadApps, filterApps, searchApps, downloadApp, deleteApp, shareApp };

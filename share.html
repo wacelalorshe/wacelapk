@@ -94,7 +94,24 @@
             width: 100%;
         }
         
-        .btn-share-social:hover {
+        .btn-download {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-share-social:hover,
+        .btn-download:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
@@ -121,6 +138,18 @@
         .stat-label {
             font-size: 0.8rem;
             color: var(--text-secondary);
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .error-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ef4444;
         }
     </style>
 </head>
@@ -149,72 +178,44 @@
     </main>
 
     <script type="module">
-        import { db, collection, getDocs, doc, getDoc, updateDoc } from './js/firebase-config.js';
+        import { db, doc, getDoc } from './js/firebase-config.js';
 
         // الحصول على معرّف التطبيق من URL
         const urlParams = new URLSearchParams(window.location.search);
         const appId = urlParams.get('app');
+        let currentApp = null;
 
         async function loadSharedApp() {
             try {
-                let app = null;
+                if (!appId) {
+                    throw new Error('لم يتم تحديد تطبيق للمشاركة');
+                }
                 
-                if (appId) {
-                    // محاولة الحصول على التطبيق من Firebase
-                    const appDoc = await getDoc(doc(db, "apps", appId));
-                    if (appDoc.exists()) {
-                        app = {
-                            id: appDoc.id,
-                            ...appDoc.data()
-                        };
-                    } else {
-                        // البحث في التطبيقات المحلية إذا لم يوجد في Firebase
-                        const querySnapshot = await getDocs(collection(db, "apps"));
-                        querySnapshot.forEach((doc) => {
-                            if (doc.id === appId) {
-                                app = {
-                                    id: doc.id,
-                                    ...doc.data()
-                                };
-                            }
-                        });
-                    }
+                console.log("جاري تحميل التطبيق:", appId);
+                
+                // محاولة الحصول على التطبيق من Firebase
+                const appDoc = await getDoc(doc(db, "apps", appId));
+                
+                if (appDoc.exists()) {
+                    currentApp = {
+                        id: appDoc.id,
+                        ...appDoc.data()
+                    };
+                    console.log("تم تحميل التطبيق:", currentApp);
+                    displayShareContent(currentApp);
+                } else {
+                    throw new Error('التطبيق غير موجود في قاعدة البيانات');
                 }
 
-                if (app) {
-                    displayShareContent(app);
-                } else {
-                    document.getElementById('shareContent').innerHTML = `
-                        <div class="error-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>التطبيق غير موجود</h3>
-                            <p>عذراً، لم يتم العثور على التطبيق المطلوب.</p>
-                            <button class="btn-back" onclick="window.location.href='index.html'">
-                                <i class="fas fa-arrow-right"></i>
-                                العودة إلى المتجر
-                            </button>
-                        </div>
-                    `;
-                }
             } catch (error) {
                 console.error('Error loading shared app:', error);
-                document.getElementById('shareContent').innerHTML = `
-                    <div class="error-state">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>حدث خطأ</h3>
-                        <p>عذراً، حدث خطأ في تحميل التطبيق.</p>
-                        <button class="btn-back" onclick="window.location.href='index.html'">
-                            <i class="fas fa-arrow-right"></i>
-                            العودة إلى المتجر
-                        </button>
-                    </div>
-                `;
+                showErrorState(error.message);
             }
         }
 
         function displayShareContent(app) {
             const shareUrl = window.location.href;
-            const shareText = `اكتشف هذا التطبيق الرائع: ${app.name}`;
+            const shareText = `اكتشف هذا التطبيق الرائع: ${app.name} - ${app.description}`;
             
             const appIcon = app.iconURL 
                 ? `<img src="${app.iconURL}" alt="${app.name}">`
@@ -270,14 +271,30 @@
                 </div>
                 
                 <div class="share-actions">
-                    <button class="btn-back" onclick="window.location.href='index.html'">
+                    <button class="btn-back" onclick="goToHome()">
                         <i class="fas fa-arrow-right"></i>
                         العودة إلى المتجر
                     </button>
-                    <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')" style="flex: 1;">
+                    <button class="btn-download" onclick="downloadApp()">
                         <i class="fas fa-download"></i>
                         تحميل التطبيق
                     </button>
+                </div>
+            `;
+        }
+
+        function showErrorState(message) {
+            document.getElementById('shareContent').innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>لم يتم العثور على التطبيق</h3>
+                    <p>${message}</p>
+                    <div class="share-actions" style="margin-top: 2rem;">
+                        <button class="btn-back" onclick="goToHome()">
+                            <i class="fas fa-arrow-right"></i>
+                            العودة إلى المتجر
+                        </button>
+                    </div>
                 </div>
             `;
         }
@@ -307,20 +324,23 @@
         }
 
         function shareOnWhatsApp(text, url) {
-            window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+            const shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+            window.open(shareUrl, '_blank');
         }
 
         function shareOnTwitter(text, url) {
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            window.open(shareUrl, '_blank');
         }
 
         function shareOnFacebook(url) {
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            window.open(shareUrl, '_blank');
         }
 
         function copyShareLink(url) {
             navigator.clipboard.writeText(url).then(() => {
-                alert('تم نسخ رابط المشاركة إلى الحافظة!');
+                showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
             }).catch(() => {
                 // Fallback for older browsers
                 const tempInput = document.createElement('input');
@@ -329,17 +349,116 @@
                 tempInput.select();
                 document.execCommand('copy');
                 document.body.removeChild(tempInput);
-                alert('تم نسخ رابط المشاركة إلى الحافظة!');
+                showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
             });
         }
 
-        function downloadApp(downloadURL, appId) {
-            if (downloadURL && downloadURL !== 'https://example.com/app1.zip') {
+        function downloadApp() {
+            if (!currentApp) {
+                showTempMessage('لم يتم تحميل معلومات التطبيق', 'error');
+                return;
+            }
+
+            const downloadURL = currentApp.downloadURL;
+            
+            if (downloadURL && downloadURL.startsWith('http')) {
+                // فتح رابط التحميل في نافذة جديدة
                 window.open(downloadURL, '_blank');
+                
+                // زيادة عداد التنزيلات
+                updateDownloadCount();
+                
+                showTempMessage('جاري تحميل التطبيق...', 'success');
             } else {
-                alert('هذا رابط تجريبي. في التطبيق الحقيقي، سيبدأ التحميل.');
+                showTempMessage('رابط التحميل غير متوفر حالياً', 'error');
             }
         }
+
+        async function updateDownloadCount() {
+            try {
+                if (currentApp && currentApp.id) {
+                    // في تطبيق حقيقي، هنا نزيد عداد التنزيلات في قاعدة البيانات
+                    console.log('زيادة عداد التنزيلات للتطبيق:', currentApp.id);
+                    
+                    // يمكنك إضافة كود هنا لتحديث Firebase
+                    // await updateDoc(doc(db, "apps", currentApp.id), {
+                    //     downloads: (currentApp.downloads || 0) + 1
+                    // });
+                }
+            } catch (error) {
+                console.error('Error updating download count:', error);
+            }
+        }
+
+        function goToHome() {
+            window.location.href = 'index.html';
+        }
+
+        function showTempMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `temp-message ${type}`;
+            messageDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i>
+                <span>${text}</span>
+            `;
+            
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : '#ef4444'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: var(--shadow-lg);
+                z-index: 3000;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.parentNode.removeChild(messageDiv);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // إضافة أنماط CSS للرسائل المتحركة
+        const messageStyles = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = messageStyles;
+        document.head.appendChild(styleSheet);
 
         // تحميل التطبيق عند فتح الصفحة
         document.addEventListener('DOMContentLoaded', loadSharedApp);

@@ -234,24 +234,33 @@ function createAppCard(app) {
                     ${ratingStars}
                     <span>${app.rating || 'غير مقيم'}</span>
                 </div>
+        <div class="app-meta">
+    <div class="app-shares">
+        <i class="fas fa-share"></i>
+        <span>${app.shareCount || 0} مشاركة</span>
+    </div>
+</div>
+                
                 <div class="app-downloads">${app.downloads || 0} تنزيل</div>
             </div>
             ${app.featured ? '<div class="featured-badge">مميز</div>' : ''}
             ${app.trending ? '<div class="trending-badge">شائع</div>' : ''}
-            <div class="app-actions">
-                <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
-                    <i class="fas fa-download"></i>
-                    تحميل
-                </button>
-                ${isAdmin() ? `
-                    <button class="delete-btn" onclick="deleteApp('${app.id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ` : ''}
-            </div>
-        </div>
-    `;
-}
+            // استبدل قسم app-actions الحالي بهذا الكود:
+<div class="app-actions">
+    <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
+        <i class="fas fa-download"></i>
+        تحميل
+    </button>
+    <button class="share-btn" onclick="shareApp('${app.id}', '${app.name}')">
+        <i class="fas fa-share-alt"></i>
+        مشاركة
+    </button>
+    ${isAdmin() ? `
+        <button class="delete-btn" onclick="deleteApp('${app.id}')">
+            <i class="fas fa-trash"></i>
+        </button>
+    ` : ''}
+</div>
 
 // توليد نجوم التقييم
 function generateRatingStars(rating) {
@@ -629,5 +638,63 @@ window.performSearch = performSearch;
 window.downloadApp = downloadApp;
 window.deleteApp = deleteApp;
 
+
+// أضف هذه الدوال قبل التصدير
+
+// إنشاء رابط المشاركة
+function generateShareLink(appId) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}share.html?app=${appId}`;
+}
+
+// مشاركة التطبيق
+async function shareApp(appId, appName) {
+    const shareUrl = generateShareLink(appId);
+    
+    try {
+        // زيادة عداد المشاركات في قاعدة البيانات
+        const appRef = doc(db, "apps", appId);
+        const app = allApps.find(a => a.id === appId);
+        const currentShares = app.shareCount || 0;
+        
+        await updateDoc(appRef, {
+            shareCount: currentShares + 1
+        });
+
+        // تحديث البيانات المحلية
+        app.shareCount = currentShares + 1;
+
+        if (navigator.share) {
+            // استخدام Web Share API إذا متاح
+            await navigator.share({
+                title: `تحميل ${appName}`,
+                text: `اكتشف هذا التطبيق الرائع: ${appName}`,
+                url: shareUrl,
+            });
+            showTempMessage('تم مشاركة التطبيق بنجاح!', 'success');
+        } else {
+            // نسخ الرابط إلى الحافظة
+            await navigator.clipboard.writeText(shareUrl);
+            showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
+        }
+        
+        // إعادة تحميل القوائم لتحديث عدد المشاركات
+        displayApps(allApps);
+        displayFeaturedApps();
+        displayTrendingApps();
+        
+    } catch (error) {
+        console.error('Error sharing app:', error);
+        if (error.name !== 'AbortError') {
+            // Fallback: فتح نافذة المشاركة
+            window.open(`https://twitter.com/intent/tweet?text=اكتشف هذا التطبيق الرائع: ${appName}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        }
+    }
+}
+
+
 // تصدير الدوال للاستخدام في ملفات أخرى
 export { loadApps, filterApps, searchApps, downloadApp, deleteApp };
+
+// أضف دالة shareApp للتصدير
+export { loadApps, filterApps, searchApps, downloadApp, deleteApp, shareApp };

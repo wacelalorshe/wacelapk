@@ -1,20 +1,86 @@
-// js/admin.js - الإصدار المصحح مع خاصية المشاركة
-import { 
-    db, 
-    collection, 
-    addDoc, 
-    getDocs, 
-    deleteDoc, 
-    doc,
-    updateDoc
-} from './firebase-config.js';
+// js/admin.js - الإصدار المحدث مع خاصية التعديل
+// ... الاستيرادات الحالية تبقى كما هي ...
 
 let apps = [];
+let currentEditingApp = null;
 
 // إنشاء رابط المشاركة
 function generateShareLink(appId) {
     const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
     return `${baseUrl}share.html?app=${appId}`;
+}
+
+// فتح نافذة التعديل
+function openEditModal(app) {
+    currentEditingApp = app;
+    
+    // ملء النموذج ببيانات التطبيق الحالية
+    document.getElementById('editAppId').value = app.id;
+    document.getElementById('editAppName').value = app.name;
+    document.getElementById('editAppDescription').value = app.description;
+    document.getElementById('editAppVersion').value = app.version;
+    document.getElementById('editAppSize').value = app.size;
+    document.getElementById('editAppCategory').value = app.category;
+    document.getElementById('editAppDownloadURL').value = app.downloadURL;
+    document.getElementById('editAppRating').value = app.rating || '';
+    document.getElementById('editAppIconURL').value = app.iconURL || '';
+    document.getElementById('editAppFeatured').checked = app.featured || false;
+    document.getElementById('editAppTrending').checked = app.trending || false;
+    
+    // إظهار النافذة
+    document.getElementById('editAppModal').style.display = 'block';
+}
+
+// إغلاق نافذة التعديل
+function closeEditModal() {
+    document.getElementById('editAppModal').style.display = 'none';
+    currentEditingApp = null;
+}
+
+// تحديث التطبيق
+async function updateApp(e) {
+    e.preventDefault();
+    
+    const loadingModal = document.getElementById('loadingModal');
+    if (loadingModal) loadingModal.style.display = 'block';
+    
+    const appId = document.getElementById('editAppId').value;
+    const appData = {
+        name: document.getElementById('editAppName').value.trim(),
+        description: document.getElementById('editAppDescription').value.trim(),
+        version: document.getElementById('editAppVersion').value.trim(),
+        size: document.getElementById('editAppSize').value.trim(),
+        category: document.getElementById('editAppCategory').value,
+        downloadURL: document.getElementById('editAppDownloadURL').value.trim(),
+        rating: document.getElementById('editAppRating').value || null,
+        featured: document.getElementById('editAppFeatured').checked,
+        trending: document.getElementById('editAppTrending').checked,
+        updatedAt: new Date().toISOString()
+    };
+
+    // الحصول على رابط الأيقونة إذا تم إدخاله
+    const iconURL = document.getElementById('editAppIconURL').value.trim();
+    if (iconURL) {
+        appData.iconURL = iconURL;
+    }
+
+    try {
+        // تحديث التطبيق في Firebase
+        await updateDoc(doc(db, "apps", appId), appData);
+        showMessage('تم تحديث التطبيق بنجاح!', 'success');
+        
+        // إغلاق النافذة
+        closeEditModal();
+        
+        // إعادة تحميل القائمة
+        await loadAdminApps();
+
+    } catch (error) {
+        console.error("Error updating app:", error);
+        showMessage('خطأ في تحديث التطبيق: ' + error.message, 'error');
+    } finally {
+        if (loadingModal) loadingModal.style.display = 'none';
+    }
 }
 
 // نسخ رابط المشاركة
@@ -28,7 +94,6 @@ function copyShareLink(appId) {
             navigator.clipboard.writeText(shareInput.value).then(() => {
                 showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
             }).catch(() => {
-                // Fallback for older browsers
                 document.execCommand('copy');
                 showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
             });
@@ -43,7 +108,7 @@ function copyShareLink(appId) {
 async function generateNewShareLink(appId) {
     try {
         showMessage('تم تحديث رابط المشاركة', 'success');
-        displayAdminApps(); // إعادة تحميل القائمة
+        displayAdminApps();
     } catch (error) {
         console.error("Error updating share link:", error);
         showMessage('خطأ في تحديث رابط المشاركة: ' + error.message, 'error');
@@ -102,7 +167,10 @@ function displayAdminApps() {
                     </div>
                 </div>
             </div>
-            <p class="app-description">${app.description}</p>
+            <div class="app-description-container">
+                <p class="app-description">${app.description}</p>
+                ${app.description && app.description.length > 100 ? '<span class="show-more">عرض المزيد</span>' : ''}
+            </div>
             <div class="app-meta">
                 <span>التصنيف: ${getCategoryName(app.category)}</span>
                 ${app.rating ? `<span>التقييم: ${app.rating}/5</span>` : ''}
@@ -120,11 +188,21 @@ function displayAdminApps() {
                 </div>
             </div>
             <div class="admin-app-actions">
+                <button class="btn-edit" onclick="openEditModal(${JSON.stringify(app).replace(/"/g, '&quot;')})">تعديل</button>
                 <button class="btn-share" onclick="generateNewShareLink('${app.id}')">تحديث رابط المشاركة</button>
                 <button class="btn-delete" onclick="deleteAdminApp('${app.id}')">حذف التطبيق</button>
             </div>
         </div>
     `).join('');
+    
+    // إضافة مستمعات الأحداث لعرض المزيد
+    document.querySelectorAll('.show-more').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const description = this.previousElementSibling;
+            description.classList.toggle('expanded');
+            this.textContent = description.classList.contains('expanded') ? 'عرض أقل' : 'عرض المزيد';
+        });
+    });
     
     console.log("تم عرض التطبيقات في لوحة التحكم");
 }
@@ -206,6 +284,30 @@ function initializeAddAppForm() {
     console.log("تم تهيئة نموذج إضافة التطبيق");
 }
 
+// تهيئة نموذج التعديل
+function initializeEditAppForm() {
+    const form = document.getElementById('editAppForm');
+    if (form) {
+        form.addEventListener('submit', updateApp);
+    }
+    
+    // إغلاق النافذة عند النقر على X
+    const closeBtn = document.querySelector('#editAppModal .close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeEditModal);
+    }
+    
+    // إغلاق النافذة عند النقر خارجها
+    const modal = document.getElementById('editAppModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+    }
+}
+
 // حذف التطبيق
 async function deleteAdminApp(appId) {
     if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
@@ -214,7 +316,7 @@ async function deleteAdminApp(appId) {
         console.log("جاري حذف التطبيق:", appId);
         await deleteDoc(doc(db, "apps", appId));
         showMessage('تم حذف التطبيق بنجاح', 'success');
-        await loadAdminApps(); // إعادة تحميل القائمة
+        await loadAdminApps();
     } catch (error) {
         console.error("Error deleting app:", error);
         showMessage('خطأ في حذف التطبيق: ' + error.message, 'error');
@@ -259,7 +361,6 @@ function showMessage(text, type) {
         messageDiv.style.backgroundColor = type === 'success' ? '#e8f5e8' : '#ffe8e8';
         messageDiv.style.border = type === 'success' ? '1px solid #27ae60' : '1px solid #e74c3c';
         
-        // إخفاء الرسالة بعد 5 ثواني
         setTimeout(() => {
             messageDiv.textContent = '';
             messageDiv.style.backgroundColor = 'transparent';
@@ -267,7 +368,6 @@ function showMessage(text, type) {
         }, 5000);
     }
     
-    // أيضاً عرض في الكونسول
     console.log(type.toUpperCase() + ":", text);
 }
 
@@ -281,7 +381,6 @@ function checkAdminAuth() {
     if (!user || !isAdmin) {
         console.log("المستخدم غير مسجل - إعادة التوجيه إلى الصفحة الرئيسية");
         
-        // عرض رسالة للمستخدم
         const adminContainer = document.querySelector('.admin-container');
         if (adminContainer) {
             adminContainer.innerHTML = `
@@ -334,8 +433,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // تهيئة النموذج
+    // تهيئة النماذج
     initializeAddAppForm();
+    initializeEditAppForm();
     
     // تحميل التطبيقات
     loadAdminApps();
@@ -361,3 +461,6 @@ window.goToHome = goToHome;
 window.deleteAdminApp = deleteAdminApp;
 window.copyShareLink = copyShareLink;
 window.generateNewShareLink = generateNewShareLink;
+window.openEditModal = openEditModal;
+window.closeEditModal = closeEditModal;
+window.updateApp = updateApp;

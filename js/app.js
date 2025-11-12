@@ -18,7 +18,7 @@ const sampleApps = [
     {
         id: '1',
         name: 'تطبيق التواصل الاجتماعي',
-        description: 'تطبيق رائع للتواصل مع الأصدقاء والعائلة',
+        description: 'تطبيق رائع للتواصل مع الأصدقاء والعائلة مع ميزات متقدمة مثل المراسلة الفورية ومشاركة الصور والفيديو والمحادثات الجماعية. يدعم اللغة العربية بشكل كامل ويتوافق مع جميع الأجهزة.',
         version: '1.0.0',
         size: '25',
         category: 'social',
@@ -26,12 +26,13 @@ const sampleApps = [
         rating: 4.5,
         downloads: 1500,
         featured: true,
-        shareCount: 45
+        shareCount: 45,
+        iconURL: ''
     },
     {
         id: '2',
         name: 'تطبيق الألعاب',
-        description: 'ألعاب مسلية ومثيرة للجميع',
+        description: 'ألعاب مسلية ومثيرة للجميع تحتوي على أكثر من 100 لعبة مختلفة. يشمل ألعاب الذكاء والألغاز والرياضة والسباقات. مناسب لجميع الأعمال مع واجهة مستخدم بديهية وسهلة الاستخدام.',
         version: '2.1.0',
         size: '45',
         category: 'games',
@@ -39,7 +40,8 @@ const sampleApps = [
         rating: 4.2,
         downloads: 2300,
         trending: true,
-        shareCount: 67
+        shareCount: 67,
+        iconURL: ''
     }
 ];
 
@@ -233,9 +235,9 @@ function createAppCard(app) {
     const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
     
-    // استخدام الأيقونة المخصصة إذا كانت متاحة
+    // استخدام الأيقونة المخصصة إذا كانت متاحة - بنفس نمط صفحة المشاركة
     const appIcon = app.iconURL 
-        ? `<img src="${app.iconURL}" alt="${app.name}" class="app-icon-img">`
+        ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}"></div>`
         : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
     
     return `

@@ -2,133 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - WacelMarkt</title>
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/admin.css">
+    <title>إصلاح المسؤول</title>
+    <script>
+        function createAdmin() {
+            localStorage.setItem('user', 'admin@wacelmarkt.com');
+            localStorage.setItem('isAdmin', 'true');
+            alert('تم إصلاح الصلاحيات! انتقل إلى لوحة التحكم الآن.');
+            window.location.href = 'admin.html';
+        }
+    </script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">لوحة التحكم</h1>
-            <div class="nav-links">
-                <a href="index.html">العودة للمتجر</a>
-                <button id="adminLogoutBtn" class="btn-logout">تسجيل الخروج</button>
-            </div>
-        </div>
-    </nav>
-
-    <main class="admin-main">
-        <div class="admin-container">
-            <h2>إدارة التطبيقات</h2>
-            
-            <!-- إحصائيات سريعة -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>إجمالي التطبيقات</h3>
-                    <p id="totalApps">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>التطبيقات النشطة</h3>
-                    <p id="activeApps">0</p>
-                </div>
-            </div>
-
-            <!-- نموذج إضافة تطبيق -->
-            <section class="add-app-section">
-                <h3>إضافة تطبيق جديد</h3>
-                <form id="addAppForm" class="app-form">
-                    <div class="form-group">
-                        <label for="appName">اسم التطبيق *</label>
-                        <input type="text" id="appName" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="appDescription">وصف التطبيق *</label>
-                        <textarea id="appDescription" rows="3" required></textarea>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="appVersion">الإصدار *</label>
-                            <input type="text" id="appVersion" placeholder="مثال: 1.0.0" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="appSize">الحجم (MB) *</label>
-                            <input type="number" id="appSize" placeholder="مثال: 25" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="appCategory">التصنيف *</label>
-                            <select id="appCategory" required>
-                                <option value="">اختر التصنيف</option>
-                                <option value="productivity">الإنتاجية</option>
-                                <option value="education">التعليم</option>
-                                <option value="entertainment">الترفيه</option>
-                                <option value="utility">الأدوات</option>
-                                <option value="games">الألعاب</option>
-                                <option value="social">التواصل الاجتماعي</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="appRating">التقييم (1-5)</label>
-                            <input type="number" id="appRating" min="1" max="5" step="0.1" placeholder="4.5">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="appDownloadURL">رابط التحميل *</label>
-                        <input type="url" id="appDownloadURL" placeholder="https://example.com/app.zip" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="appIconURL">رابط الأيقونة (اختياري)</label>
-                        <input type="url" id="appIconURL" placeholder="https://example.com/icon.png">
-                        <small>يمكنك استخدام رابط مباشر لأيقونة التطبيق</small>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="appFeatured"> تطبيق مميز
-                            </label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="appTrending"> تطبيق شائع
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">إضافة التطبيق</button>
-                    <div id="formMessage"></div>
-                </form>
-            </section>
-
-            <!-- قائمة التطبيقات -->
-            <section class="apps-management">
-                <h3>التطبيقات المضافة</h3>
-                <div id="adminAppsList" class="admin-apps-grid">
-                    <p>جاري تحميل التطبيقات...</p>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- نافذة التحميل -->
-    <div id="loadingModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>جاري إضافة التطبيق...</h3>
-            <p>يرجى الانتظار</p>
-        </div>
-    </div>
-
-    <script type="module" src="js/firebase-config.js"></script>
-    <script type="module" src="js/admin.js"></script>
+<body style="text-align: center; padding: 50px; font-family: Arial;">
+    <h2>إصلاح صلاحيات المسؤول</h2>
+    <button onclick="createAdmin()" style="padding: 15px 30px; font-size: 18px;">
+        إصلاح الصلاحيات والدخول للوحة التحكم
+    </button>
 </body>
 </html>

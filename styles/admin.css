@@ -402,3 +402,98 @@ small {
         font-size: 0.75rem;
     }
 }
+
+
+
+/* styles/admin.css - الإصدار المحدث مع أنماط المشاركة */
+/* ... الأنماط الحالية تبقى كما هي ... */
+
+/* قسم رابط المشاركة */
+.share-link-section {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.share-link-section label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.share-link-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.share-link-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: white;
+    font-size: 0.9rem;
+    direction: ltr;
+}
+
+.btn-copy {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.btn-copy:hover {
+    background: var(--primary-dark);
+}
+
+.btn-share {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.btn-share:hover {
+    background: #e67e22;
+}
+
+/* تحديث أزرار الإجراءات */
+.admin-app-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.admin-app-actions button {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* التصميم المتجاوب */
+@media (max-width: 768px) {
+    .share-link-container {
+        flex-direction: column;
+    }
+    
+    .admin-app-actions {
+        flex-direction: column;
+    }
+    
+    .admin-app-actions button {
+        width: 100%;
+    }
+}

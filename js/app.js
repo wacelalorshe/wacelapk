@@ -78,6 +78,7 @@ async function shareApp(appId, appName) {
         
         // إعادة تحميل القوائم لتحديث عدد المشاركات
         displayApps(allApps);
+        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         
@@ -124,6 +125,7 @@ async function loadApps() {
         
         // عرض التطبيقات في الأقسام المختلفة
         displayApps(allApps);
+        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         
@@ -133,6 +135,7 @@ async function loadApps() {
         // في حالة الخطأ، استخدام البيانات التجريبية
         allApps = sampleApps;
         displayApps(allApps);
+        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         
@@ -167,6 +170,18 @@ function displayApps(apps) {
     appsContainer.innerHTML = apps.map(app => createAppCard(app)).join('');
     console.log("تم عرض التطبيقات الرئيسية:", apps.length);
 }
+
+// إضافة مستمعات الأحداث لعرض المزيد في الصفحة الرئيسية
+function setupDescriptionToggle() {
+    document.querySelectorAll('.show-more').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const description = this.previousElementSibling;
+            description.classList.toggle('expanded');
+            this.textContent = description.classList.contains('expanded') ? 'عرض أقل' : 'عرض المزيد';
+        });
+    });
+}
+
 
 // عرض التطبيقات المميزة
 function displayFeaturedApps() {
@@ -235,7 +250,10 @@ function createAppCard(app) {
                     <div class="app-category">${getCategoryName(app.category)}</div>
                 </div>
             </div>
-            <p class="app-description">${app.description}</p>
+            <div class="app-description-container">
+    <p class="app-description">${app.description}</p>
+    ${app.description && app.description.length > 100 ? '<span class="show-more">عرض المزيد</span>' : ''}
+</div>
             <div class="app-meta">
                 <div class="app-version">الإصدار: ${app.version}</div>
                 <div class="app-size">${app.size} MB</div>
@@ -446,6 +464,7 @@ async function deleteApp(appId) {
         
         // إعادة تحميل القوائم
         displayApps(allApps);
+        setupDescriptionToggle();
         displayFeaturedApps();
         displayTrendingApps();
         

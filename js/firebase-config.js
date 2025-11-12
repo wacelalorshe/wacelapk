@@ -1,6 +1,6 @@
 // js/firebase-config.js - الإصدار المحدث
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
 const firebaseConfig = {
@@ -26,6 +26,8 @@ export {
     getDocs, 
     deleteDoc, 
     doc, 
+    updateDoc,
+    getDoc,
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     signOut,

@@ -1,4 +1,4 @@
-/* styles/admin.css - الإصدار المحدث بمقاسات صور متجانسة */
+/* styles/admin.css - الإصدار المحدث بمقاسات الأيقونات المتجاوبة */
 .admin-main {
     margin-top: 80px;
     padding: 2rem 0;
@@ -183,27 +183,26 @@ textarea {
 }
 
 .admin-app-card .app-icon {
-    width: clamp(3rem, 8vw, 3.5rem);
-    height: clamp(3rem, 8vw, 3.5rem);
+    width: clamp(2.5rem, 8vw, 3.5rem);
+    height: clamp(2.5rem, 8vw, 3.5rem);
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 16px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-size: clamp(1rem, 4vw, 1.4rem);
     box-shadow: var(--shadow);
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
 }
 
-.admin-app-card .app-icon img {
+.admin-app-card .app-icon-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: inherit;
-    display: block;
 }
 
 .admin-app-card h4 {
@@ -257,29 +256,6 @@ textarea {
     background: #c0392b;
 }
 
-/* نظام إدارة الصور في لوحة التحكم */
-.admin-app-card .app-icon:not(:has(img)) {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.admin-app-card .app-icon:not(:has(img))::before {
-    content: "📱";
-    font-size: clamp(1rem, 4vw, 1.4rem);
-}
-
-.admin-app-card .app-icon img {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    transition: opacity 0.3s ease;
-}
-
-.admin-app-card .app-icon img[src=""],
-.admin-app-card .app-icon img:not([src]) {
-    opacity: 0;
-}
-
 /* رسائل النموذج */
 #formMessage {
     margin-top: 1rem;
@@ -296,6 +272,14 @@ small {
     font-size: clamp(0.7rem, 2vw, 0.8rem);
     display: block;
     margin-top: 0.25rem;
+}
+
+/* تحسينات للأيقونات في حالة الخطأ */
+.admin-app-card .app-icon i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /* التصميم المتجاوب */
@@ -331,9 +315,9 @@ small {
     }
     
     .admin-app-card .app-icon {
-        width: clamp(2.8rem, 9vw, 3.2rem);
-        height: clamp(2.8rem, 9vw, 3.2rem);
-        font-size: clamp(1rem, 3.5vw, 1.3rem);
+        width: clamp(2.2rem, 9vw, 3rem);
+        height: clamp(2.2rem, 9vw, 3rem);
+        font-size: clamp(0.9rem, 3.5vw, 1.2rem);
     }
 }
 
@@ -352,9 +336,9 @@ small {
     }
     
     .admin-app-card .app-icon {
-        width: clamp(2.5rem, 10vw, 3rem);
-        height: clamp(2.5rem, 10vw, 3rem);
-        font-size: clamp(0.9rem, 3vw, 1.2rem);
+        width: clamp(2rem, 10vw, 2.8rem);
+        height: clamp(2rem, 10vw, 2.8rem);
+        font-size: clamp(0.8rem, 3vw, 1.1rem);
     }
     
     .admin-app-card .app-header {
@@ -387,90 +371,34 @@ small {
     }
 }
 
-/* تحسينات إضافية للصور في النماذج */
-.form-group img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin-top: 0.5rem;
-    border: 2px solid var(--border);
+/* تحسينات للشاشات متوسطة الحجم */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .admin-apps-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
 }
 
-/* ضمان تناسق الصور في المعاينة */
-.image-preview {
-    width: 100%;
-    max-width: 200px;
-    aspect-ratio: 1 / 1;
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 0.5rem 0;
-    border: 2px solid var(--border);
-}
-
-.image-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-
-
-/* styles/admin.css - إضافة أنماط المشاركة في لوحة التحكم */
-
-/* قسم المشاركة في لوحة التحكم */
-.share-section {
-    background: var(--bg-light);
-    padding: 1rem;
-    border-radius: var(--radius);
-    margin: 1rem 0;
-    border: 1px solid var(--border);
-}
-
-.share-section label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.share-link-container {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.share-link-input {
-    flex: 1;
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: white;
-    font-size: 0.9rem;
-    direction: ltr;
-    text-overflow: ellipsis;
-}
-
-.copy-share-link {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.copy-share-link:hover {
-    background: var(--primary-dark);
-}
-
-/* أزرار المشاركة الاجتماعية في الأدمن */
-.admin-app-card .social-share-buttons {
-    justify-content: flex-start;
-}
-
-.admin-app-card .social-share-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
+/* تحسينات إضافية للأزرار في الشاشات الصغيرة */
+@media (max-width: 360px) {
+    .btn-edit,
+    .btn-delete {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .admin-app-card {
+        padding: 0.8rem;
+    }
+    
+    .admin-app-card h4 {
+        font-size: 0.9rem;
+    }
+    
+    .admin-app-card p {
+        font-size: 0.75rem;
+    }
 }

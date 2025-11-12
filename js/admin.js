@@ -1,14 +1,54 @@
-// js/admin.js - الإصدار المصحح مع رابط الأيقونة المباشر
+// js/admin.js - الإصدار المصحح مع خاصية المشاركة
 import { 
     db, 
     collection, 
     addDoc, 
     getDocs, 
     deleteDoc, 
-    doc
+    doc,
+    updateDoc
 } from './firebase-config.js';
 
 let apps = [];
+
+// إنشاء رابط المشاركة
+function generateShareLink(appId) {
+    const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
+    return `${baseUrl}share.html?app=${appId}`;
+}
+
+// نسخ رابط المشاركة
+function copyShareLink(appId) {
+    const shareInput = document.getElementById(`shareLink-${appId}`);
+    if (shareInput) {
+        shareInput.select();
+        shareInput.setSelectionRange(0, 99999);
+        
+        try {
+            navigator.clipboard.writeText(shareInput.value).then(() => {
+                showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                document.execCommand('copy');
+                showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
+            });
+        } catch (error) {
+            document.execCommand('copy');
+            showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
+        }
+    }
+}
+
+// إنشاء رابط مشاركة جديد
+async function generateNewShareLink(appId) {
+    try {
+        showMessage('تم تحديث رابط المشاركة', 'success');
+        displayAdminApps(); // إعادة تحميل القائمة
+    } catch (error) {
+        console.error("Error updating share link:", error);
+        showMessage('خطأ في تحديث رابط المشاركة: ' + error.message, 'error');
+    }
+}
 
 // تحميل التطبيقات
 async function loadAdminApps() {
@@ -30,16 +70,6 @@ async function loadAdminApps() {
     } catch (error) {
         console.error("Error loading apps:", error);
         document.getElementById('adminAppsList').innerHTML = '<p style="color: red;">خطأ في تحميل التطبيقات: ' + error.message + '</p>';
-        
-
-<div class="share-link-section">
-    <label>رابط المشاركة:</label>
-    <div class="share-link-container">
-        <input type="text" id="shareLink-${app.id}" value="${generateShareLink(app.id)}" readonly class="share-link-input">
-        <button class="btn-copy" onclick="copyShareLink('${app.id}')">نسخ</button>
-    </div>
-</div>
-        
     }
 }
 
@@ -82,9 +112,15 @@ function displayAdminApps() {
                 ${app.trending ? '<span class="badge trending">شائع</span>' : ''}
                 <span class="downloads">${app.downloads || 0} تنزيل</span>
             </div>
+            <div class="share-link-section">
+                <label>رابط المشاركة:</label>
+                <div class="share-link-container">
+                    <input type="text" id="shareLink-${app.id}" value="${generateShareLink(app.id)}" readonly class="share-link-input">
+                    <button class="btn-copy" onclick="copyShareLink('${app.id}')">نسخ</button>
+                </div>
+            </div>
             <div class="admin-app-actions">
-     
-<button class="btn-share" onclick="generateNewShareLink('${app.id}')">تحديث رابط المشاركة</button>
+                <button class="btn-share" onclick="generateNewShareLink('${app.id}')">تحديث رابط المشاركة</button>
                 <button class="btn-delete" onclick="deleteAdminApp('${app.id}')">حذف التطبيق</button>
             </div>
         </div>
@@ -123,7 +159,8 @@ function initializeAddAppForm() {
             featured: document.getElementById('appFeatured').checked,
             trending: document.getElementById('appTrending').checked,
             createdAt: new Date().toISOString(),
-            downloads: 0
+            downloads: 0,
+            shareCount: 0
         };
 
         // الحصول على رابط الأيقونة إذا تم إدخاله
@@ -322,42 +359,5 @@ document.addEventListener('DOMContentLoaded', function() {
 window.goToLogin = goToLogin;
 window.goToHome = goToHome;
 window.deleteAdminApp = deleteAdminApp;
-
-// أضف هذه الدوال في نهاية الملف قبل التصدير
-
-// إنشاء رابط المشاركة
-function generateShareLink(appId) {
-    const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
-    return `${baseUrl}share.html?app=${appId}`;
-}
-
-// نسخ رابط المشاركة
-function copyShareLink(appId) {
-    const shareInput = document.getElementById(`shareLink-${appId}`);
-    shareInput.select();
-    shareInput.setSelectionRange(0, 99999);
-    
-    try {
-        navigator.clipboard.writeText(shareInput.value).then(() => {
-            showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
-        }).catch(() => {
-            // Fallback for older browsers
-            document.execCommand('copy');
-            showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
-        });
-    } catch (error) {
-        document.execCommand('copy');
-        showMessage('تم نسخ رابط المشاركة إلى الحافظة', 'success');
-    }
-}
-
-// إنشاء رابط مشاركة جديد
-async function generateNewShareLink(appId) {
-    try {
-        showMessage('تم تحديث رابط المشاركة', 'success');
-        displayAdminApps(); // إعادة تحميل القائمة
-    } catch (error) {
-        console.error("Error updating share link:", error);
-        showMessage('خطأ في تحديث رابط المشاركة: ' + error.message, 'error');
-    }
-}
+window.copyShareLink = copyShareLink;
+window.generateNewShareLink = generateNewShareLink;

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاركة التطبيق - WacelMarkt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        .share-container {
+            max-width: 500px;
+            margin: 100px auto 50px;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        
+        .app-share-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: right;
+        }
+        
+        .share-app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        
+        .share-app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+        }
+        
+        .share-actions {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn-share-social {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        
+        .btn-twitter {
+            background: #1DA1F2;
+            color: white;
+        }
+        
+        .btn-facebook {
+            background: #1877F2;
+            color: white;
+        }
+        
+        .btn-copy-link {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-back {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            width: 100%;
+        }
+        
+        .btn-share-social:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .share-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <a href="index.html" style="text-decoration: none;">
+                    <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <div class="share-container">
+            <div id="shareContent">
+                <div class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحميل معلومات التطبيق...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { db, collection, getDocs, doc, getDoc, updateDoc } from './js/firebase-config.js';
+
+        // الحصول على معرّف التطبيق من URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const appId = urlParams.get('app');
+
+        async function loadSharedApp() {
+            try {
+                let app = null;
+                
+                if (appId) {
+                    // محاولة الحصول على التطبيق من Firebase
+                    const appDoc = await getDoc(doc(db, "apps", appId));
+                    if (appDoc.exists()) {
+                        app = {
+                            id: appDoc.id,
+                            ...appDoc.data()
+                        };
+                    } else {
+                        // البحث في التطبيقات المحلية إذا لم يوجد في Firebase
+                        const querySnapshot = await getDocs(collection(db, "apps"));
+                        querySnapshot.forEach((doc) => {
+                            if (doc.id === appId) {
+                                app = {
+                                    id: doc.id,
+                                    ...doc.data()
+                                };
+                            }
+                        });
+                    }
+                }
+
+                if (app) {
+                    displayShareContent(app);
+                } else {
+                    document.getElementById('shareContent').innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>التطبيق غير موجود</h3>
+                            <p>عذراً، لم يتم العثور على التطبيق المطلوب.</p>
+                            <button class="btn-back" onclick="window.location.href='index.html'">
+                                <i class="fas fa-arrow-right"></i>
+                                العودة إلى المتجر
+                            </button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading shared app:', error);
+                document.getElementById('shareContent').innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>حدث خطأ</h3>
+                        <p>عذراً، حدث خطأ في تحميل التطبيق.</p>
+                        <button class="btn-back" onclick="window.location.href='index.html'">
+                            <i class="fas fa-arrow-right"></i>
+                            العودة إلى المتجر
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayShareContent(app) {
+            const shareUrl = window.location.href;
+            const shareText = `اكتشف هذا التطبيق الرائع: ${app.name}`;
+            
+            const appIcon = app.iconURL 
+                ? `<img src="${app.iconURL}" alt="${app.name}">`
+                : `<i class="${getAppIcon(app.category)}"></i>`;
+            
+            document.getElementById('shareContent').innerHTML = `
+                <div class="app-share-header">
+                    <div class="share-app-icon">
+                        ${appIcon}
+                    </div>
+                    <div>
+                        <h2>${app.name}</h2>
+                        <p class="app-category">${getCategoryName(app.category)}</p>
+                        <p class="app-description">${app.description}</p>
+                    </div>
+                </div>
+                
+                <div class="share-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">${app.downloads || 0}</div>
+                        <div class="stat-label">تنزيل</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${app.shareCount || 0}</div>
+                        <div class="stat-label">مشاركة</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${app.rating || '--'}</div>
+                        <div class="stat-label">تقييم</div>
+                    </div>
+                </div>
+                
+                <div class="share-actions">
+                    <button class="btn-share-social btn-whatsapp" onclick="shareOnWhatsApp('${shareText}', '${shareUrl}')">
+                        <i class="fab fa-whatsapp"></i>
+                        واتساب
+                    </button>
+                    <button class="btn-share-social btn-twitter" onclick="shareOnTwitter('${shareText}', '${shareUrl}')">
+                        <i class="fab fa-twitter"></i>
+                        تويتر
+                    </button>
+                    <button class="btn-share-social btn-facebook" onclick="shareOnFacebook('${shareUrl}')">
+                        <i class="fab fa-facebook"></i>
+                        فيسبوك
+                    </button>
+                </div>
+                
+                <div class="share-actions">
+                    <button class="btn-copy-link" onclick="copyShareLink('${shareUrl}')">
+                        <i class="fas fa-link"></i>
+                        نسخ رابط المشاركة
+                    </button>
+                </div>
+                
+                <div class="share-actions">
+                    <button class="btn-back" onclick="window.location.href='index.html'">
+                        <i class="fas fa-arrow-right"></i>
+                        العودة إلى المتجر
+                    </button>
+                    <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')" style="flex: 1;">
+                        <i class="fas fa-download"></i>
+                        تحميل التطبيق
+                    </button>
+                </div>
+            `;
+        }
+
+        function getAppIcon(category) {
+            const icons = {
+                'games': 'fas fa-gamepad',
+                'social': 'fas fa-comments',
+                'entertainment': 'fas fa-film',
+                'productivity': 'fas fa-briefcase',
+                'education': 'fas fa-graduation-cap',
+                'utility': 'fas fa-tools'
+            };
+            return icons[category] || 'fas fa-mobile-alt';
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'games': 'الألعاب',
+                'social': 'التواصل الاجتماعي',
+                'entertainment': 'الترفيه',
+                'productivity': 'الإنتاجية',
+                'education': 'التعليم',
+                'utility': 'الأدوات'
+            };
+            return categories[category] || category;
+        }
+
+        function shareOnWhatsApp(text, url) {
+            window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+        }
+
+        function shareOnTwitter(text, url) {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function shareOnFacebook(url) {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function copyShareLink(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert('تم نسخ رابط المشاركة إلى الحافظة!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const tempInput = document.createElement('input');
+                tempInput.value = url;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                alert('تم نسخ رابط المشاركة إلى الحافظة!');
+            });
+        }
+
+        function downloadApp(downloadURL, appId) {
+            if (downloadURL && downloadURL !== 'https://example.com/app1.zip') {
+                window.open(downloadURL, '_blank');
+            } else {
+                alert('هذا رابط تجريبي. في التطبيق الحقيقي، سيبدأ التحميل.');
+            }
+        }
+
+        // تحميل التطبيق عند فتح الصفحة
+        document.addEventListener('DOMContentLoaded', loadSharedApp);
+    </script>
+</body>
+</html>

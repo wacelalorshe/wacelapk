@@ -1,414 +1,917 @@
-/* styles/admin.css - الإصدار المحدث بمقاسات صور متجانسة */
-.admin-main {
-    margin-top: 80px;
-    padding: 2rem 0;
-    min-height: calc(100vh - 80px);
-    background: var(--bg-secondary);
-}
+/* styles/style.css - التصميم المحدث بمقاسات صور متجانسة */
+:root {
+            --primary: #006CFF;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.8), 0 1px 20px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
 
-.admin-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.admin-container h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--text-primary);
-    font-size: clamp(1.5rem, 5vw, 2rem);
-}
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Tahoma', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            direction: rtl;
+            padding-bottom: 80px;
+        }
 
-/* إحصائيات */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
+        /* الشريط العلوي */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.9);
+            border-bottom: 1px solid var(--border-black);
+        }
 
-.stat-card {
-    background: white;
-    padding: clamp(1rem, 3vw, 1.5rem);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-    text-align: center;
-    border-left: 4px solid var(--primary);
-    transition: transform 0.3s ease;
-}
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+        }
 
-.stat-card:hover {
-    transform: translateY(-2px);
-}
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-.stat-card h3 {
-    color: var(--text-secondary);
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-    margin-bottom: 0.5rem;
-}
+        .logo i {
+            color: var(--secondary);
+        }
 
-.stat-card p {
-    font-size: clamp(1.5rem, 6vw, 2rem);
-    font-weight: bold;
-    color: var(--text-primary);
-}
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-/* نموذج إضافة تطبيق */
-.add-app-section {
-    background: white;
-    padding: clamp(1rem, 4vw, 2rem);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-    margin-bottom: 2rem;
-    border: 1px solid var(--border);
-}
+        .search-icon-top {
+            width: clamp(2rem, 10vw, 2.5rem);
+            height: clamp(2rem, 10vw, 2.5rem);
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
 
-.add-app-section h3 {
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 0.5rem;
-    font-size: clamp(1.1rem, 4vw, 1.3rem);
-}
+        .search-icon-top i {
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+        }
 
-.app-form {
-    max-width: 600px;
-}
+        .search-icon-top:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
+        .btn-login, .btn-logout {
+            width: clamp(2rem, 7vw, 2.5rem);
+            height: clamp(2rem, 7vw, 2.5rem);
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
+        .btn-login i, .btn-logout i {
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+        }
 
-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: var(--text-primary);
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-}
+        .btn-login:hover, .btn-logout:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
 
-input, select, textarea {
-    width: 100%;
-    padding: clamp(0.6rem, 2vw, 0.75rem);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    font-family: inherit;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
+        /* الشريط السفلي */
+        .bottom-navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 0.75rem 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 -2px 50px rgba(0, 0, 0, 0.8);
+            border-top: 2px solid var(--border-light);
+        }
 
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-}
+        .bottom-nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 1rem;
+        }
 
-textarea {
-    resize: vertical;
-    min-height: 80px;
-}
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            min-width: clamp(3rem, 15vw, 4rem);
+        }
 
-.submit-btn {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: clamp(0.8rem, 3vw, 1rem) clamp(1.5rem, 4vw, 2rem);
-    border-radius: 5px;
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    margin-top: 1rem;
-    font-weight: 500;
-}
+        .bottom-nav-item i {
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            margin-bottom: 0.25rem;
+        }
 
-.submit-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
-}
+        .bottom-nav-item span {
+            font-size: clamp(0.6rem, 2.5vw, 0.85rem);
+            font-weight: 500;
+        }
 
-.submit-btn:active {
-    transform: translateY(0);
-}
+        .bottom-nav-item.active {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
 
-/* إدارة التطبيقات */
-.apps-management {
-    background: white;
-    padding: clamp(1rem, 4vw, 2rem);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-}
+        .bottom-nav-item:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
 
-.apps-management h3 {
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 0.5rem;
-    font-size: clamp(1.1rem, 4vw, 1.3rem);
-}
+        /* المحتوى الرئيسي */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 1.5rem 2rem;
+        }
 
-.admin-apps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
+        /* قسم الهيرو */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+        }
 
-.admin-app-card {
-    background: white;
-    padding: clamp(1rem, 3vw, 1.5rem);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-    border-left: 4px solid var(--primary);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid var(--border);
-}
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
 
-.admin-app-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
 
-.admin-app-card .app-header {
-    display: flex;
-    align-items: flex-start;
-    gap: clamp(0.75rem, 2vw, 1rem);
-    margin-bottom: 1rem;
-}
+        /* قسم الفئات */
+        .categories-section {
+            margin-bottom: 2rem;
+        }
 
-.admin-app-card .app-icon {
-    width: clamp(3rem, 8vw, 3.5rem);
-    height: clamp(3rem, 8vw, 3.5rem);
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
-    box-shadow: var(--shadow);
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-}
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
 
-.admin-app-card .app-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: inherit;
-    display: block;
-}
+        .category-card {
+            background: var(--bg-card);
+            padding: 1.5rem 0.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 40px rgba(0,0,0, 4.9);
+            border-bottom: 6px groove  #000; 
+    border-top: 6px   groove  #000; 
+border-left: 0px ridge #000;
+border-right: 0px groove #000;
+        }
 
-.admin-app-card h4 {
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    font-size: clamp(1rem, 4vw, 1.2rem);
-}
+        .category-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
 
-.admin-app-card p {
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-    line-height: 1.5;
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-}
+        .category-icon {
+            width: clamp(3rem, 10vw, 4rem);
+            height: clamp(3rem, 10vw, 4rem);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            color: white;
+            font-size: clamp(11.2rem, 5vw, 1.6rem);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
 
-.admin-app-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
+        /* تحسينات الصور للفئات */
+        .category-icon {
+            width: 184px;
+            height: 194px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
 
-.btn-edit {
-    background: #f39c12;
-    color: white;
-    border: none;
-    padding: clamp(0.4rem, 2vw, 0.5rem) clamp(0.8rem, 2.5vw, 1rem);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-    flex: 1;
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-}
+        .category-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: transparent;
+        }
 
-.btn-edit:hover {
-    background: #e67e22;
-}
+        .category-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.99rem;
+        }
 
-.btn-delete {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: clamp(0.4rem, 2vw, 0.5rem) clamp(0.8rem, 2.5vw, 1rem);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-    flex: 1;
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-}
+        /* أقسام التطبيقات */
+        .featured-section,
+        .trending-section,
+        .ads-section,
+        .all-apps-section {
+            margin-bottom: 2rem;
+        }
 
-.btn-delete:hover {
-    background: #c0392b;
-}
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
 
-/* نظام إدارة الصور في لوحة التحكم */
-.admin-app-card .app-icon:not(:has(img)) {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .section-title {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-light);
+        }
 
-.admin-app-card .app-icon:not(:has(img))::before {
-    content: "📱";
-    font-size: clamp(1rem, 4vw, 1.4rem);
-}
+        /* شبكة التطبيقات */
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
 
-.admin-app-card .app-icon img {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    transition: opacity 0.3s ease;
-}
+        .app-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            
+            padding: 2.25rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            
+box-shadow: 0 0px 40px rgba(0,0,0,0.9);
+border-bottom: 6px groove #000;
+    border-top: 9px  groove  #000; 
+border-left: 0px ridge #000;
+border-right: 0px groove #000;
+            position: relative;
+        }
 
-.admin-app-card .app-icon img[src=""],
-.admin-app-card .app-icon img:not([src]) {
-    opacity: 0;
-}
+        .app-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
 
-/* رسائل النموذج */
-#formMessage {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-}
+        .app-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 0.0rem;
+            font-size: 1.9rem;
+            
+        }
 
-/* نصوص مساعدة */
-small {
-    color: var(--text-secondary);
-    font-size: clamp(0.7rem, 2vw, 0.8rem);
-    display: block;
-    margin-top: 0.25rem;
-}
+        /* تحسينات الصور للتطبيقات */
+        .app-icon {
+            width: 94px;
+            height: 94px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
 
-/* التصميم المتجاوب */
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .admin-apps-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .admin-app-actions {
-        flex-direction: column;
-    }
-    
-    .admin-container {
-        padding: 0 1rem;
-    }
-    
-    .add-app-section {
-        padding: 1rem;
-    }
-    
-    .apps-management {
-        padding: 1rem;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-    }
-    
-    .admin-app-card .app-icon {
-        width: clamp(2.8rem, 9vw, 3.2rem);
-        height: clamp(2.8rem, 9vw, 3.2rem);
-        font-size: clamp(1rem, 3.5vw, 1.3rem);
-    }
-}
+        .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: transparent;
+        }
 
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .admin-main {
-        margin-top: 120px;
-        padding: 1rem 0;
-    }
-    
-    .admin-container h2 {
-        font-size: 1.5rem;
-    }
-    
-    .admin-app-card .app-icon {
-        width: clamp(2.5rem, 10vw, 3rem);
-        height: clamp(2.5rem, 10vw, 3rem);
-        font-size: clamp(0.9rem, 3vw, 1.2rem);
-    }
-    
-    .admin-app-card .app-header {
-        gap: 0.5rem;
-    }
-    
-    .admin-app-actions {
-        gap: 0.3rem;
-    }
-}
+        .app-info {
+            flex: 1;
+            min-width: 50;
+        }
 
-@media (min-width: 1200px) {
-    .admin-app-card .app-icon {
-        width: 3.5rem;
-        height: 3.5rem;
-        font-size: 1.4rem;
-    }
-    
-    .admin-container h2 {
-        font-size: 2rem;
-    }
-    
-    .stat-card p {
-        font-size: 2rem;
-    }
-    
-    .add-app-section h3,
-    .apps-management h3 {
-        font-size: 1.3rem;
-    }
-}
+        .app-info h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 1.0rem;
+            font-weight: 600;
+            line-height: 2.5;
+        }
 
-/* تحسينات إضافية للصور في النماذج */
-.form-group img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin-top: 0.5rem;
-    border: 2px solid var(--border);
-}
+        .app-category {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 0.5;
+        }
 
-/* ضمان تناسق الصور في المعاينة */
-.image-preview {
-    width: 100%;
-    max-width: 200px;
-    aspect-ratio: 1 / 1;
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 0.5rem 0;
-    border: 2px solid var(--border);
-}
+        .app-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            font-size: 0.85rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-.image-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+        .app-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .app-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .app-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .download-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .download-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            font-size: 0.85rem;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* قسم الإعلانات */
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .ad-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .ad-badge {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: var(--secondary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .ad-card h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .ad-card p {
+            opacity: 0.9;
+            font-size: 0.85rem;
+        }
+
+        .loading-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-state i {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* المودال */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 20% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        .search-modal {
+            max-width: 500px;
+            margin: 10% auto;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .modal-content h3 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: var(--bg-secondary);
+            font-family: inherit;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        #loginMessage {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        .test-credentials {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .test-credentials h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .test-credentials p {
+            margin: 0.25rem 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* شريط البحث في المودال */
+        .search-container {
+            width: 100%;
+        }
+
+        .search-bar {
+            display: flex;
+            background: white;
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-icon {
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.75rem 0.5rem;
+            font-size: 1rem;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-light);
+        }
+
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* نظام إدارة الصور المحسن */
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* معالجة الصور المفقودة أو التالفة */
+        .app-icon:not(:has(img)),
+        .category-icon:not(:has(img)) {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .app-icon:not(:has(img))::before,
+        .category-icon:not(:has(img))::before {
+            content: "📱";
+            font-size: clamp(1rem, 4vw, 1.4rem);
+        }
+
+        /* تحسين تحميل الصور */
+        .app-icon img,
+        .category-icon img {
+            transition: opacity 0.3s ease;
+        }
+
+        .app-icon img[src=""],
+        .app-icon img:not([src]),
+        .category-icon img[src=""],
+        .category-icon img:not([src]) {
+            opacity: 0;
+        }
+
+        /* التصميم المتجاوب */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 4rem 1rem 2rem;
+            }
+            
+            .hero-title {
+                font-size: 1.75rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ads-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bottom-nav-container {
+                padding: 0 0.5rem;
+            }
+            
+            .bottom-nav-item {
+                min-width: clamp(2.5rem, 12vw, 3.5rem);
+                padding: 0.3rem;
+            }
+            
+            .bottom-nav-item i {
+                font-size: clamp(0.9rem, 3.5vw, 1.3rem);
+            }
+            
+            .bottom-nav-item span {
+                font-size: clamp(0.55rem, 2vw, 0.75rem);
+            }
+            
+            /* تحسينات الصور للشاشات الصغيرة */
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 56px;
+                height: 56px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.5rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .modal-content {
+                margin: 25% auto;
+                padding: 1.5rem;
+            }
+            
+            .search-modal {
+                margin: 15% auto;
+            }
+            
+            /* تحسينات الصور للشاشات الصغيرة جداً */
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 48px;
+                height: 48px;
+            }
+        }
+
+        @media (min-width: 12000px) {
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .bottom-nav-item i {
+                font-size: 1.4rem;
+            }
+            
+            .bottom-nav-item span {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* تحسينات إضافية للصور */
+        .app-icon img,
+        .category-icon img {
+            background: transparent;
+        }
+
+        /* ضمان تناسق جميع الصور */
+        .apps-grid,
+        .categories-grid {
+            container-type: inline-size;
+        }
+
+        @container (max-width: 3000px) {
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 90px;
+                height: 90px;
+                
+                
+                .category-icon {
+        width: 3rem;
+        height: 3rem;
+            }
+        }
+
+        /* ضمان ظهور الأيقونات بشكل صحيح عندما لا توجد صور */
+        .app-icon i,
+        .category-icon i {
+            font-size: 2.4rem;
+            z-index: 2;
+        }
+
+        /* تحسينات للأحجام المختلفة للشاشات */
+        @media (max-width: 3600px) {
+            .app-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .category-icon {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .app-icon i,
+            .category-icon i {
+                font-size: 2.2rem;
+            }
+        }

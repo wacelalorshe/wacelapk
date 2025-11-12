@@ -915,3 +915,56 @@ border-right: 0px groove #000;
                 font-size: 2.2rem;
             }
         }
+
+
+
+/* styles/style.css - التصميم المحدث مع أنماط المشاركة */
+/* ... الأنماط الحالية تبقى كما هي ... */
+
+/* أزرار المشاركة في بطاقات التطبيقات */
+.share-btn {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    font-size: 0.85rem;
+}
+
+.share-btn:hover {
+    background: #e67e22;
+    transform: translateY(-1px);
+}
+
+.app-shares {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.app-shares i {
+    color: #f39c12;
+}
+
+/* تحديث تخطيط أزرار الإجراءات */
+.app-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.app-actions .download-btn {
+    flex: 2;
+}
+
+.app-actions .share-btn,
+.app-actions .delete-btn {
+    flex: 1;
+}

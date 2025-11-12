@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - WacelMarkt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/admin.css">
 </head>
@@ -45,7 +46,7 @@
                     
                     <div class="form-group">
                         <label for="appDescription">وصف التطبيق *</label>
-                        <textarea id="appDescription" rows="3" required></textarea>
+                        <textarea id="appDescription" rows="4" placeholder="يمكنك كتابة وصف طويل ومفصل للتطبيق..." required></textarea>
                     </div>
                     
                     <div class="form-row">
@@ -88,7 +89,7 @@
                     <div class="form-group">
                         <label for="appIconURL">رابط الأيقونة (اختياري)</label>
                         <input type="url" id="appIconURL" placeholder="https://example.com/icon.png">
-                        <small>يمكنك استخدام رابط مباشر لأيقونة التطبيق</small>
+                        <small>يجب أن تكون الصورة مربعة ومقاس مناسب للعرض</small>
                     </div>
                     
                     <div class="form-row">
@@ -123,8 +124,88 @@
     <!-- نافذة التحميل -->
     <div id="loadingModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <h3>جاري إضافة التطبيق...</h3>
+            <h3>جاري معالجة الطلب...</h3>
             <p>يرجى الانتظار</p>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل التطبيق -->
+    <div id="editAppModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>تعديل التطبيق</h3>
+            <form id="editAppForm" class="app-form">
+                <input type="hidden" id="editAppId">
+                
+                <div class="form-group">
+                    <label for="editAppName">اسم التطبيق *</label>
+                    <input type="text" id="editAppName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editAppDescription">وصف التطبيق *</label>
+                    <textarea id="editAppDescription" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editAppVersion">الإصدار *</label>
+                        <input type="text" id="editAppVersion" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAppSize">الحجم (MB) *</label>
+                        <input type="number" id="editAppSize" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editAppCategory">التصنيف *</label>
+                        <select id="editAppCategory" required>
+                            <option value="">اختر التصنيف</option>
+                            <option value="productivity">الإنتاجية</option>
+                            <option value="education">التعليم</option>
+                            <option value="entertainment">الترفيه</option>
+                            <option value="utility">الأدوات</option>
+                            <option value="games">الألعاب</option>
+                            <option value="social">التواصل الاجتماعي</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAppRating">التقييم (1-5)</label>
+                        <input type="number" id="editAppRating" min="1" max="5" step="0.1">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editAppDownloadURL">رابط التحميل *</label>
+                    <input type="url" id="editAppDownloadURL" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editAppIconURL">رابط الأيقونة (اختياري)</label>
+                    <input type="url" id="editAppIconURL">
+                    <small>سيتم ضبط حجم الصورة تلقائياً للعرض المناسب</small>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="editAppFeatured"> تطبيق مميز
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="editAppTrending"> تطبيق شائع
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">حفظ التعديلات</button>
+            </form>
         </div>
     </div>
 

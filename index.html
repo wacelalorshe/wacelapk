@@ -3,216 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WacelMarkt - متجر التطبيقات</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>لوحة التحكم - WacelMarkt</title>
     <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/admin.css">
 </head>
 <body>
-    <!-- الشريط العلوي -->
-    <nav class="top-navbar">
+    <nav class="navbar">
         <div class="nav-container">
-            <div class="logo-section">
-                <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
-            </div>
-            <div class="nav-actions">
-                <div class="search-icon-top" id="searchIconTop">
-                    <i class="fas fa-search"></i>
-                </div>
-                <button id="loginBtn" class="btn-login"><i class="fas fa-user"></i></button>
-                <button id="logoutBtn" class="btn-logout" style="display:none;"><i class="fas fa-sign-out-alt"></i></button>
+            <h1 class="logo">لوحة التحكم</h1>
+            <div class="nav-links">
+                <a href="index.html">العودة للمتجر</a>
+                <button id="adminLogoutBtn" class="btn-logout">تسجيل الخروج</button>
             </div>
         </div>
     </nav>
 
-    <!-- شريط البحث المنبثق -->
-    <div id="searchModal" class="modal">
-        <div class="modal-content search-modal">
-            <span class="close">&times;</span>
-            <div class="search-container">
-                <div class="search-bar">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
-                    <button class="search-btn" onclick="searchApps()">بحث</button>
+    <main class="admin-main">
+        <div class="admin-container">
+            <h2>إدارة التطبيقات</h2>
+            
+            <!-- إحصائيات سريعة -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>إجمالي التطبيقات</h3>
+                    <p id="totalApps">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>التطبيقات النشطة</h3>
+                    <p id="activeApps">0</p>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="main-content">
-        <!-- قسم الهيرو -->
-        <section class="hero-section">
-            <div class="hero-content">
-                <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
-                <p class="hero-subtitle">أفضل التطبيقات المختارة خصيصاً لك</p>
-            </div>
-        </section>
-
-        <!-- الفئات -->
-        <section class="categories-section">
-            <div class="categories-grid">
-                <div class="category-card" onclick="filterApps('games')">
-                    <div class="category-icon">
-                        <i class="fas fa-gamepad"></i>
+            <!-- نموذج إضافة تطبيق -->
+            <section class="add-app-section">
+                <h3>إضافة تطبيق جديد</h3>
+                <form id="addAppForm" class="app-form">
+                    <div class="form-group">
+                        <label for="appName">اسم التطبيق *</label>
+                        <input type="text" id="appName" required>
                     </div>
-                    <span class="category-name">الألعاب</span>
-                </div>
-                <div class="category-card" onclick="filterApps('social')">
-                    <div class="category-icon">
-                        <i class="fas fa-comments"></i>
+                    
+                    <div class="form-group">
+                        <label for="appDescription">وصف التطبيق *</label>
+                        <textarea id="appDescription" rows="3" required></textarea>
                     </div>
-                    <span class="category-name">التواصل</span>
-                </div>
-                <div class="category-card" onclick="filterApps('entertainment')">
-                    <div class="category-icon">
-                        <i class="fas fa-film"></i>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appVersion">الإصدار *</label>
+                            <input type="text" id="appVersion" placeholder="مثال: 1.0.0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appSize">الحجم (MB) *</label>
+                            <input type="number" id="appSize" placeholder="مثال: 25" required>
+                        </div>
                     </div>
-                    <span class="category-name">الترفيه</span>
-                </div>
-                <div class="category-card" onclick="filterApps('productivity')">
-                    <div class="category-icon">
-                        <i class="fas fa-briefcase"></i>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appCategory">التصنيف *</label>
+                            <select id="appCategory" required>
+                                <option value="">اختر التصنيف</option>
+                                <option value="productivity">الإنتاجية</option>
+                                <option value="education">التعليم</option>
+                                <option value="entertainment">الترفيه</option>
+                                <option value="utility">الأدوات</option>
+                                <option value="games">الألعاب</option>
+                                <option value="social">التواصل الاجتماعي</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appRating">التقييم (1-5)</label>
+                            <input type="number" id="appRating" min="1" max="5" step="0.1" placeholder="4.5">
+                        </div>
                     </div>
-                    <span class="category-name">الإنتاجية</span>
-                </div>
-            </div>
-        </section>
+                    
+                    <div class="form-group">
+                        <label for="appDownloadURL">رابط التحميل *</label>
+                        <input type="url" id="appDownloadURL" placeholder="https://example.com/app.zip" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appIconURL">رابط الأيقونة (اختياري)</label>
+                        <input type="url" id="appIconURL" placeholder="https://example.com/icon.png">
+                        <small>يمكنك استخدام رابط مباشر لأيقونة التطبيق</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="appFeatured"> تطبيق مميز
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="appTrending"> تطبيق شائع
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">إضافة التطبيق</button>
+                    <div id="formMessage"></div>
+                </form>
+            </section>
 
-        <!-- التطبيقات المقترحة -->
-        <section class="featured-section">
-            <div class="section-header">
-                <h2 class="section-title">مقترحة لك</h2>
-            </div>
-            <div id="featured-apps" class="apps-grid">
-                <!-- سيتم تعبئة التطبيقات المميزة هنا -->
-            </div>
-        </section>
-
-        <!-- الأكثر رواجاً -->
-        <section class="trending-section">
-            <div class="section-header">
-                <h2 class="section-title">الأكثر رواجاً</h2>
-            </div>
-            <div id="trending-apps" class="apps-grid">
-                <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
-            </div>
-        </section>
-
-        <!-- إعلانات مقترحة -->
-        <section class="ads-section">
-            <div class="section-header">
-                <h2 class="section-title">إعلانات مقترحة لك</h2>
-            </div>
-            <div class="ads-grid">
-                <div class="ad-card">
-                    <div class="ad-badge">2025</div>
-                    <h3>التدريبات المنزلية - بدون معدات</h3>
-                    <p>احصل على جسم مثالي من منزلك</p>
-                </div>
-                <div class="ad-card">
-                    <div class="ad-badge">جديد</div>
-                    <h3>دورات تعليمية مجانية</h3>
-                    <p>طور مهاراتك مع أفضل المدربين</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- جميع التطبيقات -->
-        <section class="all-apps-section">
-            <div class="section-header">
-                <h2 class="section-title">التطبيقات</h2>
-            </div>
-            <div id="apps-list" class="apps-grid">
-                <div class="loading-state">
-                    <i class="fas fa-spinner fa-spin"></i>
+            <!-- قائمة التطبيقات -->
+            <section class="apps-management">
+                <h3>التطبيقات المضافة</h3>
+                <div id="adminAppsList" class="admin-apps-grid">
                     <p>جاري تحميل التطبيقات...</p>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
-    <!-- الشريط السفلي -->
-    <nav class="bottom-navbar">
-        <div class="bottom-nav-container">
-            <a href="#games" class="bottom-nav-item active">
-                <i class="fas fa-gamepad"></i>
-                <span>الألعاب</span>
-            </a>
-            <a href="#apps" class="bottom-nav-item">
-                <i class="fas fa-th-large"></i>
-                <span>التطبيقات</span>
-            </a>
-            <a href="#search" class="bottom-nav-item" id="bottomSearchBtn">
-                <i class="fas fa-search"></i>
-                <span>بحث</span>
-            </a>
-        </div>
-    </nav>
-
-    <!-- نموذج تسجيل الدخول -->
-    <div id="loginModal" class="modal">
+    <!-- نافذة التحميل -->
+    <div id="loadingModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</h3>
-            <form id="loginForm">
-                <div class="form-group">
-                    <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
-                </div>
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
-                </button>
-            </form>
-            <div id="loginMessage"></div>
-            
-            <div class="test-credentials">
-                <h4><i class="fas fa-info-circle"></i> بيانات الاختبار:</h4>
-                <p><strong>البريد:</strong> admin@wacelmarkt.com</p>
-                <p><strong>كلمة المرور:</strong> Admin123456</p>
-            </div>
+            <h3>جاري إضافة التطبيق...</h3>
+            <p>يرجى الانتظار</p>
         </div>
     </div>
 
     <script type="module" src="js/firebase-config.js"></script>
-    <script type="module" src="js/app.js"></script>
-    <script type="module" src="js/auth.js"></script>
-    <script>
-        // إدارة شريط البحث
-        document.getElementById('searchIconTop').addEventListener('click', function() {
-            document.getElementById('searchModal').style.display = 'block';
-        });
-
-        document.getElementById('bottomSearchBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('searchModal').style.display = 'block';
-        });
-
-        // إغلاق النافذة المنبثقة
-        document.querySelectorAll('.close').forEach(function(closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                this.closest('.modal').style.display = 'none';
-            });
-        });
-
-        // إغلاق النافذة عند النقر خارجها
-        window.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        });
-
-        // التنقل في الشريط السفلي
-        document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('.bottom-nav-item').forEach(function(i) {
-                    i.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
-        });
-    </script>
+    <script type="module" src="js/admin.js"></script>
 </body>
 </html>

@@ -329,10 +329,8 @@ body {
 }
 
 /* أقسام التطبيقات المحسنة */
-.featured-section,
-.trending-section,
-.ads-section,
-.all-apps-section {
+.all-apps-section,
+.ads-section {
     margin-bottom: 3rem;
 }
 
@@ -392,6 +390,8 @@ body {
     border: 1px solid var(--border-light);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .app-card::before {
@@ -479,6 +479,7 @@ body {
 .app-description-container {
     position: relative;
     margin: 1rem 0;
+    flex: 1;
 }
 
 .app-description {
@@ -521,7 +522,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     font-size: 0.9rem;
     color: var(--text-secondary);
 }
@@ -570,16 +571,19 @@ body {
     top: 3rem;
 }
 
+/* تحسين أزرار التطبيقات */
 .app-actions {
     display: flex;
     gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 1rem;
 }
 
 .download-btn {
     background: var(--gradient-primary);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     border-radius: 10px;
     cursor: pointer;
     flex: 2;
@@ -591,11 +595,13 @@ body {
     font-weight: 600;
     font-size: 0.9rem;
     box-shadow: var(--shadow);
+    min-height: 44px;
 }
 
 .download-btn:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    background: var(--primary-dark);
 }
 
 .share-btn {
@@ -613,11 +619,14 @@ body {
     font-size: 0.9rem;
     box-shadow: var(--shadow);
     flex: 1;
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .share-btn:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, #ff5252, #ff2b2b);
 }
 
 .delete-btn {
@@ -634,11 +643,99 @@ body {
     aspect-ratio: 1;
     font-size: 0.9rem;
     box-shadow: var(--shadow);
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .delete-btn:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* زر عرض المزيد */
+.load-more-container {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.load-more-btn {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 50px;
+}
+
+.load-more-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background: var(--primary-dark);
+}
+
+/* أقسام خاصة */
+.special-sections {
+    margin-bottom: 3rem;
+}
+
+.section-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.section-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-secondary);
+    font-weight: 500;
+    box-shadow: var(--shadow);
+    border: none;
+    font-family: inherit;
+}
+
+.section-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: var(--primary);
+}
+
+.section-tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.special-section-content {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* قسم الإعلانات المحسن */
@@ -956,6 +1053,13 @@ body {
     color: var(--text-light);
 }
 
+.category-card.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
 .temp-message {
     position: fixed;
     top: 100px;
@@ -1075,6 +1179,23 @@ body {
     .app-header {
         gap: 1rem;
     }
+    
+    .section-tabs {
+        gap: 0.5rem;
+    }
+    
+    .section-tab {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .app-actions {
+        flex-direction: column;
+    }
+    
+    .download-btn, .share-btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1124,6 +1245,14 @@ body {
     
     .app-info h4 {
         font-size: 1.1rem;
+    }
+    
+    .section-tabs {
+        flex-direction: column;
+    }
+    
+    .section-tab {
+        justify-content: center;
     }
 }
 

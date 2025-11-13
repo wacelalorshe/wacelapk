@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحسن مع التحميل التدريجي
+// js/app.js - الإصدار المصحح والمحدث
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -12,8 +12,6 @@ import {
 
 let allApps = [];
 let currentFilter = 'all';
-let currentDisplayCount = 6;
-const APPS_PER_LOAD = 6;
 
 // بيانات تجريبية للاختبار
 const sampleApps = [
@@ -28,7 +26,6 @@ const sampleApps = [
         rating: 4.5,
         downloads: 1500,
         featured: true,
-        trending: true,
         shareCount: 45,
         iconURL: ''
     },
@@ -42,99 +39,8 @@ const sampleApps = [
         downloadURL: 'https://example.com/app2.zip',
         rating: 4.2,
         downloads: 2300,
-        featured: false,
         trending: true,
         shareCount: 67,
-        iconURL: ''
-    },
-    {
-        id: '3',
-        name: 'تطبيق الإنتاجية',
-        description: 'ادارة المهام والوقت بشكل فعال مع هذا التطبيق المميز. يتضمن ميزات التخطيط اليومي، تذكير المهام، التقويم الذكي، وإحصائيات الأداء. مثالي للطلاب والموظفين ورواد الأعمال.',
-        version: '3.0.1',
-        size: '32',
-        category: 'productivity',
-        downloadURL: 'https://example.com/app3.zip',
-        rating: 4.8,
-        downloads: 3200,
-        featured: true,
-        trending: false,
-        shareCount: 89,
-        iconURL: ''
-    },
-    {
-        id: '4',
-        name: 'تطبيق التعليم',
-        description: 'منصة تعليمية شاملة تحتوي على آلاف الدروس في مختلف المجالات. يشمل فيديوهات تعليمية، اختبارات تفاعلية، شهادات معتمدة، ومتابعة التقدم. مناسب لجميع المستويات.',
-        version: '1.2.0',
-        size: '28',
-        category: 'education',
-        downloadURL: 'https://example.com/app4.zip',
-        rating: 4.6,
-        downloads: 1800,
-        featured: true,
-        trending: true,
-        shareCount: 34,
-        iconURL: ''
-    },
-    {
-        id: '5',
-        name: 'تطبيق الترفيه',
-        description: 'منصة ترفيهية متكاملة تشمل أفلام، مسلسلات، برامج تلفزيونية، ومقاطع فيديو متنوعة. يدعم الجودة العالية، التحميل للعرض دون اتصال، وتوصيات ذكية بناءً على اهتماماتك.',
-        version: '2.5.0',
-        size: '52',
-        category: 'entertainment',
-        downloadURL: 'https://example.com/app5.zip',
-        rating: 4.3,
-        downloads: 4200,
-        featured: false,
-        trending: true,
-        shareCount: 156,
-        iconURL: ''
-    },
-    {
-        id: '6',
-        name: 'تطبيق الأدوات',
-        description: 'مجموعة شاملة من الأدوات الذكية التي تحتاجها يومياً. يتضمن مدير الملفات، محول الصيغ، الحاسبة المتقدمة، مسجل الشاشة، ومحرر الصور. واجهة بسيطة وسهلة الاستخدام.',
-        version: '1.8.0',
-        size: '38',
-        category: 'utility',
-        downloadURL: 'https://example.com/app6.zip',
-        rating: 4.4,
-        downloads: 2900,
-        featured: false,
-        trending: false,
-        shareCount: 78,
-        iconURL: ''
-    },
-    {
-        id: '7',
-        name: 'تطبيق اللياقة البدنية',
-        description: 'رفيقك الشخصي في رحلة اللياقة البدنية. يتضمن تمارين يومية، نظام غذائي متكامل، متتبع السعرات الحرارية، ومخطط التقدم. مناسب للمبتدئين والمحترفين.',
-        version: '2.3.0',
-        size: '41',
-        category: 'health',
-        downloadURL: 'https://example.com/app7.zip',
-        rating: 4.7,
-        downloads: 3500,
-        featured: true,
-        trending: true,
-        shareCount: 112,
-        iconURL: ''
-    },
-    {
-        id: '8',
-        name: 'تطبيق التسوق',
-        description: 'منصة تسوق ذكية تتيح لك شراء كل ما تحتاجه من مكان واحد. يشمل تصنيفات متنوعة، عروض حصرية، توصيل سريع، وضمان استعادة الأموال. تجربة تسوق آمنة وممتعة.',
-        version: '3.1.0',
-        size: '47',
-        category: 'shopping',
-        downloadURL: 'https://example.com/app8.zip',
-        rating: 4.2,
-        downloads: 5100,
-        featured: false,
-        trending: true,
-        shareCount: 203,
         iconURL: ''
     }
 ];
@@ -227,9 +133,6 @@ async function loadApps() {
             console.log("تم استخدام البيانات التجريبية:", allApps.length);
         }
         
-        // تحديث الإحصائيات
-        updateStats();
-        
         // عرض التطبيقات في الأقسام المختلفة
         displayApps(allApps);
         displayFeaturedApps();
@@ -240,7 +143,6 @@ async function loadApps() {
         
         // في حالة الخطأ، استخدام البيانات التجريبية
         allApps = sampleApps;
-        updateStats();
         displayApps(allApps);
         displayFeaturedApps();
         displayTrendingApps();
@@ -259,27 +161,9 @@ async function loadApps() {
     }
 }
 
-// تحديث الإحصائيات
-function updateStats() {
-    const totalApps = allApps.length;
-    const totalDownloads = allApps.reduce((sum, app) => sum + (app.downloads || 0), 0);
-    
-    // تحديث الهيرو
-    if (typeof updateHeroStats === 'function') {
-        updateHeroStats(totalApps, totalDownloads);
-    }
-    
-    // تحديث قسم جميع التطبيقات
-    const allAppsCount = document.getElementById('allAppsCount');
-    if (allAppsCount) {
-        allAppsCount.textContent = `${totalApps} تطبيق`;
-    }
-}
-
-// عرض التطبيقات الرئيسية مع التحميل التدريجي
+// عرض التطبيقات الرئيسية
 function displayApps(apps) {
     const appsContainer = document.getElementById('apps-list');
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
     
     if (!appsContainer) {
         console.error("لم يتم العثور على عنصر apps-list");
@@ -288,38 +172,12 @@ function displayApps(apps) {
     
     if (apps.length === 0) {
         appsContainer.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>لا توجد تطبيقات متاحة</p></div>';
-        if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
         return;
     }
     
-    // إعادة تعيين العداد إذا كانت التطبيقات مختلفة
-    if (apps !== allApps) {
-        currentDisplayCount = APPS_PER_LOAD;
-    }
-    
-    const appsToShow = apps.slice(0, currentDisplayCount);
-    appsContainer.innerHTML = appsToShow.map(app => createAppCard(app)).join('');
+    appsContainer.innerHTML = apps.map(app => createAppCard(app)).join('');
     setupDescriptionToggle();
-    
-    // التحكم في زر "عرض المزيد"
-    if (loadMoreBtn) {
-        if (currentDisplayCount >= apps.length) {
-            loadMoreBtn.classList.add('hidden');
-        } else {
-            loadMoreBtn.classList.remove('hidden');
-        }
-    }
-    
-    console.log("تم عرض التطبيقات الرئيسية:", appsToShow.length);
-}
-
-// تحميل المزيد من التطبيقات
-function loadMoreApps() {
-    currentDisplayCount += APPS_PER_LOAD;
-    const filteredApps = currentFilter === 'all' 
-        ? allApps 
-        : allApps.filter(app => app.category === currentFilter);
-    displayApps(filteredApps);
+    console.log("تم عرض التطبيقات الرئيسية:", apps.length);
 }
 
 // عرض التطبيقات المميزة
@@ -333,8 +191,8 @@ function displayFeaturedApps() {
     
     // التطبيقات المميزة هي التي لديها تقييم عالي أو marked as featured
     const featuredApps = allApps
-        .filter(app => app.featured)
-        .slice(0, 3);
+        .filter(app => app.featured || (app.rating && app.rating >= 4.0))
+        .slice(0, 4);
     
     if (featuredApps.length === 0) {
         featuredContainer.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>لا توجد تطبيقات مميزة</p></div>';
@@ -358,7 +216,7 @@ function displayTrendingApps() {
     // التطبيقات الشائعة هي التي لديها تنزيلات عالية أو marked as trending
     const trendingApps = allApps
         .filter(app => app.trending || (app.downloads && app.downloads > 1000))
-        .slice(0, 4);
+        .slice(0, 6);
     
     if (trendingApps.length === 0) {
         // إذا لم توجد تطبيقات شائعة، نعرض بعض التطبيقات العشوائية
@@ -372,7 +230,7 @@ function displayTrendingApps() {
     console.log("تم عرض التطبيقات الشائعة:", trendingApps.length);
 }
 
-// إنشاء بطاقة تطبيق محسنة
+// إنشاء بطاقة تطبيق
 function createAppCard(app) {
     const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
@@ -396,7 +254,7 @@ function createAppCard(app) {
                 ${app.description && app.description.length > 100 ? '<span class="show-more">عرض المزيد</span>' : ''}
             </div>
             <div class="app-meta">
-                <div class="app-version">v${app.version}</div>
+                <div class="app-version">الإصدار: ${app.version}</div>
                 <div class="app-size">${app.size} MB</div>
             </div>
             <div class="app-meta">
@@ -404,10 +262,7 @@ function createAppCard(app) {
                     ${ratingStars}
                     <span>${app.rating || 'غير مقيم'}</span>
                 </div>
-                <div class="app-downloads">
-                    <i class="fas fa-download"></i>
-                    <span>${(app.downloads || 0).toLocaleString()}</span>
-                </div>
+                <div class="app-downloads">${app.downloads || 0} تنزيل</div>
             </div>
             <div class="app-meta">
                 <div class="app-shares">
@@ -424,6 +279,7 @@ function createAppCard(app) {
                 </button>
                 <button class="share-btn" onclick="shareApp('${app.id}', '${app.name}')">
                     <i class="fas fa-share-alt"></i>
+                    مشاركة
                 </button>
                 ${isAdmin() ? `
                     <button class="delete-btn" onclick="deleteApp('${app.id}')">
@@ -482,9 +338,7 @@ function getAppIcon(category) {
         'entertainment': 'fas fa-film',
         'productivity': 'fas fa-briefcase',
         'education': 'fas fa-graduation-cap',
-        'utility': 'fas fa-tools',
-        'health': 'fas fa-heartbeat',
-        'shopping': 'fas fa-shopping-cart'
+        'utility': 'fas fa-tools'
     };
     return icons[category] || 'fas fa-mobile-alt';
 }
@@ -497,9 +351,7 @@ function getCategoryName(category) {
         'entertainment': 'الترفيه',
         'productivity': 'الإنتاجية',
         'education': 'التعليم',
-        'utility': 'الأدوات',
-        'health': 'الصحة واللياقة',
-        'shopping': 'التسوق'
+        'utility': 'الأدوات'
     };
     return categories[category] || category;
 }
@@ -509,18 +361,14 @@ function filterApps(category) {
     console.log("تصفية التطبيقات حسب الفئة:", category);
     
     currentFilter = category;
-    currentDisplayCount = APPS_PER_LOAD;
     
-    // تحديث حالة الأزرار النشطة في الفئات
-    document.querySelectorAll('.category-card').forEach(card => {
-        card.classList.remove('active');
+    // تحديث حالة الأزرار النشطة في شريط التصفية
+    document.querySelectorAll('.category-filter').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.category === category) {
+            btn.classList.add('active');
+        }
     });
-    
-    // إضافة active للفئة المحددة
-    const activeCategory = document.querySelector(`.category-card[onclick*="${category}"]`);
-    if (activeCategory) {
-        activeCategory.classList.add('active');
-    }
     
     const filteredApps = category === 'all' 
         ? allApps 
@@ -529,7 +377,7 @@ function filterApps(category) {
     displayApps(filteredApps);
     
     // التمرير إلى قسم التطبيقات
-    document.getElementById('all-apps-section').scrollIntoView({ 
+    document.getElementById('apps-list').scrollIntoView({ 
         behavior: 'smooth',
         block: 'start'
     });
@@ -588,12 +436,9 @@ function downloadApp(downloadURL, appId) {
         if (appCard) {
             const downloadsElement = appCard.querySelector('.app-downloads');
             if (downloadsElement) {
-                downloadsElement.innerHTML = `<i class="fas fa-download"></i><span>${app.downloads.toLocaleString()}</span>`;
+                downloadsElement.textContent = `${app.downloads} تنزيل`;
             }
         }
-        
-        // تحديث الإحصائيات
-        updateStats();
     }
     
     // فتح رابط التحميل في نافذة جديدة
@@ -623,9 +468,6 @@ async function deleteApp(appId) {
         
         // إزالة من المصفوفة المحلية
         allApps = allApps.filter(app => app.id !== appId);
-        
-        // تحديث الإحصائيات
-        updateStats();
         
         // إعادة تحميل القوائم
         displayApps(allApps);
@@ -700,20 +542,36 @@ function setupBottomNavigation() {
             
             // إضافة النشاط للعنصر الحالي
             this.classList.add('active');
+            
+            const target = this.getAttribute('href');
+            console.log("النقر على:", target);
+            
+            // تنفيذ الإجراء المناسب
+            switch(target) {
+                case '#games':
+                    filterApps('games');
+                    break;
+                case '#apps':
+                    filterApps('all');
+                    break;
+                case '#search':
+                    document.getElementById('searchModal').style.display = 'block';
+                    break;
+            }
         });
     });
 }
 
-// إعداد أحداث الفئات
+// إعداد أحداث الفئات للشريط الأفقي
 function setupCategoryEvents() {
-    const categoryCards = document.querySelectorAll('.category-card');
+    const categoryFilters = document.querySelectorAll('.category-filter');
     
-    categoryCards.forEach(card => {
-        card.addEventListener('click', function() {
-            // إزالة النشاط من جميع الفئات
-            categoryCards.forEach(c => c.classList.remove('active'));
+    categoryFilters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            // إزالة النشاط من جميع الفلاتر
+            categoryFilters.forEach(f => f.classList.remove('active'));
             
-            // إضافة النشاط للفئة المحددة
+            // إضافة النشاط للفلتر المحدد
             this.classList.add('active');
         });
     });
@@ -752,4 +610,3 @@ window.performSearch = performSearch;
 window.downloadApp = downloadApp;
 window.deleteApp = deleteApp;
 window.shareApp = shareApp;
-window.loadMoreApps = loadMoreApps;

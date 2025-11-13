@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
-    <!-- الشريط العلوي المعدل -->
+    <!-- الشريط العلوي -->
     <nav class="top-navbar">
         <div class="nav-container">
             <div class="logo-section">
-                <h1 class="logo">WacelMarkt</h1>
+                <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
             </div>
             <div class="nav-actions">
                 <div class="search-icon-top" id="searchIconTop">
@@ -38,20 +38,9 @@
         </div>
     </div>
 
-    <!-- شريط الأقسام الجديد -->
-    <div class="categories-bar">
-        <div class="category-tabs">
-            <div class="category-tab active" onclick="filterApps('all')">الكل</div>
-            <div class="category-tab" onclick="filterApps('games')">الألعاب</div>
-            <div class="category-tab" onclick="filterApps('social')">التواصل</div>
-            <div class="category-tab" onclick="filterApps('entertainment')">الترفيه</div>
-            <div class="category-tab" onclick="filterApps('productivity')">الإنتاجية</div>
-        </div>
-    </div>
-
     <!-- المحتوى الرئيسي -->
     <main class="main-content">
-        <!-- قسم الهيرو المبسط -->
+        <!-- قسم الهيرو -->
         <section class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
@@ -59,30 +48,85 @@
             </div>
         </section>
 
-        <!-- الأكثر رواجاً -->
-        <section class="trending-section">
-            <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-fire"></i> الأكثر رواجاً</h2>
-            </div>
-            <div id="trending-apps" class="apps-grid">
-                <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
+        <!-- شريط تصفية الفئات -->
+        <section class="categories-section">
+            <div class="categories-scroll-container">
+                <div class="categories-scroll">
+                    <button class="category-filter active" data-category="all" onclick="filterApps('all')">
+                        <i class="fas fa-th-large"></i>
+                        <span>الكل</span>
+                    </button>
+                    <button class="category-filter" data-category="games" onclick="filterApps('games')">
+                        <i class="fas fa-gamepad"></i>
+                        <span>الألعاب</span>
+                    </button>
+                    <button class="category-filter" data-category="social" onclick="filterApps('social')">
+                        <i class="fas fa-comments"></i>
+                        <span>التواصل</span>
+                    </button>
+                    <button class="category-filter" data-category="entertainment" onclick="filterApps('entertainment')">
+                        <i class="fas fa-film"></i>
+                        <span>الترفيه</span>
+                    </button>
+                    <button class="category-filter" data-category="productivity" onclick="filterApps('productivity')">
+                        <i class="fas fa-briefcase"></i>
+                        <span>الإنتاجية</span>
+                    </button>
+                    <button class="category-filter" data-category="education" onclick="filterApps('education')">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>التعليم</span>
+                    </button>
+                    <button class="category-filter" data-category="utility" onclick="filterApps('utility')">
+                        <i class="fas fa-tools"></i>
+                        <span>الأدوات</span>
+                    </button>
+                </div>
             </div>
         </section>
 
         <!-- التطبيقات المقترحة -->
         <section class="featured-section">
             <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-star"></i> تطبيقات مميزة</h2>
+                <h2 class="section-title">مقترحة لك</h2>
             </div>
             <div id="featured-apps" class="apps-grid">
                 <!-- سيتم تعبئة التطبيقات المميزة هنا -->
             </div>
         </section>
 
+        <!-- الأكثر رواجاً -->
+        <section class="trending-section">
+            <div class="section-header">
+                <h2 class="section-title">الأكثر رواجاً</h2>
+            </div>
+            <div id="trending-apps" class="apps-grid">
+                <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
+            </div>
+        </section>
+
+        <!-- إعلانات مقترحة -->
+        <section class="ads-section">
+            <div class="section-header">
+                <h2 class="section-title">إعلانات مقترحة لك</h2>
+            </div>
+            <div class="ads-grid">
+                <div class="ad-card">
+                    <div class="ad-badge">2025</div>
+                    <h3>التدريبات المنزلية - بدون معدات</h3>
+                    <p>احصل على جسم مثالي من منزلك</p>
+                </div>
+                <div class="ad-card">
+                    <div class="ad-badge">جديد</div>
+                    <h3>دورات تعليمية مجانية</h3>
+                    <p>طور مهاراتك مع أفضل المدربين</p>
+                </div>
+            </div>
+        </section>
+
         <!-- جميع التطبيقات -->
         <section class="all-apps-section">
             <div class="section-header">
-                <h2 class="section-title">جميع التطبيقات</h2>
+                <h2 class="section-title">التطبيقات</h2>
             </div>
             <div id="apps-list" class="apps-grid">
                 <div class="loading-state">
@@ -93,24 +137,20 @@
         </section>
     </main>
 
-    <!-- الشريط السفلي المعدل -->
+    <!-- الشريط السفلي -->
     <nav class="bottom-navbar">
         <div class="bottom-nav-container">
-            <a href="#" class="bottom-nav-item active" onclick="filterApps('all')">
-                <i class="fas fa-home"></i>
-                <span>الرئيسية</span>
+            <a href="#games" class="bottom-nav-item active">
+                <i class="fas fa-gamepad"></i>
+                <span>الألعاب</span>
             </a>
-            <a href="#" class="bottom-nav-item" onclick="filterApps('all')">
+            <a href="#apps" class="bottom-nav-item">
                 <i class="fas fa-th-large"></i>
                 <span>التطبيقات</span>
             </a>
-            <a href="#" class="bottom-nav-item" id="bottomSearchBtn">
+            <a href="#search" class="bottom-nav-item" id="bottomSearchBtn">
                 <i class="fas fa-search"></i>
                 <span>بحث</span>
-            </a>
-            <a href="#" class="bottom-nav-item" id="favoritesBtn">
-                <i class="fas fa-heart"></i>
-                <span>المفضلة</span>
             </a>
         </div>
     </nav>
@@ -167,16 +207,6 @@
             if (e.target.classList.contains('modal')) {
                 e.target.style.display = 'none';
             }
-        });
-
-        // التنقل في شريط الأقسام
-        document.querySelectorAll('.category-tab').forEach(function(tab) {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.category-tab').forEach(function(t) {
-                    t.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
         });
 
         // التنقل في الشريط السفلي

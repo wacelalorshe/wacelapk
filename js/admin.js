@@ -1,4 +1,4 @@
-// js/admin.js - الإصدار المصحح مع خاصية التعديل
+// js/admin.js - الإصدار المحدث مع إضافة البحث
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -13,6 +13,7 @@ import {
 
 let apps = [];
 let currentEditingApp = null;
+let searchTerm = ''; // مصطلح البحث الحالي
 
 // إنشاء رابط المشاركة
 function generateShareLink(appId) {
@@ -93,6 +94,56 @@ async function updateApp(e) {
     }
 }
 
+// البحث في التطبيقات (لوحة التحكم)
+function searchAdminApps() {
+    const searchInput = document.getElementById('adminSearchInput');
+    searchTerm = searchInput.value.toLowerCase().trim();
+    
+    // إظهار زر إعادة الضبط إذا كان هناك بحث
+    const clearSearchBtn = document.querySelector('.clear-search-btn');
+    if (searchTerm) {
+        clearSearchBtn.style.display = 'flex';
+    } else {
+        clearSearchBtn.style.display = 'none';
+    }
+    
+    displayAdminApps();
+    updateSearchStats();
+}
+
+// مسح البحث
+function clearAdminSearch() {
+    const searchInput = document.getElementById('adminSearchInput');
+    searchInput.value = '';
+    searchTerm = '';
+    
+    // إخفاء زر إعادة الضبط
+    const clearSearchBtn = document.querySelector('.clear-search-btn');
+    clearSearchBtn.style.display = 'none';
+    
+    displayAdminApps();
+    updateSearchStats();
+}
+
+// تحديث إحصائيات البحث
+function updateSearchStats() {
+    const searchResultsCount = document.getElementById('searchResultsCount');
+    const appsCount = document.getElementById('appsCount');
+    
+    if (searchTerm) {
+        const filteredApps = apps.filter(app => 
+            app.name.toLowerCase().includes(searchTerm) ||
+            app.description.toLowerCase().includes(searchTerm) ||
+            getCategoryName(app.category).toLowerCase().includes(searchTerm)
+        );
+        searchResultsCount.textContent = filteredApps.length;
+        appsCount.textContent = `(${filteredApps.length} تطبيق - نتائج البحث)`;
+    } else {
+        searchResultsCount.textContent = '-';
+        appsCount.textContent = `(${apps.length} تطبيق)`;
+    }
+}
+
 // نسخ رابط المشاركة
 function copyShareLink(appId) {
     const shareInput = document.getElementById(`shareLink-${appId}`);
@@ -153,6 +204,7 @@ async function loadAdminApps() {
 function updateStats() {
     document.getElementById('totalApps').textContent = apps.length;
     document.getElementById('activeApps').textContent = apps.length;
+    updateSearchStats();
     console.log("تم تحديث الإحصائيات:", apps.length);
 }
 
@@ -160,12 +212,32 @@ function updateStats() {
 function displayAdminApps() {
     const container = document.getElementById('adminAppsList');
     
-    if (apps.length === 0) {
-        container.innerHTML = '<p>لا توجد تطبيقات مضافة بعد</p>';
+    // تصفية التطبيقات حسب البحث
+    let filteredApps = apps;
+    if (searchTerm) {
+        filteredApps = apps.filter(app => 
+            app.name.toLowerCase().includes(searchTerm) ||
+            app.description.toLowerCase().includes(searchTerm) ||
+            getCategoryName(app.category).toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    if (filteredApps.length === 0) {
+        if (searchTerm) {
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <i class="fas fa-search"></i>
+                    <p>لم يتم العثور على تطبيقات تطابق البحث</p>
+                    <small>بحثت عن: "${searchTerm}"</small>
+                </div>
+            `;
+        } else {
+            container.innerHTML = '<p>لا توجد تطبيقات مضافة بعد</p>';
+        }
         return;
     }
     
-    container.innerHTML = apps.map(app => `
+    container.innerHTML = filteredApps.map(app => `
         <div class="admin-app-card">
             <div class="app-header">
                 ${app.iconURL ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}"></div>` : 
@@ -438,6 +510,32 @@ function goToHome() {
     window.location.href = 'index.html';
 }
 
+// إعداد البحث في لوحة التحكم
+function setupAdminSearch() {
+    const searchInput = document.getElementById('adminSearchInput');
+    const searchBtn = document.querySelector('.search-bar-admin .search-btn');
+    
+    if (searchInput) {
+        // البحث عند الضغط على Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchAdminApps();
+            }
+        });
+        
+        // البحث أثناء الكتابة (بحث فوري)
+        searchInput.addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                clearAdminSearch();
+            }
+        });
+    }
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', searchAdminApps);
+    }
+}
+
 // تهيئة لوحة التحكم
 document.addEventListener('DOMContentLoaded', function() {
     console.log("تم تحميل صفحة لوحة التحكم");
@@ -450,6 +548,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // تهيئة النماذج
     initializeAddAppForm();
     initializeEditAppForm();
+    
+    // إعداد البحث
+    setupAdminSearch();
     
     // تحميل التطبيقات
     loadAdminApps();
@@ -478,3 +579,5 @@ window.generateNewShareLink = generateNewShareLink;
 window.openEditModal = openEditModal;
 window.closeEditModal = closeEditModal;
 window.updateApp = updateApp;
+window.searchAdminApps = searchAdminApps;
+window.clearAdminSearch = clearAdminSearch;

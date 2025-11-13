@@ -32,7 +32,7 @@
                 <div class="search-bar">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
-                    <button class="search-btn" onclick="searchApps()">بحث</button>
+                    <button class="search-btn" onclick="performSearch()">بحث</button>
                 </div>
             </div>
         </div>
@@ -84,23 +84,67 @@
             </div>
         </section>
 
-        <!-- التطبيقات المقترحة -->
-        <section class="featured-section">
+        <!-- جميع التطبيقات -->
+        <section class="all-apps-section">
             <div class="section-header">
-                <h2 class="section-title">مقترحة لك</h2>
+                <h2 class="section-title">التطبيقات</h2>
             </div>
-            <div id="featured-apps" class="apps-grid">
-                <!-- سيتم تعبئة التطبيقات المميزة هنا -->
+            <div id="apps-list" class="apps-grid">
+                <div class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحميل التطبيقات...</p>
+                </div>
+            </div>
+            <div id="load-more-container" class="load-more-container" style="display: none;">
+                <button id="loadMoreBtn" class="load-more-btn">
+                    <i class="fas fa-chevron-down"></i>
+                    عرض المزيد من التطبيقات
+                </button>
             </div>
         </section>
 
-        <!-- الأكثر رواجاً -->
-        <section class="trending-section">
-            <div class="section-header">
-                <h2 class="section-title">الأكثر رواجاً</h2>
+        <!-- أقسام خاصة -->
+        <section class="special-sections">
+            <div class="section-tabs">
+                <button class="section-tab" data-section="featured" onclick="displaySpecialSection('featured')">
+                    <i class="fas fa-star"></i>
+                    <span>مقترحة لك</span>
+                </button>
+                <button class="section-tab" data-section="trending" onclick="displaySpecialSection('trending')">
+                    <i class="fas fa-fire"></i>
+                    <span>الأكثر رواجاً</span>
+                </button>
+                <button class="section-tab" data-section="top" onclick="displaySpecialSection('top')">
+                    <i class="fas fa-crown"></i>
+                    <span>التطبيقات المميزة</span>
+                </button>
             </div>
-            <div id="trending-apps" class="apps-grid">
-                <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
+            
+            <div id="featured-section" class="special-section-content" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">مقترحة لك</h2>
+                </div>
+                <div id="featured-apps" class="apps-grid">
+                    <!-- سيتم تعبئة التطبيقات المميزة هنا -->
+                </div>
+            </div>
+            
+            <div id="trending-section" class="special-section-content" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">الأكثر رواجاً</h2>
+                </div>
+                <div id="trending-apps" class="apps-grid">
+                    <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
+                </div>
+            </div>
+            
+            <div id="top-section" class="special-section-content" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">التطبيقات المميزة</h2>
+                </div>
+                <div id="top-apps" class="apps-grid">
+                    <!-- سيتم تعبئة التطبيقات المميزة هنا -->
+                </div>
             </div>
         </section>
 
@@ -119,19 +163,6 @@
                     <div class="ad-badge">جديد</div>
                     <h3>دورات تعليمية مجانية</h3>
                     <p>طور مهاراتك مع أفضل المدربين</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- جميع التطبيقات -->
-        <section class="all-apps-section">
-            <div class="section-header">
-                <h2 class="section-title">التطبيقات</h2>
-            </div>
-            <div id="apps-list" class="apps-grid">
-                <div class="loading-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>جاري تحميل التطبيقات...</p>
                 </div>
             </div>
         </section>
@@ -209,6 +240,13 @@
             }
         });
 
+        // البحث عند الضغط على Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
         // التنقل في الشريط السفلي
         document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
             item.addEventListener('click', function(e) {
@@ -217,6 +255,15 @@
                     i.classList.remove('active');
                 });
                 this.classList.add('active');
+                
+                const target = this.getAttribute('href');
+                if (target === '#games') {
+                    filterApps('games');
+                } else if (target === '#apps') {
+                    filterApps('all');
+                } else if (target === '#search') {
+                    document.getElementById('searchModal').style.display = 'block';
+                }
             });
         });
     </script>

@@ -12,6 +12,8 @@ import {
 
 let allApps = [];
 let currentFilter = 'all';
+let visibleAppsCount = 6; // عدد التطبيقات المعروضة في البداية
+let currentDisplayedApps = []; // التطبيقات المعروضة حالياً
 
 // بيانات تجريبية للاختبار
 const sampleApps = [
@@ -26,6 +28,7 @@ const sampleApps = [
         rating: 4.5,
         downloads: 1500,
         featured: true,
+        trending: true,
         shareCount: 45,
         iconURL: ''
     },
@@ -41,6 +44,87 @@ const sampleApps = [
         downloads: 2300,
         trending: true,
         shareCount: 67,
+        iconURL: ''
+    },
+    {
+        id: '3',
+        name: 'تطبيق الموسيقى',
+        description: 'استمع إلى ملايين الأغاني والموسيقى من جميع أنحاء العالم. يدعم جميع الأنواع الموسيقية ويوفر تجربة استماع فريدة مع جودة صوت عالية.',
+        version: '1.5.0',
+        size: '35',
+        category: 'entertainment',
+        downloadURL: 'https://example.com/app3.zip',
+        rating: 4.7,
+        downloads: 3200,
+        featured: true,
+        shareCount: 89,
+        iconURL: ''
+    },
+    {
+        id: '4',
+        name: 'تطبيق الإنتاجية',
+        description: 'ادفع مهامك وإنتاجيتك إلى مستوى جديد مع هذا التطبيق المميز. يتضمن أدوات لإدارة المهام والتقويم والتذكيرات والمزيد.',
+        version: '3.0.0',
+        size: '28',
+        category: 'productivity',
+        downloadURL: 'https://example.com/app4.zip',
+        rating: 4.3,
+        downloads: 1800,
+        shareCount: 34,
+        iconURL: ''
+    },
+    {
+        id: '5',
+        name: 'تطبيق التعليم',
+        description: 'تعلم لغات جديدة ومهارات متنوعة من خلال دورات تفاعلية وشيقة. مناسب لجميع المستويات والأعمار.',
+        version: '2.2.0',
+        size: '42',
+        category: 'education',
+        downloadURL: 'https://example.com/app5.zip',
+        rating: 4.6,
+        downloads: 2700,
+        featured: true,
+        shareCount: 56,
+        iconURL: ''
+    },
+    {
+        id: '6',
+        name: 'تطبيق الأدوات',
+        description: 'مجموعة متكاملة من الأدوات الذكية التي تحتاجها في حياتك اليومية. بسيط وسهل الاستخدام مع واجهة أنيقة.',
+        version: '1.8.0',
+        size: '19',
+        category: 'utility',
+        downloadURL: 'https://example.com/app6.zip',
+        rating: 4.1,
+        downloads: 1400,
+        shareCount: 23,
+        iconURL: ''
+    },
+    {
+        id: '7',
+        name: 'تطبيق التصوير',
+        description: 'التقط صوراً مذهلة واحترافية باستخدام هذا التطبيق المتقدم. يتضمن فلاتر ومؤثرات احترافية.',
+        version: '2.5.0',
+        size: '52',
+        category: 'entertainment',
+        downloadURL: 'https://example.com/app7.zip',
+        rating: 4.4,
+        downloads: 2100,
+        trending: true,
+        shareCount: 78,
+        iconURL: ''
+    },
+    {
+        id: '8',
+        name: 'تطبيق اللياقة',
+        description: 'احصل على جسم مثالي مع تمارين يومية وخطط تغذية متكاملة. مناسب للمبتدئين والمحترفين.',
+        version: '1.3.0',
+        size: '38',
+        category: 'utility',
+        downloadURL: 'https://example.com/app8.zip',
+        rating: 4.8,
+        downloads: 1900,
+        shareCount: 45,
         iconURL: ''
     }
 ];
@@ -87,10 +171,8 @@ async function shareApp(appId, appName) {
             showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
         }
         
-        // إعادة تحميل القوائم لتحديث عدد المشاركات
-        displayApps(allApps);
-        displayFeaturedApps();
-        displayTrendingApps();
+        // تحديث العرض الحالي
+        updateCurrentDisplay();
         
     } catch (error) {
         console.error('Error sharing app:', error);
@@ -107,13 +189,9 @@ async function loadApps() {
         console.log("بدء تحميل التطبيقات...");
         
         const appsContainer = document.getElementById('apps-list');
-        const featuredContainer = document.getElementById('featured-apps');
-        const trendingContainer = document.getElementById('trending-apps');
         
         // عرض حالة التحميل
         if (appsContainer) appsContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات...</p></div>';
-        if (featuredContainer) featuredContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات المميزة...</p></div>';
-        if (trendingContainer) trendingContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات الشائعة...</p></div>';
 
         // محاولة تحميل التطبيقات من Firebase
         const querySnapshot = await getDocs(collection(db, "apps"));
@@ -133,19 +211,17 @@ async function loadApps() {
             console.log("تم استخدام البيانات التجريبية:", allApps.length);
         }
         
-        // عرض التطبيقات في الأقسام المختلفة
-        displayApps(allApps);
-        displayFeaturedApps();
-        displayTrendingApps();
+        // عرض التطبيقات في القسم الرئيسي
+        displayApps(allApps.slice(0, visibleAppsCount));
+        setupLoadMoreButton();
         
     } catch (error) {
         console.error("خطأ في تحميل التطبيقات:", error);
         
         // في حالة الخطأ، استخدام البيانات التجريبية
         allApps = sampleApps;
-        displayApps(allApps);
-        displayFeaturedApps();
-        displayTrendingApps();
+        displayApps(allApps.slice(0, visibleAppsCount));
+        setupLoadMoreButton();
         
         // عرض رسالة خطأ
         const appsContainer = document.getElementById('apps-list');
@@ -164,6 +240,7 @@ async function loadApps() {
 // عرض التطبيقات الرئيسية
 function displayApps(apps) {
     const appsContainer = document.getElementById('apps-list');
+    currentDisplayedApps = apps;
     
     if (!appsContainer) {
         console.error("لم يتم العثور على عنصر apps-list");
@@ -178,56 +255,6 @@ function displayApps(apps) {
     appsContainer.innerHTML = apps.map(app => createAppCard(app)).join('');
     setupDescriptionToggle();
     console.log("تم عرض التطبيقات الرئيسية:", apps.length);
-}
-
-// عرض التطبيقات المميزة
-function displayFeaturedApps() {
-    const featuredContainer = document.getElementById('featured-apps');
-    
-    if (!featuredContainer) {
-        console.error("لم يتم العثور على عنصر featured-apps");
-        return;
-    }
-    
-    // التطبيقات المميزة هي التي لديها تقييم عالي أو marked as featured
-    const featuredApps = allApps
-        .filter(app => app.featured || (app.rating && app.rating >= 4.0))
-        .slice(0, 4);
-    
-    if (featuredApps.length === 0) {
-        featuredContainer.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>لا توجد تطبيقات مميزة</p></div>';
-        return;
-    }
-    
-    featuredContainer.innerHTML = featuredApps.map(app => createAppCard(app)).join('');
-    setupDescriptionToggle();
-    console.log("تم عرض التطبيقات المميزة:", featuredApps.length);
-}
-
-// عرض التطبيقات الشائعة
-function displayTrendingApps() {
-    const trendingContainer = document.getElementById('trending-apps');
-    
-    if (!trendingContainer) {
-        console.error("لم يتم العثور على عنصر trending-apps");
-        return;
-    }
-    
-    // التطبيقات الشائعة هي التي لديها تنزيلات عالية أو marked as trending
-    const trendingApps = allApps
-        .filter(app => app.trending || (app.downloads && app.downloads > 1000))
-        .slice(0, 6);
-    
-    if (trendingApps.length === 0) {
-        // إذا لم توجد تطبيقات شائعة، نعرض بعض التطبيقات العشوائية
-        const randomApps = [...allApps].sort(() => 0.5 - Math.random()).slice(0, 4);
-        trendingContainer.innerHTML = randomApps.map(app => createAppCard(app)).join('');
-    } else {
-        trendingContainer.innerHTML = trendingApps.map(app => createAppCard(app)).join('');
-    }
-    
-    setupDescriptionToggle();
-    console.log("تم عرض التطبيقات الشائعة:", trendingApps.length);
 }
 
 // إنشاء بطاقة تطبيق
@@ -289,6 +316,33 @@ function createAppCard(app) {
             </div>
         </div>
     `;
+}
+
+// إعداد زر "عرض المزيد"
+function setupLoadMoreButton() {
+    const loadMoreContainer = document.getElementById('load-more-container');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    
+    if (allApps.length > visibleAppsCount) {
+        loadMoreContainer.style.display = 'block';
+        loadMoreBtn.onclick = showMoreApps;
+    } else {
+        loadMoreContainer.style.display = 'none';
+    }
+}
+
+// عرض المزيد من التطبيقات
+function showMoreApps() {
+    visibleAppsCount += 6;
+    displayApps(allApps.slice(0, visibleAppsCount));
+    setupLoadMoreButton();
+}
+
+// تحديث العرض الحالي
+function updateCurrentDisplay() {
+    if (currentDisplayedApps.length > 0) {
+        displayApps(currentDisplayedApps);
+    }
 }
 
 // إضافة مستمعات الأحداث لعرض المزيد في الصفحة الرئيسية
@@ -374,7 +428,9 @@ function filterApps(category) {
         ? allApps 
         : allApps.filter(app => app.category === category);
     
-    displayApps(filteredApps);
+    visibleAppsCount = 6; // إعادة تعيين العدد المرئي
+    displayApps(filteredApps.slice(0, visibleAppsCount));
+    setupLoadMoreButton();
     
     // التمرير إلى قسم التطبيقات
     document.getElementById('apps-list').scrollIntoView({ 
@@ -389,7 +445,10 @@ function searchApps() {
     console.log("الببحث عن:", searchTerm);
     
     if (!searchTerm) {
-        displayApps(allApps);
+        // إذا كان البحث فارغاً، اعرض جميع التطبيقات
+        visibleAppsCount = 6;
+        displayApps(allApps.slice(0, visibleAppsCount));
+        setupLoadMoreButton();
         return;
     }
     
@@ -399,7 +458,10 @@ function searchApps() {
         getCategoryName(app.category).toLowerCase().includes(searchTerm)
     );
     
+    // إخفاء جميع التطبيقات الأخرى وعرض فقط نتائج البحث
+    visibleAppsCount = filteredApps.length; // عرض جميع النتائج
     displayApps(filteredApps);
+    setupLoadMoreButton(); // إخفاء زر "عرض المزيد" أثناء البحث
     
     // إغلاق نافذة البحث بعد النتائج
     const searchModal = document.getElementById('searchModal');
@@ -432,13 +494,7 @@ function downloadApp(downloadURL, appId) {
         app.downloads = (app.downloads || 0) + 1;
         
         // تحديث واجهة المستخدم
-        const appCard = document.querySelector(`.app-card[data-id="${appId}"]`);
-        if (appCard) {
-            const downloadsElement = appCard.querySelector('.app-downloads');
-            if (downloadsElement) {
-                downloadsElement.textContent = `${app.downloads} تنزيل`;
-            }
-        }
+        updateCurrentDisplay();
     }
     
     // فتح رابط التحميل في نافذة جديدة
@@ -468,11 +524,11 @@ async function deleteApp(appId) {
         
         // إزالة من المصفوفة المحلية
         allApps = allApps.filter(app => app.id !== appId);
+        currentDisplayedApps = currentDisplayedApps.filter(app => app.id !== appId);
         
         // إعادة تحميل القوائم
-        displayApps(allApps);
-        displayFeaturedApps();
-        displayTrendingApps();
+        displayApps(currentDisplayedApps);
+        setupLoadMoreButton();
         
         showTempMessage('تم حذف التطبيق بنجاح', 'success');
         
@@ -529,6 +585,59 @@ function showTempMessage(text, type) {
     }, 3000);
 }
 
+// عرض الأقسام الخاصة
+function displaySpecialSection(section) {
+    // إخفاء جميع الأقسام أولاً
+    document.querySelectorAll('.special-section-content').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // إزالة النشاط من جميع الأزرار
+    document.querySelectorAll('.section-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // إضافة النشاط للزر المحدد
+    document.querySelector(`.section-tab[data-section="${section}"]`).classList.add('active');
+    
+    // عرض القسم المحدد
+    const sectionElement = document.getElementById(`${section}-section`);
+    if (sectionElement) {
+        sectionElement.style.display = 'block';
+        
+        // تحميل التطبيقات الخاصة بالقسم
+        let specialApps = [];
+        
+        switch(section) {
+            case 'featured':
+                specialApps = allApps.filter(app => app.featured);
+                break;
+            case 'trending':
+                specialApps = allApps.filter(app => app.trending);
+                break;
+            case 'top':
+                specialApps = allApps.filter(app => app.rating >= 4.5);
+                break;
+        }
+        
+        const appsContainer = document.getElementById(`${section}-apps`);
+        if (appsContainer) {
+            if (specialApps.length === 0) {
+                appsContainer.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>لا توجد تطبيقات في هذا القسم</p></div>';
+            } else {
+                appsContainer.innerHTML = specialApps.map(app => createAppCard(app)).join('');
+                setupDescriptionToggle();
+            }
+        }
+        
+        // التمرير إلى القسم
+        sectionElement.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
 // إعداد التنقل في الشريط السفلي
 function setupBottomNavigation() {
     const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
@@ -577,6 +686,18 @@ function setupCategoryEvents() {
     });
 }
 
+// إعداد أزرار الأقسام الخاصة
+function setupSectionTabs() {
+    const sectionTabs = document.querySelectorAll('.section-tab');
+    
+    sectionTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const section = this.dataset.section;
+            displaySpecialSection(section);
+        });
+    });
+}
+
 // تهيئة الصفحة
 document.addEventListener('DOMContentLoaded', function() {
     console.log("تهيئة صفحة المتجر...");
@@ -600,6 +721,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // إعداد أحداث الفئات
     setupCategoryEvents();
     
+    // إعداد أزرار الأقسام الخاصة
+    setupSectionTabs();
+    
     console.log("تم تهيئة صفحة المتجر بالكامل");
 });
 
@@ -610,3 +734,4 @@ window.performSearch = performSearch;
 window.downloadApp = downloadApp;
 window.deleteApp = deleteApp;
 window.shareApp = shareApp;
+window.displaySpecialSection = displaySpecialSection;

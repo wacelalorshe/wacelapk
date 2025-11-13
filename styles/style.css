@@ -397,7 +397,7 @@ border-right: 0px ridge #fff;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 43%;
+            height: 100%;
         }
         
 .app-card::before {

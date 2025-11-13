@@ -7,35 +7,95 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/style.css">
     <style>
-        .share-container {
-            max-width: 500px;
-            margin: 100px auto 50px;
-            padding: 2rem;
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #edf2ff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .top-navbar {
             background: white;
-            border-radius: 15px;
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .main-content {
+            padding-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .share-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 1rem;
+        }
+        
+        .share-card {
+            background: white;
+            border-radius: 20px;
             box-shadow: var(--shadow-lg);
-            text-align: center;
+            overflow: hidden;
         }
         
         .app-share-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
             display: flex;
             align-items: center;
             gap: 1.5rem;
-            margin-bottom: 2rem;
-            text-align: right;
+            position: relative;
         }
         
         .share-app-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 2rem;
+            font-size: 2.5rem;
             flex-shrink: 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .share-app-icon img {
@@ -43,6 +103,61 @@
             height: 100%;
             object-fit: cover;
             border-radius: inherit;
+        }
+        
+        .app-info {
+            flex: 1;
+        }
+        
+        .app-info h2 {
+            margin: 0 0 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .app-category {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        
+        .app-description {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .app-details {
+            padding: 1.5rem 2rem;
+        }
+        
+        .share-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
         
         .share-actions {
@@ -56,7 +171,7 @@
             flex: 1;
             padding: 1rem;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             display: flex;
@@ -65,6 +180,7 @@
             gap: 0.5rem;
             transition: all 0.3s ease;
             min-width: 120px;
+            font-size: 0.9rem;
         }
         
         .btn-whatsapp {
@@ -99,7 +215,7 @@
             color: white;
             border: none;
             padding: 1rem 2rem;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             display: flex;
@@ -108,73 +224,125 @@
             gap: 0.5rem;
             transition: all 0.3s ease;
             flex: 1;
+            font-size: 1rem;
         }
         
         .btn-share-social:hover,
         .btn-download:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-md);
         }
         
-        .share-stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 2rem 0;
-            padding: 1rem;
-            background: var(--bg-secondary);
-            border-radius: 10px;
-        }
-        
-        .stat-item {
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
         .error-state {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 2rem;
             color: var(--text-secondary);
         }
-
+        
         .error-state i {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
             color: #ef4444;
         }
-
+        
+        .error-state h3 {
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+        
         .download-info {
             background: var(--primary-light);
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 1rem 0;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
             text-align: right;
+            border-right: 4px solid var(--primary);
         }
-
+        
         .download-info h4 {
             color: var(--primary);
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-
+        
         .loading-state {
             text-align: center;
-            padding: 3rem;
+            padding: 4rem 2rem;
             color: var(--text-secondary);
         }
-
+        
         .loading-state i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
             color: var(--primary);
+        }
+        
+        .app-features {
+            margin: 1.5rem 0;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .feature-list i {
+            color: var(--primary);
+            width: 20px;
+        }
+        
+        .app-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .meta-item i {
+            color: var(--primary);
+        }
+        
+        @media (max-width: 600px) {
+            .app-share-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .share-actions {
+                flex-direction: column;
+            }
+            
+            .btn-share-social, .btn-download {
+                width: 100%;
+            }
+            
+            .share-stats {
+                padding: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -193,10 +361,12 @@
     <!-- المحتوى الرئيسي -->
     <main class="main-content">
         <div class="share-container">
-            <div id="shareContent">
-                <div class="loading-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>جاري تحميل معلومات التطبيق...</p>
+            <div class="share-card">
+                <div id="shareContent">
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>جاري تحميل معلومات التطبيق...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -294,56 +464,89 @@
                 </div>
             `;
             
+            // إنشاء قائمة الميزات إذا كانت متوفرة
+            const featuresHtml = app.features && app.features.length > 0 ? `
+                <div class="app-features">
+                    <h3>مميزات التطبيق</h3>
+                    <ul class="feature-list">
+                        ${app.features.map(feature => `<li><i class="fas fa-check-circle"></i> ${feature}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : '';
+            
+            // إنشاء معلومات إضافية عن التطبيق
+            const metaInfoHtml = `
+                <div class="app-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>${formatDate(app.createdAt)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-sync"></i>
+                        <span>الإصدار ${app.version || '1.0.0'}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-hdd"></i>
+                        <span>${app.size || 'غير محدد'}</span>
+                    </div>
+                </div>
+            `;
+            
             document.getElementById('shareContent').innerHTML = `
                 <div class="app-share-header">
                     <div class="share-app-icon">
                         ${appIcon}
                     </div>
-                    <div>
+                    <div class="app-info">
                         <h2>${app.name}</h2>
-                        <p class="app-category">${getCategoryName(app.category)}</p>
+                        <div class="app-category">${getCategoryName(app.category)}</div>
                         <p class="app-description">${app.description}</p>
                     </div>
                 </div>
                 
-                <div class="share-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">${app.downloads || 0}</div>
-                        <div class="stat-label">تنزيل</div>
+                <div class="app-details">
+                    <div class="share-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">${app.downloads || 0}</div>
+                            <div class="stat-label">تنزيل</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${app.shareCount || 0}</div>
+                            <div class="stat-label">مشاركة</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${app.rating || '--'}</div>
+                            <div class="stat-label">تقييم</div>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${app.shareCount || 0}</div>
-                        <div class="stat-label">مشاركة</div>
+                    
+                    ${featuresHtml}
+                    
+                    <div class="share-actions">
+                        <button class="btn-share-social btn-whatsapp" onclick="shareOnWhatsApp('${shareText}', '${shareUrl}')">
+                            <i class="fab fa-whatsapp"></i>
+                            واتساب
+                        </button>
+                        <button class="btn-share-social btn-twitter" onclick="shareOnTwitter('${shareText}', '${shareUrl}')">
+                            <i class="fab fa-twitter"></i>
+                            تويتر
+                        </button>
+                        <button class="btn-share-social btn-facebook" onclick="shareOnFacebook('${shareUrl}')">
+                            <i class="fab fa-facebook"></i>
+                            فيسبوك
+                        </button>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${app.rating || '--'}</div>
-                        <div class="stat-label">تقييم</div>
+                    
+                    <div class="share-actions">
+                        <button class="btn-copy-link" onclick="copyShareLink('${shareUrl}')">
+                            <i class="fas fa-link"></i>
+                            نسخ رابط المشاركة
+                        </button>
                     </div>
+                    
+                    ${downloadSection}
+                    ${metaInfoHtml}
                 </div>
-                
-                <div class="share-actions">
-                    <button class="btn-share-social btn-whatsapp" onclick="shareOnWhatsApp('${shareText}', '${shareUrl}')">
-                        <i class="fab fa-whatsapp"></i>
-                        واتساب
-                    </button>
-                    <button class="btn-share-social btn-twitter" onclick="shareOnTwitter('${shareText}', '${shareUrl}')">
-                        <i class="fab fa-twitter"></i>
-                        تويتر
-                    </button>
-                    <button class="btn-share-social btn-facebook" onclick="shareOnFacebook('${shareUrl}')">
-                        <i class="fab fa-facebook"></i>
-                        فيسبوك
-                    </button>
-                </div>
-                
-                <div class="share-actions">
-                    <button class="btn-copy-link" onclick="copyShareLink('${shareUrl}')">
-                        <i class="fas fa-link"></i>
-                        نسخ رابط المشاركة
-                    </button>
-                </div>
-                
-                ${downloadSection}
             `;
         }
 
@@ -388,6 +591,22 @@
                 'utility': 'الأدوات'
             };
             return categories[category] || category;
+        }
+
+        // تنسيق التاريخ
+        function formatDate(timestamp) {
+            if (!timestamp) return 'غير محدد';
+            
+            try {
+                const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+                return date.toLocaleDateString('ar-EG', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return 'غير محدد';
+            }
         }
 
         // مشاركة على واتساب

@@ -1385,3 +1385,31 @@ border-right: 0px ridge #fff;
         font-size: 0.6rem;
     }
 }
+
+
+
+.icon-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background: #111;        /* لون الدائرة */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.icon-btn:hover {
+    background: #333;        /* تأثير عند المرور */
+}
+
+.icon-w {
+    color: #fff;             /* لون حرف W */
+    font-size: 22px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    letter-spacing: 1px;
+}

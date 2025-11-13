@@ -12,7 +12,7 @@ import {
 
 let allApps = [];
 let currentFilter = 'all';
-let visibleAppsCount = 6; // عدد التطبيقات المعروضة في البداية
+let visibleAppsCount = 5; // عدد التطبيقات المعروضة في البداية (5 بدلاً من 6)
 let currentDisplayedApps = []; // التطبيقات المعروضة حالياً
 
 // بيانات تجريبية للاختبار
@@ -125,6 +125,33 @@ const sampleApps = [
         rating: 4.8,
         downloads: 1900,
         shareCount: 45,
+        iconURL: ''
+    },
+    {
+        id: '9',
+        name: 'تطبيق السفر',
+        description: 'خطط لرحلاتك واكتشف أماكن جديدة حول العالم. يوفر معلومات شاملة عن الوجهات والفنادق.',
+        version: '2.0.0',
+        size: '31',
+        category: 'utility',
+        downloadURL: 'https://example.com/app9.zip',
+        rating: 4.5,
+        downloads: 2200,
+        shareCount: 67,
+        iconURL: ''
+    },
+    {
+        id: '10',
+        name: 'تطبيق التسوق',
+        description: 'تسوق من آلاف المتاجر بأسعار مميزة وعروض حصرية. خدمة توصيل سريعة وموثوقة.',
+        version: '3.1.0',
+        size: '47',
+        category: 'utility',
+        downloadURL: 'https://example.com/app10.zip',
+        rating: 4.3,
+        downloads: 3100,
+        trending: true,
+        shareCount: 89,
         iconURL: ''
     }
 ];
@@ -333,8 +360,12 @@ function setupLoadMoreButton() {
 
 // عرض المزيد من التطبيقات
 function showMoreApps() {
-    visibleAppsCount += 6;
-    displayApps(allApps.slice(0, visibleAppsCount));
+    visibleAppsCount += 5;
+    const appsToShow = currentFilter === 'all' 
+        ? allApps.slice(0, visibleAppsCount)
+        : allApps.filter(app => app.category === currentFilter).slice(0, visibleAppsCount);
+    
+    displayApps(appsToShow);
     setupLoadMoreButton();
 }
 
@@ -415,6 +446,7 @@ function filterApps(category) {
     console.log("تصفية التطبيقات حسب الفئة:", category);
     
     currentFilter = category;
+    visibleAppsCount = 5; // إعادة تعيين العدد المرئي
     
     // تحديث حالة الأزرار النشطة في شريط التصفية
     document.querySelectorAll('.category-filter').forEach(btn => {
@@ -428,7 +460,6 @@ function filterApps(category) {
         ? allApps 
         : allApps.filter(app => app.category === category);
     
-    visibleAppsCount = 6; // إعادة تعيين العدد المرئي
     displayApps(filteredApps.slice(0, visibleAppsCount));
     setupLoadMoreButton();
     
@@ -444,9 +475,15 @@ function searchApps() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     console.log("الببحث عن:", searchTerm);
     
+    // إغلاق نافذة البحث بعد إجراء البحث
+    const searchModal = document.getElementById('searchModal');
+    if (searchModal) {
+        searchModal.style.display = 'none';
+    }
+    
     if (!searchTerm) {
         // إذا كان البحث فارغاً، اعرض جميع التطبيقات
-        visibleAppsCount = 6;
+        visibleAppsCount = 5;
         displayApps(allApps.slice(0, visibleAppsCount));
         setupLoadMoreButton();
         return;
@@ -462,12 +499,6 @@ function searchApps() {
     visibleAppsCount = filteredApps.length; // عرض جميع النتائج
     displayApps(filteredApps);
     setupLoadMoreButton(); // إخفاء زر "عرض المزيد" أثناء البحث
-    
-    // إغلاق نافذة البحث بعد النتائج
-    const searchModal = document.getElementById('searchModal');
-    if (searchModal) {
-        searchModal.style.display = 'none';
-    }
     
     // إظهار عدد النتائج
     const appsContainer = document.getElementById('apps-list');

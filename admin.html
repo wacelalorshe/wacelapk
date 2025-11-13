@@ -23,6 +23,19 @@
         <div class="admin-container">
             <h2>إدارة التطبيقات</h2>
             
+            <!-- شريط البحث في لوحة التحكم -->
+            <div class="admin-search-section">
+                <div class="search-bar-admin">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="adminSearchInput" placeholder="ابحث عن التطبيقات بالاسم أو التصنيف...">
+                    <button class="search-btn" onclick="searchAdminApps()">بحث</button>
+                </div>
+                <button class="clear-search-btn" onclick="clearAdminSearch()" style="display: none;">
+                    <i class="fas fa-times"></i>
+                    إعادة الضبط
+                </button>
+            </div>
+
             <!-- إحصائيات سريعة -->
             <div class="stats-grid">
                 <div class="stat-card">
@@ -32,6 +45,10 @@
                 <div class="stat-card">
                     <h3>التطبيقات النشطة</h3>
                     <p id="activeApps">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>نتائج البحث</h3>
+                    <p id="searchResultsCount">-</p>
                 </div>
             </div>
 
@@ -113,7 +130,10 @@
 
             <!-- قائمة التطبيقات -->
             <section class="apps-management">
-                <h3>التطبيقات المضافة</h3>
+                <div class="section-header">
+                    <h3>التطبيقات المضافة</h3>
+                    <span id="appsCount" class="apps-count">(0 تطبيق)</span>
+                </div>
                 <div id="adminAppsList" class="admin-apps-grid">
                     <p>جاري تحميل التطبيقات...</p>
                 </div>

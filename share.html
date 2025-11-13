@@ -1,11 +1,11 @@
-<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشاركة التطبيق - WacelMarkt</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>مشاركة التطبيق - WacelMarkt</title> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+  <link rel="stylesheet" href="styles/style.css"> 
+  <style>
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
@@ -431,7 +431,7 @@
         <div class="nav-container">
             <div class="logo-section">
                 <a href="index.html" style="text-decoration: none;">
-                    <h1 class="logo"><i class="fas fa-mobile-alt"></i> WacelMarkt</h1>
+                    <h1 class="logo"><i class="fab fa-google-play"></i> وسيــل بـلاي</h1>
                 </a>
             </div>
         </div>
@@ -451,35 +451,61 @@
         </div>
     </main>
 
-    <script>
-        // بيانات تجريبية للتطبيق
-        const sampleApp = {
-            id: "app1",
-            name: "تطبيق التواصل الاجتماعي",
-            description: "تطبيق رائع للتواصل مع الأصدقاء والعائلة ومشاركة اللحظات المميزة",
-            category: "social",
-            downloads: 1250,
-            shareCount: 340,
-            rating: 4.7,
-            downloadURL: "https://example.com/download",
-            iconURL: "",
-            features: [
-                "محادثات فورية مع الأصدقاء",
-                "مشاركة الصور والفيديوهات",
-                "مجموعات للاهتمامات المشتركة",
-                "مكالمات صوتية وفيديو عالية الجودة"
-            ],
-            version: "2.1.0",
-            size: "45 ميجابايت",
-            createdAt: new Date()
+  <script type="module">
+        // استيراد دوال Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6h-oOG7xteSiJt2jDpSyGitiPp0aDimI",
+            authDomain: "wacelmarkt.firebaseapp.com",
+            projectId: "wacelmarkt",
+            storageBucket: "wacelmarkt.firebasestorage.app",
+            messagingSenderId: "662446208797",
+            appId: "1:662446208797:web:a3cc83551d42761e4753f4"
         };
 
-        // تحميل التطبيق
-        function loadSharedApp() {
-            // محاكاة تحميل البيانات
-            setTimeout(() => {
-                displayShareContent(sampleApp);
-            }, 1500);
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // الحصول على معرّف التطبيق من URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const appId = urlParams.get('app');
+        let currentApp = null;
+
+        // تحميل التطبيق من Firebase
+        async function loadSharedApp() {
+            try {
+                if (!appId) {
+                    throw new Error('لم يتم تحديد تطبيق للمشاركة');
+                }
+                
+                console.log("جاري تحميل التطبيق:", appId);
+                
+                // محاولة الحصول على التطبيق من Firebase
+                const appDoc = await getDoc(doc(db, "apps", appId));
+                
+                if (appDoc.exists()) {
+                    currentApp = {
+                        id: appDoc.id,
+                        ...appDoc.data()
+                    };
+                    console.log("تم تحميل التطبيق:", currentApp);
+                    displayShareContent(currentApp);
+                } else {
+                    throw new Error('التطبيق غير موجود في قاعدة البيانات');
+                }
+
+            } catch (error) {
+                console.error('Error loading shared app:', error);
+                showErrorState('عذراً، لم يتم العثور على التطبيق المطلوب.');
+            }
         }
 
         // عرض محتوى المشاركة
@@ -603,6 +629,23 @@
             `;
         }
 
+        // عرض حالة الخطأ
+        function showErrorState(message) {
+            document.getElementById('shareContent').innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>لم يتم العثور على التطبيق</h3>
+                    <p>${message}</p>
+                    <div class="share-actions" style="margin-top: 2rem;">
+                        <button class="btn-back" onclick="goToHome()">
+                            <i class="fas fa-arrow-right"></i>
+                            العودة إلى المتجر
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         // الحصول على أيقونة التطبيق حسب التصنيف
         function getAppIcon(category) {
             const icons = {
@@ -649,21 +692,18 @@
         function shareOnWhatsApp(text, url) {
             const shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
             window.open(shareUrl, '_blank');
-            showTempMessage('جاري فتح واتساب للمشاركة...', 'success');
         }
 
         // مشاركة على تويتر
         function shareOnTwitter(text, url) {
             const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
             window.open(shareUrl, '_blank');
-            showTempMessage('جاري فتح تويتر للمشاركة...', 'success');
         }
 
         // مشاركة على فيسبوك
         function shareOnFacebook(url) {
             const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
             window.open(shareUrl, '_blank');
-            showTempMessage('جاري فتح فيسبوك للمشاركة...', 'success');
         }
 
         // نسخ رابط المشاركة
@@ -683,12 +723,58 @@
         }
 
         // بدء التحميل
-        function startDownload() {
-            showTempMessage('جاري تحميل التطبيق...', 'success');
-            // محاكاة التحميل
-            setTimeout(() => {
-                window.open('https://example.com/download', '_blank');
-            }, 1000);
+        async function startDownload() {
+            if (!currentApp) {
+                showTempMessage('لم يتم تحميل معلومات التطبيق', 'error');
+                return;
+            }
+
+            const downloadURL = currentApp.downloadURL;
+            
+            console.log("رابط التحميل:", downloadURL);
+            
+            if (downloadURL && downloadURL.startsWith('http')) {
+                try {
+                    // فتح رابط التحميل في نافذة جديدة
+                    const newWindow = window.open(downloadURL, '_blank');
+                    
+                    if (newWindow) {
+                        // زيادة عداد التنزيلات
+                        await updateDownloadCount();
+                        showTempMessage('جاري تحميل التطبيق...', 'success');
+                    } else {
+                        // إذا تم منع النافذة المنبثقة
+                        showTempMessage('تم منع النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error opening download link:', error);
+                    showTempMessage('خطأ في فتح رابط التحميل', 'error');
+                }
+            } else {
+                showTempMessage('رابط التحميل غير صالح أو غير متوفر', 'error');
+                console.error('رابط التحميل غير صالح:', downloadURL);
+            }
+        }
+
+        // تحديث عداد التنزيلات
+        async function updateDownloadCount() {
+            try {
+                if (currentApp && currentApp.id) {
+                    const newDownloadCount = (currentApp.downloads || 0) + 1;
+                    
+                    // تحديث في Firebase
+                    await updateDoc(doc(db, "apps", currentApp.id), {
+                        downloads: newDownloadCount
+                    });
+                    
+                    // تحديث محلياً
+                    currentApp.downloads = newDownloadCount;
+                    
+                    console.log('تم تحديث عداد التنزيلات إلى:', newDownloadCount);
+                }
+            } catch (error) {
+                console.error('Error updating download count:', error);
+            }
         }
 
         // العودة إلى الصفحة الرئيسية
@@ -720,8 +806,71 @@
             }, 3000);
         }
 
+        // إضافة أنماط CSS للرسائل المتحركة
+        const messageStyles = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+
+            .temp-message {
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: var(--shadow-lg);
+                z-index: 3000;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+            }
+
+            .temp-message.success {
+                background: #10b981;
+                color: white;
+            }
+
+            .temp-message.error {
+                background: #ef4444;
+                color: white;
+            }
+        `;
+
+        // إضافة الأنماط إلى الصفحة
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = messageStyles;
+        document.head.appendChild(styleSheet);
+
+        // جعل الدوال متاحة globally
+        window.shareOnWhatsApp = shareOnWhatsApp;
+        window.shareOnTwitter = shareOnTwitter;
+        window.shareOnFacebook = shareOnFacebook;
+        window.copyShareLink = copyShareLink;
+        window.startDownload = startDownload;
+        window.goToHome = goToHome;
+
         // تحميل التطبيق عند فتح الصفحة
         document.addEventListener('DOMContentLoaded', loadSharedApp);
-    </script>
-</body>
+    </script> 
+ </body>
 </html>

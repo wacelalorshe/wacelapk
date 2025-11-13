@@ -1389,11 +1389,11 @@ border-right: 0px ridge #fff;
 
 
 .icon-btn {
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     border: none;
-    background: #111;        /* لون الدائرة */
+    background: #fff;        /* لون الدائرة */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1407,8 +1407,8 @@ border-right: 0px ridge #fff;
 }
 
 .icon-w {
-    color: #fff;             /* لون حرف W */
-    font-size: 22px;
+    color: #006FFF;             /* لون حرف W */
+    font-size: 18px;
     font-weight: bold;
     font-family: Arial, sans-serif;
     letter-spacing: 1px;

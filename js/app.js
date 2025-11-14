@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المصحح والمحدث
+// js/app.js - الإصدار المصحح والمحدث مع عرض التاريخ
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -7,15 +7,28 @@ import {
     getDocs, 
     deleteDoc, 
     doc, 
-    updateDoc 
+    updateDoc,
+    query,
+    orderBy
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 let allApps = [];
 let currentFilter = 'all';
-let visibleAppsCount = 5; // عدد التطبيقات المعروضة في البداية (5 بدلاً من 6)
-let currentDisplayedApps = []; // التطبيقات المعروضة حالياً
+let visibleAppsCount = 5;
+let currentDisplayedApps = [];
 
-// بيانات تجريبية للاختبار
+// تنسيق التاريخ للعرض
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+// بيانات تجريبية للاختبار مع إضافة التواريخ
 const sampleApps = [
     {
         id: '1',
@@ -30,7 +43,9 @@ const sampleApps = [
         featured: true,
         trending: true,
         shareCount: 45,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     },
     {
         id: '2',
@@ -44,7 +59,9 @@ const sampleApps = [
         downloads: 2300,
         trending: true,
         shareCount: 67,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 86400000).toISOString(), // تاريخ أمس
+        updatedAt: new Date(Date.now() - 86400000).toISOString()
     },
     {
         id: '3',
@@ -58,7 +75,9 @@ const sampleApps = [
         downloads: 3200,
         featured: true,
         shareCount: 89,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 172800000).toISOString(), // تاريخ أول أمس
+        updatedAt: new Date(Date.now() - 172800000).toISOString()
     },
     {
         id: '4',
@@ -71,7 +90,9 @@ const sampleApps = [
         rating: 4.3,
         downloads: 1800,
         shareCount: 34,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 259200000).toISOString(), // منذ 3 أيام
+        updatedAt: new Date(Date.now() - 259200000).toISOString()
     },
     {
         id: '5',
@@ -85,7 +106,9 @@ const sampleApps = [
         downloads: 2700,
         featured: true,
         shareCount: 56,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 345600000).toISOString(), // منذ 4 أيام
+        updatedAt: new Date(Date.now() - 345600000).toISOString()
     },
     {
         id: '6',
@@ -98,7 +121,9 @@ const sampleApps = [
         rating: 4.1,
         downloads: 1400,
         shareCount: 23,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 432000000).toISOString(), // منذ 5 أيام
+        updatedAt: new Date(Date.now() - 432000000).toISOString()
     },
     {
         id: '7',
@@ -112,7 +137,9 @@ const sampleApps = [
         downloads: 2100,
         trending: true,
         shareCount: 78,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 518400000).toISOString(), // منذ 6 أيام
+        updatedAt: new Date(Date.now() - 518400000).toISOString()
     },
     {
         id: '8',
@@ -125,7 +152,9 @@ const sampleApps = [
         rating: 4.8,
         downloads: 1900,
         shareCount: 45,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 604800000).toISOString(), // منذ أسبوع
+        updatedAt: new Date(Date.now() - 604800000).toISOString()
     },
     {
         id: '9',
@@ -138,7 +167,9 @@ const sampleApps = [
         rating: 4.5,
         downloads: 2200,
         shareCount: 67,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 691200000).toISOString(), // منذ 8 أيام
+        updatedAt: new Date(Date.now() - 691200000).toISOString()
     },
     {
         id: '10',
@@ -152,7 +183,9 @@ const sampleApps = [
         downloads: 3100,
         trending: true,
         shareCount: 89,
-        iconURL: ''
+        iconURL: '',
+        createdAt: new Date(Date.now() - 777600000).toISOString(), // منذ 9 أيام
+        updatedAt: new Date(Date.now() - 777600000).toISOString()
     }
 ];
 
@@ -210,7 +243,7 @@ async function shareApp(appId, appName) {
     }
 }
 
-// تحميل التطبيقات من Firebase
+// تحميل التطبيقات من Firebase مع الترتيب حسب التاريخ
 async function loadApps() {
     try {
         console.log("بدء تحميل التطبيقات...");
@@ -220,8 +253,13 @@ async function loadApps() {
         // عرض حالة التحميل
         if (appsContainer) appsContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات...</p></div>';
 
-        // محاولة تحميل التطبيقات من Firebase
-        const querySnapshot = await getDocs(collection(db, "apps"));
+        // محاولة تحميل التطبيقات من Firebase مع الترتيب حسب التاريخ
+        const q = query(
+            collection(db, "apps"), 
+            orderBy("createdAt", "desc") // الترتيب التنازلي حسب تاريخ الإنشاء
+        );
+        
+        const querySnapshot = await getDocs(q);
         allApps = [];
         
         if (!querySnapshot.empty) {
@@ -238,7 +276,7 @@ async function loadApps() {
             console.log("تم استخدام البيانات التجريبية:", allApps.length);
         }
         
-        // عرض التطبيقات في القسم الرئيسي
+        // عرض التطبيقات في القسم الرئيسي (الأحدث أولاً)
         displayApps(allApps.slice(0, visibleAppsCount));
         setupLoadMoreButton();
         
@@ -289,7 +327,7 @@ function createAppCard(app) {
     const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
     
-    // استخدام الأيقونة المخصصة إذا كانت متاحة - بنفس نمط صفحة المشاركة
+    // استخدام الأيقونة المخصصة إذا كانت متاحة
     const appIcon = app.iconURL 
         ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}"></div>`
         : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
@@ -318,10 +356,10 @@ function createAppCard(app) {
                 </div>
                 <div class="app-downloads">${app.downloads || 0} تنزيل</div>
             </div>
-            <div class="app-meta">
-                <div class="app-shares">
-                    <i class="fas fa-share"></i>
-                    <span>${app.shareCount || 0} مشاركة</span>
+            <div class="app-date-info">
+                <div class="date-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>أضيف في: ${formatDate(app.createdAt)}</span>
                 </div>
             </div>
             ${app.featured ? '<div class="featured-badge">مميز</div>' : ''}

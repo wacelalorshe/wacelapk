@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحدث مع إعلانات Adsterra
+// js/app.js - الإصدار المحدث مع توزيع الإعلانات الجديد
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -26,6 +26,16 @@ const adsterraConfig = {
     },
     popunder: {
         script: '//pl28054761.effectivegatecpm.com/77/fa/de/77fade1a0c22ec2f2f9c4fb8723f5119.js'
+    },
+    largeBanner: {
+        key: 'b2aa6af095dd52e3abeff8d9a46bcf2b',
+        width: 728,
+        height: 90
+    },
+    normalBanner: {
+        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1', // يمكنك تغيير هذا لمفتاح مختلف للإعلان العادي
+        width: 300,
+        height: 250
     }
 };
 
@@ -134,6 +144,83 @@ const sampleApps = [
         iconURL: '',
         createdAt: new Date('2024-03-13').toISOString(),
         updatedAt: new Date('2024-03-13').toISOString()
+    },
+    {
+        id: '4',
+        name: 'تطبيق الإنتاجية',
+        description: 'ادفع مهامك وإنتاجيتك إلى مستوى جديد مع هذا التطبيق المميز. يتضمن أدوات لإدارة المهام والتقويم والتذكيرات والمزيد.',
+        version: '3.0.0',
+        size: '28',
+        category: 'productivity',
+        downloadURL: 'https://example.com/app4.zip',
+        rating: 4.3,
+        downloads: 1800,
+        shareCount: 34,
+        iconURL: '',
+        createdAt: new Date('2024-03-12').toISOString(),
+        updatedAt: new Date('2024-03-12').toISOString()
+    },
+    {
+        id: '5',
+        name: 'تطبيق التعليم',
+        description: 'تعلم لغات جديدة ومهارات متنوعة من خلال دورات تفاعلية وشيقة. مناسب لجميع المستويات والأعمار.',
+        version: '2.2.0',
+        size: '42',
+        category: 'education',
+        downloadURL: 'https://example.com/app5.zip',
+        rating: 4.6,
+        downloads: 2700,
+        featured: true,
+        shareCount: 56,
+        iconURL: '',
+        createdAt: new Date('2024-03-11').toISOString(),
+        updatedAt: new Date('2024-03-11').toISOString()
+    },
+    {
+        id: '6',
+        name: 'تطبيق الأدوات',
+        description: 'مجموعة متكاملة من الأدوات الذكية التي تحتاجها في حياتك اليومية. بسيط وسهل الاستخدام مع واجهة أنيقة.',
+        version: '1.8.0',
+        size: '19',
+        category: 'utility',
+        downloadURL: 'https://example.com/app6.zip',
+        rating: 4.1,
+        downloads: 1400,
+        shareCount: 23,
+        iconURL: '',
+        createdAt: new Date('2024-03-10').toISOString(),
+        updatedAt: new Date('2024-03-10').toISOString()
+    },
+    {
+        id: '7',
+        name: 'تطبيق التصوير',
+        description: 'التقط صوراً مذهلة واحترافية باستخدام هذا التطبيق المتقدم. يتضمن فلاتر ومؤثرات احترافية.',
+        version: '2.5.0',
+        size: '52',
+        category: 'entertainment',
+        downloadURL: 'https://example.com/app7.zip',
+        rating: 4.4,
+        downloads: 2100,
+        trending: true,
+        shareCount: 78,
+        iconURL: '',
+        createdAt: new Date('2024-03-09').toISOString(),
+        updatedAt: new Date('2024-03-09').toISOString()
+    },
+    {
+        id: '8',
+        name: 'تطبيق اللياقة',
+        description: 'احصل على جسم مثالي مع تمارين يومية وخطط تغذية متكاملة. مناسب للمبتدئين والمحترفين.',
+        version: '1.3.0',
+        size: '38',
+        category: 'utility',
+        downloadURL: 'https://example.com/app8.zip',
+        rating: 4.8,
+        downloads: 1900,
+        shareCount: 45,
+        iconURL: '',
+        createdAt: new Date('2024-03-08').toISOString(),
+        updatedAt: new Date('2024-03-08').toISOString()
     }
 ];
 
@@ -313,31 +400,32 @@ function displayApps(apps) {
     
     let html = '';
     apps.forEach((app, index) => {
+        // إضافة بطاقة التطبيق
         html += createAppCard(app);
         
-        // إضافة إعلان بعد كل بطاقة تطبيق
+        // إعلان كبير بعد كل بطاقة تطبيق
         html += `
-            <div class="ad-unit" id="ad-after-${app.id}">
-                <div class="ad-container">
+            <div class="ad-unit large-ad" id="ad-large-${app.id}">
+                <div class="ad-container large">
                     <div class="ad-content">
                         <div class="ad-placeholder ad-loading">
                             <i class="fas fa-ad"></i>
-                            <span>جاري تحميل الإعلان...</span>
+                            <span>إعلان كبير - جاري التحميل...</span>
                         </div>
                     </div>
                 </div>
             </div>
         `;
         
-        // إضافة إعلان كبير بعد كل 3 تطبيقات
-        if ((index + 1) % 3 === 0) {
+        // إعلان عادي بعد كل 6 بطاقات
+        if ((index + 1) % 6 === 0) {
             html += `
-                <div class="ad-unit large-ad" id="ad-large-${index}">
-                    <div class="ad-container large">
+                <div class="ad-unit" id="ad-normal-${app.id}">
+                    <div class="ad-container">
                         <div class="ad-content">
                             <div class="ad-placeholder ad-loading">
                                 <i class="fas fa-ad"></i>
-                                <span>إعلان كبير - جاري التحميل...</span>
+                                <span>جاري تحميل الإعلان...</span>
                             </div>
                         </div>
                     </div>
@@ -426,8 +514,7 @@ function loadAds() {
         container.innerHTML = '';
         
         const adId = `ad-${Date.now()}-${index}`;
-        const width = isLarge ? 728 : 300;
-        const height = isLarge ? 90 : 250;
+        const adConfig = isLarge ? adsterraConfig.largeBanner : adsterraConfig.normalBanner;
         
         const adDiv = document.createElement('div');
         adDiv.id = adId;
@@ -437,17 +524,17 @@ function loadAds() {
         script1.type = 'text/javascript';
         script1.innerHTML = `
             atOptions = {
-                'key' : 'e9bb9d40367d9e2b490048a472a6b5e0',
+                'key' : '${adConfig.key}',
                 'format' : 'iframe',
-                'height' : ${height},
-                'width' : ${width},
+                'height' : ${adConfig.height},
+                'width' : ${adConfig.width},
                 'params' : {}
             };
         `;
         
         const script2 = document.createElement('script');
         script2.type = 'text/javascript';
-        script2.src = '//www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js';
+        script2.src = '//www.highperformanceformat.com/' + adConfig.key + '/invoke.js';
         script2.async = true;
         
         container.appendChild(script1);
@@ -566,8 +653,8 @@ function getCategoryName(category) {
         'games': 'الألعاب',
         'social': 'التواصل الاجتماعي',
         'entertainment': 'الترفيه',
-        'productivity': 'فتوغرافي',
-        'education': 'الذكاء الاصطناعي',
+        'productivity': 'الإنتاجية',
+        'education': 'التعليم',
         'utility': 'الأدوات'
     };
     return categories[category] || category;
@@ -767,18 +854,36 @@ function displaySpecialSection(section) {
                 let html = '';
                 specialApps.forEach((app, index) => {
                     html += createAppCard(app);
+                    
+                    // إعلان كبير بعد كل بطاقة في الأقسام الخاصة أيضاً
                     html += `
-                        <div class="ad-unit" id="ad-special-${app.id}">
-                            <div class="ad-container">
+                        <div class="ad-unit large-ad" id="ad-special-large-${app.id}">
+                            <div class="ad-container large">
                                 <div class="ad-content">
                                     <div class="ad-placeholder ad-loading">
                                         <i class="fas fa-ad"></i>
-                                        <span>جاري تحميل الإعلان...</span>
+                                        <span>إعلان كبير - جاري التحميل...</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     `;
+                    
+                    // إعلان عادي بعد كل 6 بطاقات في الأقسام الخاصة
+                    if ((index + 1) % 6 === 0) {
+                        html += `
+                            <div class="ad-unit" id="ad-special-normal-${app.id}">
+                                <div class="ad-container">
+                                    <div class="ad-content">
+                                        <div class="ad-placeholder ad-loading">
+                                            <i class="fas fa-ad"></i>
+                                            <span>جاري تحميل الإعلان...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
                 appsContainer.innerHTML = html;
                 setupDescriptionToggle();

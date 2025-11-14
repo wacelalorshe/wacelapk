@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحدث مع الإعلان تحت البطاقة
+// js/app.js - الإصدار المحدث مع إعلانات Adsterra
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -17,13 +17,24 @@ let currentFilter = 'all';
 let visibleAppsCount = 5;
 let currentDisplayedApps = [];
 
+// إعدادات Adsterra
+const adsterraConfig = {
+    banner: {
+        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1',
+        width: 320,
+        height: 50
+    },
+    popunder: {
+        script: '//pl28054761.effectivegatecpm.com/77/fa/de/77fade1a0c22ec2f2f9c4fb8723f5119.js'
+    }
+};
+
 // تنسيق التاريخ والوقت للعرض (الميلادي بالعربية)
 function formatDateTime(dateString) {
     if (!dateString) return 'غير محدد';
     const date = new Date(dateString);
     
     try {
-        // تنسيق التاريخ
         const dateOptions = {
             year: 'numeric',
             month: 'long',
@@ -32,7 +43,6 @@ function formatDateTime(dateString) {
             numberingSystem: 'arab'
         };
         
-        // تنسيق الوقت
         const timeOptions = {
             hour: '2-digit',
             minute: '2-digit',
@@ -43,7 +53,6 @@ function formatDateTime(dateString) {
         const timePart = date.toLocaleTimeString('ar-SA', timeOptions);
         return `${datePart} - ${timePart}`;
     } catch (error) {
-        // Fallback في حالة وجود خطأ
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
@@ -75,7 +84,7 @@ function formatDate(dateString) {
     }
 }
 
-// بيانات تجريبية للاختبار مع التواريخ الميلادية
+// بيانات تجريبية للاختبار
 const sampleApps = [
     {
         id: '1',
@@ -125,39 +134,55 @@ const sampleApps = [
         iconURL: '',
         createdAt: new Date('2024-03-13').toISOString(),
         updatedAt: new Date('2024-03-13').toISOString()
-    },
-    {
-        id: '4',
-        name: 'تطبيق الإنتاجية',
-        description: 'ادفع مهامك وإنتاجيتك إلى مستوى جديد مع هذا التطبيق المميز. يتضمن أدوات لإدارة المهام والتقويم والتذكيرات والمزيد.',
-        version: '3.0.0',
-        size: '28',
-        category: 'productivity',
-        downloadURL: 'https://example.com/app4.zip',
-        rating: 4.3,
-        downloads: 1800,
-        shareCount: 34,
-        iconURL: '',
-        createdAt: new Date('2024-03-12').toISOString(),
-        updatedAt: new Date('2024-03-12').toISOString()
-    },
-    {
-        id: '5',
-        name: 'تطبيق التعليم',
-        description: 'تعلم لغات جديدة ومهارات متنوعة من خلال دورات تفاعلية وشيقة. مناسب لجميع المستويات والأعمار.',
-        version: '2.2.0',
-        size: '42',
-        category: 'education',
-        downloadURL: 'https://example.com/app5.zip',
-        rating: 4.6,
-        downloads: 2700,
-        featured: true,
-        shareCount: 56,
-        iconURL: '',
-        createdAt: new Date('2024-03-11').toISOString(),
-        updatedAt: new Date('2024-03-11').toISOString()
     }
 ];
+
+// تحميل إعلان البانر العلوي
+function loadBannerAd() {
+    const bannerContainer = document.getElementById('topBannerAd');
+    if (!bannerContainer) return;
+
+    const script1 = document.createElement('script');
+    script1.type = 'text/javascript';
+    script1.innerHTML = `
+        atOptions = {
+            'key' : '${adsterraConfig.banner.key}',
+            'format' : 'iframe',
+            'height' : ${adsterraConfig.banner.height},
+            'width' : ${adsterraConfig.banner.width},
+            'params' : {}
+        };
+    `;
+
+    const script2 = document.createElement('script');
+    script2.type = 'text/javascript';
+    script2.src = '//www.highperformanceformat.com/' + adsterraConfig.banner.key + '/invoke.js';
+    script2.async = true;
+
+    bannerContainer.appendChild(script1);
+    bannerContainer.appendChild(script2);
+}
+
+// تحميل الإعلان المنبثق
+function loadPopunderAd() {
+    // لا تحميل للمسؤولين
+    if (isAdmin()) return;
+    
+    // تحميل مرة واحدة فقط في الجلسة
+    if (sessionStorage.getItem('popunderLoaded')) return;
+
+    setTimeout(() => {
+        const popunderScript = document.createElement('script');
+        popunderScript.type = 'text/javascript';
+        popunderScript.src = adsterraConfig.popunder.script;
+        popunderScript.async = true;
+        
+        document.body.appendChild(popunderScript);
+        
+        // وضع علامة أن الإعلان تم تحميله
+        sessionStorage.setItem('popunderLoaded', 'true');
+    }, 3000); // تأخير 3 ثواني
+}
 
 // إنشاء رابط المشاركة
 function generateShareLink(appId) {
@@ -170,25 +195,13 @@ async function shareApp(appId, appName) {
     const shareUrl = generateShareLink(appId);
     
     try {
-        // زيادة عداد المشاركات في قاعدة البيانات
-        const appRef = doc(db, "apps", appId);
         const app = allApps.find(a => a.id === appId);
         const currentShares = app.shareCount || 0;
         
-        // تحديث في Firebase
-        try {
-            await updateDoc(appRef, {
-                shareCount: currentShares + 1
-            });
-        } catch (error) {
-            console.log('لا يمكن تحديث Firebase، استخدام البيانات المحلية');
-        }
-
         // تحديث البيانات المحلية
         app.shareCount = currentShares + 1;
 
         if (navigator.share) {
-            // استخدام Web Share API إذا متاح
             await navigator.share({
                 title: `تحميل ${appName}`,
                 text: `اكتشف هذا التطبيق الرائع: ${appName}`,
@@ -196,34 +209,29 @@ async function shareApp(appId, appName) {
             });
             showTempMessage('تم مشاركة التطبيق بنجاح!', 'success');
         } else {
-            // نسخ الرابط إلى الحافظة
             await navigator.clipboard.writeText(shareUrl);
             showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
         }
         
-        // تحديث العرض الحالي
         updateCurrentDisplay();
         
     } catch (error) {
         console.error('Error sharing app:', error);
         if (error.name !== 'AbortError') {
-            // Fallback: فتح نافذة المشاركة
             window.open(`https://twitter.com/intent/tweet?text=اكتشف هذا التطبيق الرائع: ${appName}&url=${encodeURIComponent(shareUrl)}`, '_blank');
         }
     }
 }
 
-// تحميل التطبيقات من Firebase مع الترتيب الجديد
+// تحميل التطبيقات من Firebase
 async function loadApps() {
     try {
         console.log("بدء تحميل التطبيقات...");
         
         const appsContainer = document.getElementById('apps-list');
         
-        // عرض حالة التحميل
         if (appsContainer) appsContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات...</p></div>';
 
-        // محاولة تحميل التطبيقات من Firebase
         const querySnapshot = await getDocs(collection(db, "apps"));
         allApps = [];
         
@@ -236,38 +244,30 @@ async function loadApps() {
             });
             console.log("تم تحميل التطبيقات من Firebase:", allApps.length);
         } else {
-            // استخدام البيانات التجريبية إذا لم توجد بيانات في Firebase
             allApps = sampleApps;
             console.log("تم استخدام البيانات التجريبية:", allApps.length);
         }
         
-        // الترتيب المخصص: المميزة أولاً، ثم الشائعة، ثم المحدثة حديثاً
+        // الترتيب: المميزة أولاً، ثم الشائعة، ثم المحدثة حديثاً
         allApps.sort((a, b) => {
-            // 1. التطبيقات المميزة أولاً
             if (a.featured && !b.featured) return -1;
             if (!a.featured && b.featured) return 1;
             
-            // 2. التطبيقات الشائعة ثانياً
             if (a.trending && !b.trending) return -1;
             if (!a.trending && b.trending) return 1;
             
-            // 3. الأحدث تحديثاً ثالثاً
             const aDate = a.updatedAt || a.createdAt;
             const bDate = b.updatedAt || b.createdAt;
             return new Date(bDate) - new Date(aDate);
         });
         
-        // عرض التطبيقات في القسم الرئيسي
         displayApps(allApps.slice(0, visibleAppsCount));
         setupLoadMoreButton();
         
     } catch (error) {
         console.error("خطأ في تحميل التطبيقات:", error);
         
-        // في حالة الخطأ، استخدام البيانات التجريبية
         allApps = sampleApps;
-        
-        // ترتيب البيانات التجريبية بنفس الطريقة
         allApps.sort((a, b) => {
             if (a.featured && !b.featured) return -1;
             if (!a.featured && b.featured) return 1;
@@ -283,7 +283,6 @@ async function loadApps() {
         displayApps(allApps.slice(0, visibleAppsCount));
         setupLoadMoreButton();
         
-        // عرض رسالة خطأ
         const appsContainer = document.getElementById('apps-list');
         if (appsContainer) {
             appsContainer.innerHTML = `
@@ -314,10 +313,9 @@ function displayApps(apps) {
     
     let html = '';
     apps.forEach((app, index) => {
-        // إضافة بطاقة التطبيق
         html += createAppCard(app);
         
-        // إضافة الإعلان تحت كل بطاقة تطبيق (وليس داخلها)
+        // إضافة إعلان بعد كل بطاقة تطبيق
         html += `
             <div class="ad-unit" id="ad-after-${app.id}">
                 <div class="ad-container">
@@ -331,7 +329,7 @@ function displayApps(apps) {
             </div>
         `;
         
-        // إضافة إعلان إضافي بعد كل 3 تطبيقات
+        // إضافة إعلان كبير بعد كل 3 تطبيقات
         if ((index + 1) % 3 === 0) {
             html += `
                 <div class="ad-unit large-ad" id="ad-large-${index}">
@@ -351,7 +349,6 @@ function displayApps(apps) {
     appsContainer.innerHTML = html;
     setupDescriptionToggle();
     
-    // تحميل الإعلانات بعد عرض التطبيقات
     setTimeout(() => {
         loadAds();
     }, 500);
@@ -364,7 +361,6 @@ function createAppCard(app) {
     const iconClass = getAppIcon(app.category);
     const ratingStars = generateRatingStars(app.rating);
     
-    // استخدام الأيقونة المخصصة إذا كانت متاحة
     const appIcon = app.iconURL 
         ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}"></div>`
         : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
@@ -425,45 +421,42 @@ function loadAds() {
     
     adUnits.forEach((unit, index) => {
         const container = unit.querySelector('.ad-container');
-        const adId = `ad-${Date.now()}-${index}`;
+        const isLarge = unit.classList.contains('large-ad');
         
-        // مسح المحتوى الحالي
         container.innerHTML = '';
         
-        // إنشاء عنصر div للإعلان
+        const adId = `ad-${Date.now()}-${index}`;
+        const width = isLarge ? 728 : 300;
+        const height = isLarge ? 90 : 250;
+        
         const adDiv = document.createElement('div');
         adDiv.id = adId;
         adDiv.className = 'ad-content';
         
-        // إنشاء السكريبتات الديناميكية
         const script1 = document.createElement('script');
         script1.type = 'text/javascript';
         script1.innerHTML = `
-            if (typeof atOptions === 'undefined') {
-                window.atOptions = {
-                    'key': 'e9bb9d40367d9e2b490048a472a6b5e0',
-                    'format': 'iframe',
-                    'height': ${unit.classList.contains('large-ad') ? 90 : 250},
-                    'width': ${unit.classList.contains('large-ad') ? 728 : 300},
-                    'params': {}
-                };
-            }
+            atOptions = {
+                'key' : 'e9bb9d40367d9e2b490048a472a6b5e0',
+                'format' : 'iframe',
+                'height' : ${height},
+                'width' : ${width},
+                'params' : {}
+            };
         `;
         
         const script2 = document.createElement('script');
         script2.type = 'text/javascript';
-        script2.src = 'https://www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js';
+        script2.src = '//www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js';
         script2.async = true;
         
-        // إضافة العناصر إلى الحاوية
         container.appendChild(script1);
         container.appendChild(adDiv);
         container.appendChild(script2);
         
-        // طريقة بديلة إذا فشل تحميل الإعلان
         setTimeout(() => {
             if (!container.querySelector('iframe') && !container.innerHTML.includes('highperformanceformat')) {
-                loadAdFallback(container, adId, unit.classList.contains('large-ad'));
+                loadAdFallback(container, adId, isLarge);
             }
         }, 2000);
     });
@@ -482,11 +475,6 @@ function loadAdFallback(container, adId, isLarge = false) {
         <i class="fas fa-ad"></i>
         <span>مساحة إعلانية ${width}×${height}</span>
         <small>${isLarge ? 'إعلان横幅 كبير' : 'إعلان عمودي'}</small>
-        <div class="ad-info">
-            <strong>معلومات الإعلان:</strong><br>
-            - الحجم: ${width} × ${height} بكسل<br>
-            - النوع: ${isLarge ? '横幅 إعلان' : 'عمودي'}
-        </div>
     `;
     
     container.appendChild(placeholder);
@@ -523,7 +511,7 @@ function updateCurrentDisplay() {
     }
 }
 
-// إضافة مستمعات الأحداث لعرض المزيد في الصفحة الرئيسية
+// إضافة مستمعات الأحداث لعرض المزيد
 function setupDescriptionToggle() {
     document.querySelectorAll('.show-more').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -544,17 +532,14 @@ function generateRatingStars(rating) {
     
     let stars = '';
     
-    // نجوم كاملة
     for (let i = 0; i < fullStars; i++) {
         stars += '<i class="fas fa-star"></i>';
     }
     
-    // نصف نجمة
     if (halfStar) {
         stars += '<i class="fas fa-star-half-alt"></i>';
     }
     
-    // نجوم فارغة
     for (let i = 0; i < emptyStars; i++) {
         stars += '<i class="far fa-star"></i>';
     }
@@ -581,8 +566,8 @@ function getCategoryName(category) {
         'games': 'الألعاب',
         'social': 'التواصل الاجتماعي',
         'entertainment': 'الترفيه',
-        'productivity': 'الإنتاجية',
-        'education': 'التعليم',
+        'productivity': 'فتوغرافي',
+        'education': 'الذكاء الاصطناعي',
         'utility': 'الأدوات'
     };
     return categories[category] || category;
@@ -593,9 +578,8 @@ function filterApps(category) {
     console.log("تصفية التطبيقات حسب الفئة:", category);
     
     currentFilter = category;
-    visibleAppsCount = 5; // إعادة تعيين العدد المرئي
+    visibleAppsCount = 5;
     
-    // تحديث حالة الأزرار النشطة في شريط التصفية
     document.querySelectorAll('.category-filter').forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.category === category) {
@@ -610,7 +594,6 @@ function filterApps(category) {
     displayApps(filteredApps.slice(0, visibleAppsCount));
     setupLoadMoreButton();
     
-    // التمرير إلى قسم التطبيقات
     document.getElementById('apps-list').scrollIntoView({ 
         behavior: 'smooth',
         block: 'start'
@@ -622,14 +605,12 @@ function searchApps() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     console.log("الببحث عن:", searchTerm);
     
-    // إغلاق نافذة البحث بعد إجراء البحث
     const searchModal = document.getElementById('searchModal');
     if (searchModal) {
         searchModal.style.display = 'none';
     }
     
     if (!searchTerm) {
-        // إذا كان البحث فارغاً، اعرض جميع التطبيقات
         visibleAppsCount = 5;
         displayApps(allApps.slice(0, visibleAppsCount));
         setupLoadMoreButton();
@@ -642,12 +623,10 @@ function searchApps() {
         getCategoryName(app.category).toLowerCase().includes(searchTerm)
     );
     
-    // إخفاء جميع التطبيقات الأخرى وعرض فقط نتائج البحث
-    visibleAppsCount = filteredApps.length; // عرض جميع النتائج
+    visibleAppsCount = filteredApps.length;
     displayApps(filteredApps);
-    setupLoadMoreButton(); // إخفاء زر "عرض المزيد" أثناء البحث
+    setupLoadMoreButton();
     
-    // إظهار عدد النتائج
     const appsContainer = document.getElementById('apps-list');
     if (appsContainer && filteredApps.length > 0) {
         const resultsHeader = document.createElement('div');
@@ -666,24 +645,18 @@ function performSearch() {
 function downloadApp(downloadURL, appId) {
     console.log("تحميل التطبيق:", appId);
     
-    // زيادة عداد التنزيلات محلياً
     const app = allApps.find(app => app.id === appId);
     if (app) {
         app.downloads = (app.downloads || 0) + 1;
-        
-        // تحديث واجهة المستخدم
         updateCurrentDisplay();
     }
     
-    // فتح رابط التحميل في نافذة جديدة
     if (downloadURL && downloadURL !== 'https://example.com/app1.zip') {
         window.open(downloadURL, '_blank');
     } else {
-        // إذا كان الرابط تجريبي، عرض رسالة
         alert('هذا رابط تجريبي. في التطبيق الحقيقي، سيبدأ التحميل.');
     }
     
-    // إظهار رسالة نجاح
     showTempMessage('جاري تحميل التطبيق...', 'success');
 }
 
@@ -694,17 +667,14 @@ async function deleteApp(appId) {
     try {
         console.log("جاري حذف التطبيق:", appId);
         
-        // حذف من Firebase إذا كان التطبيق مخزناً هناك
         const app = allApps.find(app => app.id === appId);
         if (app && !sampleApps.some(sample => sample.id === appId)) {
             await deleteDoc(doc(db, "apps", appId));
         }
         
-        // إزالة من المصفوفة المحلية
         allApps = allApps.filter(app => app.id !== appId);
         currentDisplayedApps = currentDisplayedApps.filter(app => app.id !== appId);
         
-        // إعادة تحميل القوائم
         displayApps(currentDisplayedApps);
         setupLoadMoreButton();
         
@@ -723,7 +693,6 @@ function isAdmin() {
 
 // عرض رسالة مؤقتة
 function showTempMessage(text, type) {
-    // إنشاء عنصر الرسالة
     const messageDiv = document.createElement('div');
     messageDiv.className = `temp-message ${type}`;
     messageDiv.innerHTML = `
@@ -731,7 +700,6 @@ function showTempMessage(text, type) {
         <span>${text}</span>
     `;
     
-    // إضافة الأنماط
     messageDiv.style.cssText = `
         position: fixed;
         top: 100px;
@@ -749,10 +717,8 @@ function showTempMessage(text, type) {
         animation: slideIn 0.3s ease-out;
     `;
     
-    // إضافة الرسالة إلى الصفحة
     document.body.appendChild(messageDiv);
     
-    // إزالة الرسالة بعد 3 ثواني
     setTimeout(() => {
         messageDiv.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => {
@@ -765,25 +731,20 @@ function showTempMessage(text, type) {
 
 // عرض الأقسام الخاصة
 function displaySpecialSection(section) {
-    // إخفاء جميع الأقسام أولاً
     document.querySelectorAll('.special-section-content').forEach(el => {
         el.style.display = 'none';
     });
     
-    // إزالة النشاط من جميع الأزرار
     document.querySelectorAll('.section-tab').forEach(tab => {
         tab.classList.remove('active');
     });
     
-    // إضافة النشاط للزر المحدد
     document.querySelector(`.section-tab[data-section="${section}"]`).classList.add('active');
     
-    // عرض القسم المحدد
     const sectionElement = document.getElementById(`${section}-section`);
     if (sectionElement) {
         sectionElement.style.display = 'block';
         
-        // تحميل التطبيقات الخاصة بالقسم
         let specialApps = [];
         
         switch(section) {
@@ -806,7 +767,6 @@ function displaySpecialSection(section) {
                 let html = '';
                 specialApps.forEach((app, index) => {
                     html += createAppCard(app);
-                    // إضافة الإعلان تحت كل بطاقة في الأقسام الخاصة أيضاً
                     html += `
                         <div class="ad-unit" id="ad-special-${app.id}">
                             <div class="ad-container">
@@ -823,14 +783,12 @@ function displaySpecialSection(section) {
                 appsContainer.innerHTML = html;
                 setupDescriptionToggle();
                 
-                // تحميل الإعلانات للأقسام الخاصة
                 setTimeout(() => {
                     loadAds();
                 }, 500);
             }
         }
         
-        // التمرير إلى القسم
         sectionElement.scrollIntoView({ 
             behavior: 'smooth',
             block: 'start'
@@ -846,16 +804,12 @@ function setupBottomNavigation() {
         item.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // إزالة النشاط من جميع العناصر
             bottomNavItems.forEach(i => i.classList.remove('active'));
-            
-            // إضافة النشاط للعنصر الحالي
             this.classList.add('active');
             
             const target = this.getAttribute('href');
             console.log("النقر على:", target);
             
-            // تنفيذ الإجراء المناسب
             switch(target) {
                 case '#games':
                     filterApps('games');
@@ -877,10 +831,7 @@ function setupCategoryEvents() {
     
     categoryFilters.forEach(filter => {
         filter.addEventListener('click', function() {
-            // إزالة النشاط من جميع الفلاتر
             categoryFilters.forEach(f => f.classList.remove('active'));
-            
-            // إضافة النشاط للفلتر المحدد
             this.classList.add('active');
         });
     });
@@ -904,6 +855,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // تحميل التطبيقات
     loadApps();
+    
+    // تحميل إعلان البانر
+    loadBannerAd();
+    
+    // تحميل الإعلان المنبثق
+    loadPopunderAd();
     
     // إعداد مستمعات الأحداث للبحث
     const searchInput = document.getElementById('searchInput');

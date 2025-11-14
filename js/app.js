@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المصحح والمحدث مع عرض التاريخ
+// js/app.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -17,18 +17,65 @@ let currentFilter = 'all';
 let visibleAppsCount = 5;
 let currentDisplayedApps = [];
 
-// تنسيق التاريخ للعرض
+// تنسيق التاريخ والوقت للعرض (الميلادي بالعربية)
+function formatDateTime(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    
+    try {
+        // تنسيق التاريخ
+        const dateOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            calendar: 'gregory',
+            numberingSystem: 'arab'
+        };
+        
+        // تنسيق الوقت
+        const timeOptions = {
+            hour: '2-digit',
+            minute: '2-digit',
+            numberingSystem: 'arab'
+        };
+        
+        const datePart = date.toLocaleDateString('ar-SA', dateOptions);
+        const timePart = date.toLocaleTimeString('ar-SA', timeOptions);
+        return `${datePart} - ${timePart}`;
+    } catch (error) {
+        // Fallback في حالة وجود خطأ
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+        return `${day}/${month}/${year} ${hour}:${minute}`;
+    }
+}
+
+// تنسيق التاريخ فقط (بدون وقت)
 function formatDate(dateString) {
     if (!dateString) return 'غير محدد';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ar-SA', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    
+    try {
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            calendar: 'gregory',
+            numberingSystem: 'arab'
+        };
+        return date.toLocaleDateString('ar-SA', options);
+    } catch (error) {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
 }
 
-// بيانات تجريبية للاختبار مع إضافة التواريخ
+// بيانات تجريبية للاختبار مع التواريخ الميلادية
 const sampleApps = [
     {
         id: '1',
@@ -44,8 +91,8 @@ const sampleApps = [
         trending: true,
         shareCount: 45,
         iconURL: '',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        createdAt: new Date('2024-03-15').toISOString(),
+        updatedAt: new Date('2024-03-15').toISOString()
     },
     {
         id: '2',
@@ -60,8 +107,8 @@ const sampleApps = [
         trending: true,
         shareCount: 67,
         iconURL: '',
-        createdAt: new Date(Date.now() - 86400000).toISOString(), // تاريخ أمس
-        updatedAt: new Date(Date.now() - 86400000).toISOString()
+        createdAt: new Date('2024-03-14').toISOString(),
+        updatedAt: new Date('2024-03-14').toISOString()
     },
     {
         id: '3',
@@ -76,8 +123,8 @@ const sampleApps = [
         featured: true,
         shareCount: 89,
         iconURL: '',
-        createdAt: new Date(Date.now() - 172800000).toISOString(), // تاريخ أول أمس
-        updatedAt: new Date(Date.now() - 172800000).toISOString()
+        createdAt: new Date('2024-03-13').toISOString(),
+        updatedAt: new Date('2024-03-13').toISOString()
     },
     {
         id: '4',
@@ -91,8 +138,8 @@ const sampleApps = [
         downloads: 1800,
         shareCount: 34,
         iconURL: '',
-        createdAt: new Date(Date.now() - 259200000).toISOString(), // منذ 3 أيام
-        updatedAt: new Date(Date.now() - 259200000).toISOString()
+        createdAt: new Date('2024-03-12').toISOString(),
+        updatedAt: new Date('2024-03-12').toISOString()
     },
     {
         id: '5',
@@ -107,8 +154,8 @@ const sampleApps = [
         featured: true,
         shareCount: 56,
         iconURL: '',
-        createdAt: new Date(Date.now() - 345600000).toISOString(), // منذ 4 أيام
-        updatedAt: new Date(Date.now() - 345600000).toISOString()
+        createdAt: new Date('2024-03-11').toISOString(),
+        updatedAt: new Date('2024-03-11').toISOString()
     },
     {
         id: '6',
@@ -122,8 +169,8 @@ const sampleApps = [
         downloads: 1400,
         shareCount: 23,
         iconURL: '',
-        createdAt: new Date(Date.now() - 432000000).toISOString(), // منذ 5 أيام
-        updatedAt: new Date(Date.now() - 432000000).toISOString()
+        createdAt: new Date('2024-03-10').toISOString(),
+        updatedAt: new Date('2024-03-10').toISOString()
     },
     {
         id: '7',
@@ -138,8 +185,8 @@ const sampleApps = [
         trending: true,
         shareCount: 78,
         iconURL: '',
-        createdAt: new Date(Date.now() - 518400000).toISOString(), // منذ 6 أيام
-        updatedAt: new Date(Date.now() - 518400000).toISOString()
+        createdAt: new Date('2024-03-09').toISOString(),
+        updatedAt: new Date('2024-03-09').toISOString()
     },
     {
         id: '8',
@@ -153,8 +200,8 @@ const sampleApps = [
         downloads: 1900,
         shareCount: 45,
         iconURL: '',
-        createdAt: new Date(Date.now() - 604800000).toISOString(), // منذ أسبوع
-        updatedAt: new Date(Date.now() - 604800000).toISOString()
+        createdAt: new Date('2024-03-08').toISOString(),
+        updatedAt: new Date('2024-03-08').toISOString()
     },
     {
         id: '9',
@@ -168,8 +215,8 @@ const sampleApps = [
         downloads: 2200,
         shareCount: 67,
         iconURL: '',
-        createdAt: new Date(Date.now() - 691200000).toISOString(), // منذ 8 أيام
-        updatedAt: new Date(Date.now() - 691200000).toISOString()
+        createdAt: new Date('2024-03-07').toISOString(),
+        updatedAt: new Date('2024-03-07').toISOString()
     },
     {
         id: '10',
@@ -184,8 +231,8 @@ const sampleApps = [
         trending: true,
         shareCount: 89,
         iconURL: '',
-        createdAt: new Date(Date.now() - 777600000).toISOString(), // منذ 9 أيام
-        updatedAt: new Date(Date.now() - 777600000).toISOString()
+        createdAt: new Date('2024-03-06').toISOString(),
+        updatedAt: new Date('2024-03-06').toISOString()
     }
 ];
 
@@ -243,7 +290,7 @@ async function shareApp(appId, appName) {
     }
 }
 
-// تحميل التطبيقات من Firebase مع الترتيب حسب التاريخ
+// تحميل التطبيقات من Firebase مع الترتيب الجديد
 async function loadApps() {
     try {
         console.log("بدء تحميل التطبيقات...");
@@ -253,13 +300,8 @@ async function loadApps() {
         // عرض حالة التحميل
         if (appsContainer) appsContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل التطبيقات...</p></div>';
 
-        // محاولة تحميل التطبيقات من Firebase مع الترتيب حسب التاريخ
-        const q = query(
-            collection(db, "apps"), 
-            orderBy("createdAt", "desc") // الترتيب التنازلي حسب تاريخ الإنشاء
-        );
-        
-        const querySnapshot = await getDocs(q);
+        // محاولة تحميل التطبيقات من Firebase
+        const querySnapshot = await getDocs(collection(db, "apps"));
         allApps = [];
         
         if (!querySnapshot.empty) {
@@ -276,7 +318,23 @@ async function loadApps() {
             console.log("تم استخدام البيانات التجريبية:", allApps.length);
         }
         
-        // عرض التطبيقات في القسم الرئيسي (الأحدث أولاً)
+        // الترتيب المخصص: المميزة أولاً، ثم الشائعة، ثم المحدثة حديثاً
+        allApps.sort((a, b) => {
+            // 1. التطبيقات المميزة أولاً
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            
+            // 2. التطبيقات الشائعة ثانياً
+            if (a.trending && !b.trending) return -1;
+            if (!a.trending && b.trending) return 1;
+            
+            // 3. الأحدث تحديثاً ثالثاً
+            const aDate = a.updatedAt || a.createdAt;
+            const bDate = b.updatedAt || b.createdAt;
+            return new Date(bDate) - new Date(aDate);
+        });
+        
+        // عرض التطبيقات في القسم الرئيسي
         displayApps(allApps.slice(0, visibleAppsCount));
         setupLoadMoreButton();
         
@@ -285,6 +343,20 @@ async function loadApps() {
         
         // في حالة الخطأ، استخدام البيانات التجريبية
         allApps = sampleApps;
+        
+        // ترتيب البيانات التجريبية بنفس الطريقة
+        allApps.sort((a, b) => {
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            
+            if (a.trending && !b.trending) return -1;
+            if (!a.trending && b.trending) return 1;
+            
+            const aDate = a.updatedAt || a.createdAt;
+            const bDate = b.updatedAt || b.createdAt;
+            return new Date(bDate) - new Date(aDate);
+        });
+        
         displayApps(allApps.slice(0, visibleAppsCount));
         setupLoadMoreButton();
         
@@ -362,8 +434,8 @@ function createAppCard(app) {
                     <span>أضيف في: ${formatDate(app.createdAt)}</span>
                 </div>
             </div>
-            ${app.featured ? '<div class="featured-badge">مميز</div>' : ''}
-            ${app.trending ? '<div class="trending-badge">شائع</div>' : ''}
+            ${app.featured ? '<div class="featured-badge">⭐ مميز</div>' : ''}
+            ${app.trending ? '<div class="trending-badge">🔥 شائع</div>' : ''}
             <div class="app-actions">
                 <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
                     <i class="fas fa-download"></i>

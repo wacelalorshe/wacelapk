@@ -1,4 +1,4 @@
-// js/admin.js - الإصدار المحدث مع إضافة البحث
+// js/admin.js - الإصدار المحدث مع إضافة البحث وعرض التاريخ
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -8,7 +8,9 @@ import {
     getDocs, 
     deleteDoc, 
     doc,
-    updateDoc
+    updateDoc,
+    query,
+    orderBy
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 let apps = [];
@@ -19,6 +21,19 @@ let searchTerm = ''; // مصطلح البحث الحالي
 function generateShareLink(appId) {
     const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
     return `${baseUrl}share.html?app=${appId}`;
+}
+
+// تنسيق التاريخ للعرض
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
 
 // فتح نافذة التعديل
@@ -66,7 +81,7 @@ async function updateApp(e) {
         rating: document.getElementById('editAppRating').value || null,
         featured: document.getElementById('editAppFeatured').checked,
         trending: document.getElementById('editAppTrending').checked,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString() // تحديث تاريخ التعديل
     };
 
     // الحصول على رابط الأيقونة إذا تم إدخاله
@@ -177,11 +192,18 @@ async function generateNewShareLink(appId) {
     }
 }
 
-// تحميل التطبيقات
+// تحميل التطبيقات مع الترتيب حسب التاريخ (الأحدث أولاً)
 async function loadAdminApps() {
     try {
         console.log("بدء تحميل التطبيقات...");
-        const querySnapshot = await getDocs(collection(db, "apps"));
+        
+        // إنشاء استعلام بترتيب حسب التاريخ (الأحدث أولاً)
+        const q = query(
+            collection(db, "apps"), 
+            orderBy("createdAt", "desc") // الترتيب التنازلي حسب تاريخ الإنشاء
+        );
+        
+        const querySnapshot = await getDocs(q);
         apps = [];
         
         querySnapshot.forEach((doc) => {
@@ -263,6 +285,18 @@ function displayAdminApps() {
                 ${app.trending ? '<span class="badge trending">شائع</span>' : ''}
                 <span class="downloads">${app.downloads || 0} تنزيل</span>
             </div>
+            <div class="app-date-info">
+                <div class="date-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>أضيف في: ${formatDate(app.createdAt)}</span>
+                </div>
+                ${app.updatedAt && app.updatedAt !== app.createdAt ? `
+                    <div class="date-item">
+                        <i class="fas fa-edit"></i>
+                        <span>عدل في: ${formatDate(app.updatedAt)}</span>
+                    </div>
+                ` : ''}
+            </div>
             <div class="share-link-section">
                 <label>رابط المشاركة:</label>
                 <div class="share-link-container">
@@ -319,7 +353,8 @@ function initializeAddAppForm() {
             rating: document.getElementById('appRating').value || null,
             featured: document.getElementById('appFeatured').checked,
             trending: document.getElementById('appTrending').checked,
-            createdAt: new Date().toISOString(),
+            createdAt: new Date().toISOString(), // تاريخ الإنشاء
+            updatedAt: new Date().toISOString(), // تاريخ التحديث
             downloads: 0,
             shareCount: 0
         };

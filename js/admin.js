@@ -1,4 +1,4 @@
-// js/admin.js - الإصدار المحدث مع إضافة البحث وعرض التاريخ
+// js/admin.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -15,25 +15,70 @@ import {
 
 let apps = [];
 let currentEditingApp = null;
-let searchTerm = ''; // مصطلح البحث الحالي
+let searchTerm = '';
+
+// تنسيق التاريخ والوقت للعرض (الميلادي بالعربية)
+function formatDateTime(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    
+    try {
+        // تنسيق التاريخ
+        const dateOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            calendar: 'gregory',
+            numberingSystem: 'arab'
+        };
+        
+        // تنسيق الوقت
+        const timeOptions = {
+            hour: '2-digit',
+            minute: '2-digit',
+            numberingSystem: 'arab'
+        };
+        
+        const datePart = date.toLocaleDateString('ar-SA', dateOptions);
+        const timePart = date.toLocaleTimeString('ar-SA', timeOptions);
+        return `${datePart} - ${timePart}`;
+    } catch (error) {
+        // Fallback في حالة وجود خطأ
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+        return `${day}/${month}/${year} ${hour}:${minute}`;
+    }
+}
+
+// تنسيق التاريخ فقط (بدون وقت)
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    
+    try {
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            calendar: 'gregory',
+            numberingSystem: 'arab'
+        };
+        return date.toLocaleDateString('ar-SA', options);
+    } catch (error) {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+}
 
 // إنشاء رابط المشاركة
 function generateShareLink(appId) {
     const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
     return `${baseUrl}share.html?app=${appId}`;
-}
-
-// تنسيق التاريخ للعرض
-function formatDate(dateString) {
-    if (!dateString) return 'غير محدد';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ar-SA', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
 }
 
 // فتح نافذة التعديل
@@ -81,7 +126,7 @@ async function updateApp(e) {
         rating: document.getElementById('editAppRating').value || null,
         featured: document.getElementById('editAppFeatured').checked,
         trending: document.getElementById('editAppTrending').checked,
-        updatedAt: new Date().toISOString() // تحديث تاريخ التعديل
+        updatedAt: new Date().toISOString()
     };
 
     // الحصول على رابط الأيقونة إذا تم إدخاله
@@ -192,18 +237,13 @@ async function generateNewShareLink(appId) {
     }
 }
 
-// تحميل التطبيقات مع الترتيب حسب التاريخ (الأحدث أولاً)
+// تحميل التطبيقات مع الترتيب الجديد
 async function loadAdminApps() {
     try {
         console.log("بدء تحميل التطبيقات...");
         
-        // إنشاء استعلام بترتيب حسب التاريخ (الأحدث أولاً)
-        const q = query(
-            collection(db, "apps"), 
-            orderBy("createdAt", "desc") // الترتيب التنازلي حسب تاريخ الإنشاء
-        );
-        
-        const querySnapshot = await getDocs(q);
+        // جلب جميع التطبيات بدون ترتيب أولي
+        const querySnapshot = await getDocs(collection(db, "apps"));
         apps = [];
         
         querySnapshot.forEach((doc) => {
@@ -211,6 +251,22 @@ async function loadAdminApps() {
                 id: doc.id,
                 ...doc.data()
             });
+        });
+        
+        // الترتيب المخصص: المميزة أولاً، ثم الشائعة، ثم المحدثة حديثاً
+        apps.sort((a, b) => {
+            // 1. التطبيقات المميزة أولاً
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            
+            // 2. التطبيقات الشائعة ثانياً
+            if (a.trending && !b.trending) return -1;
+            if (!a.trending && b.trending) return 1;
+            
+            // 3. الأحدث تحديثاً ثالثاً
+            const aDate = a.updatedAt || a.createdAt;
+            const bDate = b.updatedAt || b.createdAt;
+            return new Date(bDate) - new Date(aDate);
         });
         
         console.log("تم تحميل التطبيقات:", apps.length);
@@ -281,19 +337,19 @@ function displayAdminApps() {
                 ${app.rating ? `<span>التقييم: ${app.rating}/5</span>` : ''}
             </div>
             <div class="app-meta">
-                ${app.featured ? '<span class="badge featured">مميز</span>' : ''}
-                ${app.trending ? '<span class="badge trending">شائع</span>' : ''}
+                ${app.featured ? '<span class="badge featured">⭐ مميز</span>' : ''}
+                ${app.trending ? '<span class="badge trending">🔥 شائع</span>' : ''}
                 <span class="downloads">${app.downloads || 0} تنزيل</span>
             </div>
             <div class="app-date-info">
                 <div class="date-item">
                     <i class="fas fa-calendar-plus"></i>
-                    <span>أضيف في: ${formatDate(app.createdAt)}</span>
+                    <span>أضيف في: ${formatDateTime(app.createdAt)}</span>
                 </div>
                 ${app.updatedAt && app.updatedAt !== app.createdAt ? `
                     <div class="date-item">
                         <i class="fas fa-edit"></i>
-                        <span>عدل في: ${formatDate(app.updatedAt)}</span>
+                        <span>عدل في: ${formatDateTime(app.updatedAt)}</span>
                     </div>
                 ` : ''}
             </div>
@@ -353,8 +409,8 @@ function initializeAddAppForm() {
             rating: document.getElementById('appRating').value || null,
             featured: document.getElementById('appFeatured').checked,
             trending: document.getElementById('appTrending').checked,
-            createdAt: new Date().toISOString(), // تاريخ الإنشاء
-            updatedAt: new Date().toISOString(), // تاريخ التحديث
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
             downloads: 0,
             shareCount: 0
         };

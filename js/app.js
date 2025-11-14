@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد والإعلانات
+// js/app.js - الإصدار المحدث مع الإعلان تحت البطاقة
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -312,13 +312,49 @@ function displayApps(apps) {
         return;
     }
     
-    appsContainer.innerHTML = apps.map(app => createAppCard(app)).join('');
+    let html = '';
+    apps.forEach((app, index) => {
+        // إضافة بطاقة التطبيق
+        html += createAppCard(app);
+        
+        // إضافة الإعلان تحت كل بطاقة تطبيق (وليس داخلها)
+        html += `
+            <div class="ad-unit" id="ad-after-${app.id}">
+                <div class="ad-container">
+                    <div class="ad-content">
+                        <div class="ad-placeholder ad-loading">
+                            <i class="fas fa-ad"></i>
+                            <span>جاري تحميل الإعلان...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // إضافة إعلان إضافي بعد كل 3 تطبيقات
+        if ((index + 1) % 3 === 0) {
+            html += `
+                <div class="ad-unit large-ad" id="ad-large-${index}">
+                    <div class="ad-container large">
+                        <div class="ad-content">
+                            <div class="ad-placeholder ad-loading">
+                                <i class="fas fa-ad"></i>
+                                <span>إعلان كبير - جاري التحميل...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    appsContainer.innerHTML = html;
     setupDescriptionToggle();
     
     // تحميل الإعلانات بعد عرض التطبيقات
     setTimeout(() => {
         loadAds();
-    }, 100);
+    }, 500);
     
     console.log("تم عرض التطبيقات الرئيسية:", apps.length);
 }
@@ -379,63 +415,81 @@ function createAppCard(app) {
                     </button>
                 ` : ''}
             </div>
-            
-            <!-- قسم الإعلان -->
-            <div class="ad-container" id="ad-${app.id}">
-                <div class="ad-placeholder">
-                    <i class="fas fa-ad"></i>
-                    <span>جاري تحميل الإعلان...</span>
-                </div>
-            </div>
         </div>
     `;
 }
 
 // تحميل الإعلانات
 function loadAds() {
-    const adContainers = document.querySelectorAll('.ad-container');
+    const adUnits = document.querySelectorAll('.ad-unit');
     
-    adContainers.forEach(container => {
+    adUnits.forEach((unit, index) => {
+        const container = unit.querySelector('.ad-container');
+        const adId = `ad-${Date.now()}-${index}`;
+        
         // مسح المحتوى الحالي
         container.innerHTML = '';
         
-        // إنشاء عنصر iframe للإعلان
-        const iframe = document.createElement('iframe');
-        iframe.style.width = '100%';
-        iframe.style.height = '250px';
-        iframe.style.border = 'none';
-        iframe.style.borderRadius = '8px';
-        iframe.scrolling = 'no';
+        // إنشاء عنصر div للإعلان
+        const adDiv = document.createElement('div');
+        adDiv.id = adId;
+        adDiv.className = 'ad-content';
         
-        // إنشاء محتوى HTML للإعلان
-        const adHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body { margin: 0; padding: 0; background: transparent; }
-                </style>
-            </head>
-            <body>
-                <script type="text/javascript">
-                    atOptions = {
-                        'key' : 'e9bb9d40367d9e2b490048a472a6b5e0',
-                        'format' : 'iframe',
-                        'height' : 250,
-                        'width' : 300,
-                        'params' : {}
-                    };
-                </script>
-                <script type="text/javascript" src="//www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js"></script>
-            </body>
-            </html>
+        // إنشاء السكريبتات الديناميكية
+        const script1 = document.createElement('script');
+        script1.type = 'text/javascript';
+        script1.innerHTML = `
+            if (typeof atOptions === 'undefined') {
+                window.atOptions = {
+                    'key': 'e9bb9d40367d9e2b490048a472a6b5e0',
+                    'format': 'iframe',
+                    'height': ${unit.classList.contains('large-ad') ? 90 : 250},
+                    'width': ${unit.classList.contains('large-ad') ? 728 : 300},
+                    'params': {}
+                };
+            }
         `;
         
-        // تعيين محتوى iframe
-        iframe.srcdoc = adHtml;
-        container.appendChild(iframe);
+        const script2 = document.createElement('script');
+        script2.type = 'text/javascript';
+        script2.src = 'https://www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js';
+        script2.async = true;
+        
+        // إضافة العناصر إلى الحاوية
+        container.appendChild(script1);
+        container.appendChild(adDiv);
+        container.appendChild(script2);
+        
+        // طريقة بديلة إذا فشل تحميل الإعلان
+        setTimeout(() => {
+            if (!container.querySelector('iframe') && !container.innerHTML.includes('highperformanceformat')) {
+                loadAdFallback(container, adId, unit.classList.contains('large-ad'));
+            }
+        }, 2000);
     });
+}
+
+// طريقة بديلة لتحميل الإعلان
+function loadAdFallback(container, adId, isLarge = false) {
+    container.innerHTML = '';
+    
+    const width = isLarge ? 728 : 300;
+    const height = isLarge ? 90 : 250;
+    
+    const placeholder = document.createElement('div');
+    placeholder.className = 'ad-placeholder';
+    placeholder.innerHTML = `
+        <i class="fas fa-ad"></i>
+        <span>مساحة إعلانية ${width}×${height}</span>
+        <small>${isLarge ? 'إعلان横幅 كبير' : 'إعلان عمودي'}</small>
+        <div class="ad-info">
+            <strong>معلومات الإعلان:</strong><br>
+            - الحجم: ${width} × ${height} بكسل<br>
+            - النوع: ${isLarge ? '横幅 إعلان' : 'عمودي'}
+        </div>
+    `;
+    
+    container.appendChild(placeholder);
 }
 
 // إعداد زر "عرض المزيد"
@@ -749,13 +803,30 @@ function displaySpecialSection(section) {
             if (specialApps.length === 0) {
                 appsContainer.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>لا توجد تطبيقات في هذا القسم</p></div>';
             } else {
-                appsContainer.innerHTML = specialApps.map(app => createAppCard(app)).join('');
+                let html = '';
+                specialApps.forEach((app, index) => {
+                    html += createAppCard(app);
+                    // إضافة الإعلان تحت كل بطاقة في الأقسام الخاصة أيضاً
+                    html += `
+                        <div class="ad-unit" id="ad-special-${app.id}">
+                            <div class="ad-container">
+                                <div class="ad-content">
+                                    <div class="ad-placeholder ad-loading">
+                                        <i class="fas fa-ad"></i>
+                                        <span>جاري تحميل الإعلان...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                appsContainer.innerHTML = html;
                 setupDescriptionToggle();
                 
                 // تحميل الإعلانات للأقسام الخاصة
                 setTimeout(() => {
                     loadAds();
-                }, 100);
+                }, 500);
             }
         }
         

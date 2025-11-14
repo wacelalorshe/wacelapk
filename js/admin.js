@@ -577,8 +577,8 @@ function getCategoryName(category) {
         'games': 'الألعاب',
         'social': 'التواصل الاجتماعي',
         'entertainment': 'الترفيه',
-        'productivity': 'الإنتاجية',
-        'education': 'التعليم',
+        'productivity': 'فتوغرافي',
+        'education': 'الذكاء الاصطناعي',
         'utility': 'الأدوات'
     };
     return categories[category] || category;

@@ -1413,3 +1413,137 @@ border-right: 0px ridge #fff;
     font-family: Arial, sans-serif;
     letter-spacing: 1px;
 }
+/* أنماط حاوية الإعلان */
+.ad-container, .ad-container-admin {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    text-align: center;
+    position: relative;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ad-container::before, .ad-container-admin::before {
+    content: "إعلان";
+    position: absolute;
+    top: -8px;
+    right: 15px;
+    background: #3498db;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.ad-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #6c757d;
+}
+
+.ad-placeholder i {
+    font-size: 2rem;
+    color: #3498db;
+}
+
+.ad-container iframe, .ad-container-admin iframe {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100% !important;
+    height: 250px !important;
+}
+
+/* أنماط معلومات التاريخ */
+.app-date-info {
+    margin: 10px 0;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    font-size: 0.9rem;
+}
+
+.date-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    margin-bottom: 6px;
+}
+
+.date-item:last-child {
+    margin-bottom: 0;
+}
+
+.date-item i {
+    color: #3498db;
+    width: 16px;
+    text-align: center;
+}
+
+/* تحسين البادجات */
+.badge.featured {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.badge.trending {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.featured-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.trending-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+/* تحسين التصميم للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .ad-container, .ad-container-admin {
+        margin: 15px 0;
+        padding: 10px;
+        min-height: 200px;
+    }
+    
+    .ad-container iframe, .ad-container-admin iframe {
+        height: 200px !important;
+    }
+}

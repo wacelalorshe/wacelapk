@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد
+// js/app.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد والإعلانات
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -156,83 +156,6 @@ const sampleApps = [
         iconURL: '',
         createdAt: new Date('2024-03-11').toISOString(),
         updatedAt: new Date('2024-03-11').toISOString()
-    },
-    {
-        id: '6',
-        name: 'تطبيق الأدوات',
-        description: 'مجموعة متكاملة من الأدوات الذكية التي تحتاجها في حياتك اليومية. بسيط وسهل الاستخدام مع واجهة أنيقة.',
-        version: '1.8.0',
-        size: '19',
-        category: 'utility',
-        downloadURL: 'https://example.com/app6.zip',
-        rating: 4.1,
-        downloads: 1400,
-        shareCount: 23,
-        iconURL: '',
-        createdAt: new Date('2024-03-10').toISOString(),
-        updatedAt: new Date('2024-03-10').toISOString()
-    },
-    {
-        id: '7',
-        name: 'تطبيق التصوير',
-        description: 'التقط صوراً مذهلة واحترافية باستخدام هذا التطبيق المتقدم. يتضمن فلاتر ومؤثرات احترافية.',
-        version: '2.5.0',
-        size: '52',
-        category: 'entertainment',
-        downloadURL: 'https://example.com/app7.zip',
-        rating: 4.4,
-        downloads: 2100,
-        trending: true,
-        shareCount: 78,
-        iconURL: '',
-        createdAt: new Date('2024-03-09').toISOString(),
-        updatedAt: new Date('2024-03-09').toISOString()
-    },
-    {
-        id: '8',
-        name: 'تطبيق اللياقة',
-        description: 'احصل على جسم مثالي مع تمارين يومية وخطط تغذية متكاملة. مناسب للمبتدئين والمحترفين.',
-        version: '1.3.0',
-        size: '38',
-        category: 'utility',
-        downloadURL: 'https://example.com/app8.zip',
-        rating: 4.8,
-        downloads: 1900,
-        shareCount: 45,
-        iconURL: '',
-        createdAt: new Date('2024-03-08').toISOString(),
-        updatedAt: new Date('2024-03-08').toISOString()
-    },
-    {
-        id: '9',
-        name: 'تطبيق السفر',
-        description: 'خطط لرحلاتك واكتشف أماكن جديدة حول العالم. يوفر معلومات شاملة عن الوجهات والفنادق.',
-        version: '2.0.0',
-        size: '31',
-        category: 'utility',
-        downloadURL: 'https://example.com/app9.zip',
-        rating: 4.5,
-        downloads: 2200,
-        shareCount: 67,
-        iconURL: '',
-        createdAt: new Date('2024-03-07').toISOString(),
-        updatedAt: new Date('2024-03-07').toISOString()
-    },
-    {
-        id: '10',
-        name: 'تطبيق التسوق',
-        description: 'تسوق من آلاف المتاجر بأسعار مميزة وعروض حصرية. خدمة توصيل سريعة وموثوقة.',
-        version: '3.1.0',
-        size: '47',
-        category: 'utility',
-        downloadURL: 'https://example.com/app10.zip',
-        rating: 4.3,
-        downloads: 3100,
-        trending: true,
-        shareCount: 89,
-        iconURL: '',
-        createdAt: new Date('2024-03-06').toISOString(),
-        updatedAt: new Date('2024-03-06').toISOString()
     }
 ];
 
@@ -391,6 +314,12 @@ function displayApps(apps) {
     
     appsContainer.innerHTML = apps.map(app => createAppCard(app)).join('');
     setupDescriptionToggle();
+    
+    // تحميل الإعلانات بعد عرض التطبيقات
+    setTimeout(() => {
+        loadAds();
+    }, 100);
+    
     console.log("تم عرض التطبيقات الرئيسية:", apps.length);
 }
 
@@ -450,8 +379,63 @@ function createAppCard(app) {
                     </button>
                 ` : ''}
             </div>
+            
+            <!-- قسم الإعلان -->
+            <div class="ad-container" id="ad-${app.id}">
+                <div class="ad-placeholder">
+                    <i class="fas fa-ad"></i>
+                    <span>جاري تحميل الإعلان...</span>
+                </div>
+            </div>
         </div>
     `;
+}
+
+// تحميل الإعلانات
+function loadAds() {
+    const adContainers = document.querySelectorAll('.ad-container');
+    
+    adContainers.forEach(container => {
+        // مسح المحتوى الحالي
+        container.innerHTML = '';
+        
+        // إنشاء عنصر iframe للإعلان
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.height = '250px';
+        iframe.style.border = 'none';
+        iframe.style.borderRadius = '8px';
+        iframe.scrolling = 'no';
+        
+        // إنشاء محتوى HTML للإعلان
+        const adHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { margin: 0; padding: 0; background: transparent; }
+                </style>
+            </head>
+            <body>
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : 'e9bb9d40367d9e2b490048a472a6b5e0',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js"></script>
+            </body>
+            </html>
+        `;
+        
+        // تعيين محتوى iframe
+        iframe.srcdoc = adHtml;
+        container.appendChild(iframe);
+    });
 }
 
 // إعداد زر "عرض المزيد"
@@ -767,6 +751,11 @@ function displaySpecialSection(section) {
             } else {
                 appsContainer.innerHTML = specialApps.map(app => createAppCard(app)).join('');
                 setupDescriptionToggle();
+                
+                // تحميل الإعلانات للأقسام الخاصة
+                setTimeout(() => {
+                    loadAds();
+                }, 100);
             }
         }
         

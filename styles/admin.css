@@ -729,3 +729,65 @@ small {
         grid-template-columns: 1fr;
     }
 }
+
+
+
+
+/* أنماط معلومات التاريخ */
+.app-date-info {
+    margin: 10px 0;
+    padding: 10px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.date-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.date-item:last-child {
+    margin-bottom: 0;
+}
+
+.date-item i {
+    color: var(--primary-color);
+    width: 16px;
+}
+
+/* تحسين بطاقات التطبيقات في لوحة التحكم */
+.admin-app-card {
+    position: relative;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.admin-app-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* تحسين بطاقات التطبيقات في الصفحة الرئيسية */
+.app-card {
+    position: relative;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.app-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}

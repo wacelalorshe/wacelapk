@@ -1,4 +1,4 @@
-// js/admin.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد
+// js/admin.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد والإعلانات
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -286,6 +286,53 @@ function updateStats() {
     console.log("تم تحديث الإحصائيات:", apps.length);
 }
 
+// تحميل الإعلانات في لوحة التحكم
+function loadAdminAds() {
+    const adContainers = document.querySelectorAll('.ad-container-admin');
+    
+    adContainers.forEach(container => {
+        // مسح المحتوى الحالي
+        container.innerHTML = '';
+        
+        // إنشاء عنصر iframe للإعلان
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.height = '250px';
+        iframe.style.border = 'none';
+        iframe.style.borderRadius = '8px';
+        iframe.scrolling = 'no';
+        
+        // إنشاء محتوى HTML للإعلان
+        const adHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { margin: 0; padding: 0; background: transparent; }
+                </style>
+            </head>
+            <body>
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : 'e9bb9d40367d9e2b490048a472a6b5e0',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js"></script>
+            </body>
+            </html>
+        `;
+        
+        // تعيين محتوى iframe
+        iframe.srcdoc = adHtml;
+        container.appendChild(iframe);
+    });
+}
+
 // عرض التطبيقات في لوحة التحكم
 function displayAdminApps() {
     const container = document.getElementById('adminAppsList');
@@ -360,6 +407,15 @@ function displayAdminApps() {
                     <button class="btn-copy" onclick="copyShareLink('${app.id}')">نسخ</button>
                 </div>
             </div>
+            
+            <!-- قسم الإعلان في لوحة التحكم -->
+            <div class="ad-container-admin" id="ad-admin-${app.id}">
+                <div class="ad-placeholder">
+                    <i class="fas fa-ad"></i>
+                    <span>جاري تحميل الإعلان...</span>
+                </div>
+            </div>
+            
             <div class="admin-app-actions">
                 <button class="btn-edit" onclick="openEditModal(${JSON.stringify(app).replace(/"/g, '&quot;')})">تعديل</button>
                 <button class="btn-share" onclick="generateNewShareLink('${app.id}')">تحديث رابط المشاركة</button>
@@ -376,6 +432,11 @@ function displayAdminApps() {
             this.textContent = description.classList.contains('expanded') ? 'عرض أقل' : 'عرض المزيد';
         });
     });
+    
+    // تحميل الإعلانات بعد عرض التطبيقات
+    setTimeout(() => {
+        loadAdminAds();
+    }, 100);
     
     console.log("تم عرض التطبيقات في لوحة التحكم");
 }

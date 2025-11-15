@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /js/admin.js
+Disallow: /js/create-admin.js
+
+# Sitemaps
+Sitemap: https://wacel-play.netlify.app/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1

@@ -1,11 +1,117 @@
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
- <head> 
-  <meta charset="UTF-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>مشاركة التطبيق - WacelMarkt</title> 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
-  <link rel="stylesheet" href="styles/style.css"> 
-  <style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحميل التطبيق - وسيل بلاي</title>
+    <meta name="description" content="حمّل التطبيق مجاناً من وسيل بلاي - متجر التطبيقات العربي">
+    <meta name="robots" content="index, follow">
+    
+    <!-- سيتم تحديث هذه البيانات ديناميكياً -->
+    <meta property="og:title" content="وسيل بلاي - متجر التطبيقات العربي">
+    <meta property="og:description" content="حمّل أفضل التطبيقات والألعاب مجاناً">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wacel-play.netlify.app">
+    <meta property="og:image" content="https://wacel-play.netlify.app/images/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    
+    <script>
+        // دالة لتحديث بيانات التعريف ديناميكياً
+        function updateMetaTags(app) {
+            if (!app) return;
+            
+            // تحديث العنوان
+            document.title = `${app.name} - تحميل مجاني | وسيل بلاي`;
+            
+            // تحديث وصف الصفحة
+            let metaDescription = document.querySelector('meta[name="description"]');
+            if (!metaDescription) {
+                metaDescription = document.createElement('meta');
+                metaDescription.name = 'description';
+                document.head.appendChild(metaDescription);
+            }
+            metaDescription.content = `${app.description} - حمّل ${app.name} مجاناً من وسيل بلاي. ${app.size}MB | الإصدار ${app.version}`;
+            
+            // تحديث Open Graph
+            updateMetaProperty('og:title', `${app.name} - وسيل بلاي`);
+            updateMetaProperty('og:description', app.description);
+            updateMetaProperty('og:url', window.location.href);
+            
+            if (app.iconURL) {
+                updateMetaProperty('og:image', app.iconURL);
+            }
+            
+            // إضافة Structured Data للتطبيق
+            addAppStructuredData(app);
+        }
+        
+        function updateMetaProperty(property, content) {
+            let meta = document.querySelector(`meta[property="${property}"]`);
+            if (!meta) {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', property);
+                document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', content);
+        }
+        
+        function addAppStructuredData(app) {
+            // إزالة أي Structured Data موجود مسبقاً
+            const existingSchema = document.querySelector('script[type="application/ld+json"]');
+            if (existingSchema) {
+                existingSchema.remove();
+            }
+            
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                "name": app.name,
+                "description": app.description,
+                "applicationCategory": getSchemaCategory(app.category),
+                "operatingSystem": "ANDROID",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                },
+                "author": {
+                    "@type": "Organization",
+                    "name": "وسيل بلاي"
+                },
+                "downloadUrl": app.downloadURL
+            };
+            
+            if (app.rating) {
+                schema.aggregateRating = {
+                    "@type": "AggregateRating",
+                    "ratingValue": app.rating.toString(),
+                    "ratingCount": "100"
+                };
+            }
+            
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.textContent = JSON.stringify(schema);
+            document.head.appendChild(script);
+        }
+        
+        function getSchemaCategory(category) {
+            const categories = {
+                'games': 'GameApplication',
+                'social': 'SocialNetworkingApplication',
+                'entertainment': 'EntertainmentApplication',
+                'productivity': 'BusinessApplication',
+                'education': 'EducationalApplication',
+                'utility': 'UtilityApplication'
+            };
+            return categories[category] || 'MobileApplication';
+        }
+    </script>
+    
+    <style>
+        /* الأنماط الحالية لـ share.html تبقى كما هي */
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
@@ -451,7 +557,7 @@
         </div>
     </main>
 
-  <script type="module">
+    <script type="module">
         // استيراد دوال Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { 
@@ -497,6 +603,9 @@
                         ...appDoc.data()
                     };
                     console.log("تم تحميل التطبيق:", currentApp);
+                    
+                    // تحديث بيانات التعريف
+                    updateMetaTags(currentApp);
                     displayShareContent(currentApp);
                 } else {
                     throw new Error('التطبيق غير موجود في قاعدة البيانات');
@@ -514,7 +623,7 @@
             const shareText = `اكتشف هذا التطبيق الرائع: ${app.name} - ${app.description}`;
             
             const appIcon = app.iconURL 
-                ? `<img src="${app.iconURL}" alt="${app.name}">`
+                ? `<img src="${app.iconURL}" alt="${app.name}" loading="lazy">`
                 : `<i class="${getAppIcon(app.category)}"></i>`;
             
             // التحقق من وجود رابط تحميل
@@ -566,7 +675,7 @@
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-hdd"></i>
-                        <span>${app.size || 'غير محدد'}</span>
+                        <span>${app.size || 'غير محدد'} MB</span>
                     </div>
                 </div>
             `;
@@ -806,61 +915,6 @@
             }, 3000);
         }
 
-        // إضافة أنماط CSS للرسائل المتحركة
-        const messageStyles = `
-            @keyframes slideIn {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-
-            @keyframes slideOut {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-
-            .temp-message {
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                padding: 1rem 1.5rem;
-                border-radius: 10px;
-                box-shadow: var(--shadow-lg);
-                z-index: 3000;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                font-weight: 500;
-                animation: slideIn 0.3s ease-out;
-            }
-
-            .temp-message.success {
-                background: #10b981;
-                color: white;
-            }
-
-            .temp-message.error {
-                background: #ef4444;
-                color: white;
-            }
-        `;
-
-        // إضافة الأنماط إلى الصفحة
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = messageStyles;
-        document.head.appendChild(styleSheet);
-
         // جعل الدوال متاحة globally
         window.shareOnWhatsApp = shareOnWhatsApp;
         window.shareOnTwitter = shareOnTwitter;
@@ -872,5 +926,5 @@
         // تحميل التطبيق عند فتح الصفحة
         document.addEventListener('DOMContentLoaded', loadSharedApp);
     </script> 
- </body>
+</body>
 </html>

@@ -1,0 +1,7 @@
+/*
+  X-Frame-Options: ALLOW-FROM https://wacel-play.netlify.app
+  X-Content-Type-Options: nosniff
+/*
+/sitemap.xml
+  Content-Type: application/xml
+  Access-Control-Allow-Origin: *

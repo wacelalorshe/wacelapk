@@ -2050,3 +2050,90 @@ border-right: 0px ridge #fff;
     font-weight: bold;
     z-index: 2;
 }
+
+
+/* تحسينات للبطاقات القابلة للنقر */
+.app-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* منع اختيار النص في البطاقات */
+.app-card {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* تحسين مظهر الأزرار داخل البطاقات */
+.app-actions button {
+    pointer-events: auto;
+}
+
+/* تحسينات للإعلانات */
+.ad-container, .ad-container-admin {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    text-align: center;
+    position: relative;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ad-container::before, .ad-container-admin::before {
+    content: "إعلان";
+    position: absolute;
+    top: -8px;
+    right: 15px;
+    background: #3498db;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.ad-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #6c757d;
+}
+
+.ad-placeholder i {
+    font-size: 2rem;
+    color: #3498db;
+}
+
+.ad-container iframe, .ad-container-admin iframe {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100% !important;
+    height: 250px !important;
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .ad-container, .ad-container-admin {
+        margin: 15px 0;
+        padding: 10px;
+        min-height: 200px;
+    }
+    
+    .ad-container iframe, .ad-container-admin iframe {
+        height: 200px !important;
+    }
+}

@@ -33,7 +33,7 @@ const adsterraConfig = {
         height: 90
     },
     normalBanner: {
-        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1', // يمكنك تغيير هذا لمفتاح مختلف للإعلان العادي
+        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1',
         width: 300,
         height: 250
     }
@@ -94,187 +94,10 @@ function formatDate(dateString) {
     }
 }
 
-// بيانات تجريبية للاختبار
-const sampleApps = [
-    {
-        id: '1',
-        name: 'تطبيق التواصل الاجتماعي',
-        description: 'تطبيق رائع للتواصل مع الأصدقاء والعائلة مع ميزات متقدمة مثل المراسلة الفورية ومشاركة الصور والفيديو والمحادثات الجماعية. يدعم اللغة العربية بشكل كامل ويتوافق مع جميع الأجهزة.',
-        version: '1.0.0',
-        size: '25',
-        category: 'social',
-        downloadURL: 'https://example.com/app1.zip',
-        rating: 4.5,
-        downloads: 1500,
-        featured: true,
-        trending: true,
-        shareCount: 45,
-        iconURL: '',
-        createdAt: new Date('2024-03-15').toISOString(),
-        updatedAt: new Date('2024-03-15').toISOString()
-    },
-    {
-        id: '2',
-        name: 'تطبيق الألعاب',
-        description: 'ألعاب مسلية ومثيرة للجميع تحتوي على أكثر من 100 لعبة مختلفة. يشمل ألعاب الذكاء والألغاز والرياضة والسباقات. مناسب لجميع الأعمال مع واجهة مستخدم بديهية وسهلة الاستخدام.',
-        version: '2.1.0',
-        size: '45',
-        category: 'games',
-        downloadURL: 'https://example.com/app2.zip',
-        rating: 4.2,
-        downloads: 2300,
-        trending: true,
-        shareCount: 67,
-        iconURL: '',
-        createdAt: new Date('2024-03-14').toISOString(),
-        updatedAt: new Date('2024-03-14').toISOString()
-    },
-    {
-        id: '3',
-        name: 'تطبيق الموسيقى',
-        description: 'استمع إلى ملايين الأغاني والموسيقى من جميع أنحاء العالم. يدعم جميع الأنواع الموسيقية ويوفر تجربة استماع فريدة مع جودة صوت عالية.',
-        version: '1.5.0',
-        size: '35',
-        category: 'entertainment',
-        downloadURL: 'https://example.com/app3.zip',
-        rating: 4.7,
-        downloads: 3200,
-        featured: true,
-        shareCount: 89,
-        iconURL: '',
-        createdAt: new Date('2024-03-13').toISOString(),
-        updatedAt: new Date('2024-03-13').toISOString()
-    },
-    {
-        id: '4',
-        name: 'تطبيق الإنتاجية',
-        description: 'ادفع مهامك وإنتاجيتك إلى مستوى جديد مع هذا التطبيق المميز. يتضمن أدوات لإدارة المهام والتقويم والتذكيرات والمزيد.',
-        version: '3.0.0',
-        size: '28',
-        category: 'productivity',
-        downloadURL: 'https://example.com/app4.zip',
-        rating: 4.3,
-        downloads: 1800,
-        shareCount: 34,
-        iconURL: '',
-        createdAt: new Date('2024-03-12').toISOString(),
-        updatedAt: new Date('2024-03-12').toISOString()
-    },
-    {
-        id: '5',
-        name: 'تطبيق التعليم',
-        description: 'تعلم لغات جديدة ومهارات متنوعة من خلال دورات تفاعلية وشيقة. مناسب لجميع المستويات والأعمار.',
-        version: '2.2.0',
-        size: '42',
-        category: 'education',
-        downloadURL: 'https://example.com/app5.zip',
-        rating: 4.6,
-        downloads: 2700,
-        featured: true,
-        shareCount: 56,
-        iconURL: '',
-        createdAt: new Date('2024-03-11').toISOString(),
-        updatedAt: new Date('2024-03-11').toISOString()
-    },
-    {
-        id: '6',
-        name: 'تطبيق الأدوات',
-        description: 'مجموعة متكاملة من الأدوات الذكية التي تحتاجها في حياتك اليومية. بسيط وسهل الاستخدام مع واجهة أنيقة.',
-        version: '1.8.0',
-        size: '19',
-        category: 'utility',
-        downloadURL: 'https://example.com/app6.zip',
-        rating: 4.1,
-        downloads: 1400,
-        shareCount: 23,
-        iconURL: '',
-        createdAt: new Date('2024-03-10').toISOString(),
-        updatedAt: new Date('2024-03-10').toISOString()
-    },
-    {
-        id: '7',
-        name: 'تطبيق التصوير',
-        description: 'التقط صوراً مذهلة واحترافية باستخدام هذا التطبيق المتقدم. يتضمن فلاتر ومؤثرات احترافية.',
-        version: '2.5.0',
-        size: '52',
-        category: 'entertainment',
-        downloadURL: 'https://example.com/app7.zip',
-        rating: 4.4,
-        downloads: 2100,
-        trending: true,
-        shareCount: 78,
-        iconURL: '',
-        createdAt: new Date('2024-03-09').toISOString(),
-        updatedAt: new Date('2024-03-09').toISOString()
-    },
-    {
-        id: '8',
-        name: 'تطبيق اللياقة',
-        description: 'احصل على جسم مثالي مع تمارين يومية وخطط تغذية متكاملة. مناسب للمبتدئين والمحترفين.',
-        version: '1.3.0',
-        size: '38',
-        category: 'utility',
-        downloadURL: 'https://example.com/app8.zip',
-        rating: 4.8,
-        downloads: 1900,
-        shareCount: 45,
-        iconURL: '',
-        createdAt: new Date('2024-03-08').toISOString(),
-        updatedAt: new Date('2024-03-08').toISOString()
-    }
-];
-
-// تحميل إعلان البانر العلوي
-function loadBannerAd() {
-    const bannerContainer = document.getElementById('topBannerAd');
-    if (!bannerContainer) return;
-
-    const script1 = document.createElement('script');
-    script1.type = 'text/javascript';
-    script1.innerHTML = `
-        atOptions = {
-            'key' : '${adsterraConfig.banner.key}',
-            'format' : 'iframe',
-            'height' : ${adsterraConfig.banner.height},
-            'width' : ${adsterraConfig.banner.width},
-            'params' : {}
-        };
-    `;
-
-    const script2 = document.createElement('script');
-    script2.type = 'text/javascript';
-    script2.src = '//www.highperformanceformat.com/' + adsterraConfig.banner.key + '/invoke.js';
-    script2.async = true;
-
-    bannerContainer.appendChild(script1);
-    bannerContainer.appendChild(script2);
-}
-
-// تحميل الإعلان المنبثق
-function loadPopunderAd() {
-    // لا تحميل للمسؤولين
-    if (isAdmin()) return;
-    
-    // تحميل مرة واحدة فقط في الجلسة
-    if (sessionStorage.getItem('popunderLoaded')) return;
-
-    setTimeout(() => {
-        const popunderScript = document.createElement('script');
-        popunderScript.type = 'text/javascript';
-        popunderScript.src = adsterraConfig.popunder.script;
-        popunderScript.async = true;
-        
-        document.body.appendChild(popunderScript);
-        
-        // وضع علامة أن الإعلان تم تحميله
-        sessionStorage.setItem('popunderLoaded', 'true');
-    }, 3000); // تأخير 3 ثواني
-}
-
 // إنشاء رابط المشاركة
 function generateShareLink(appId) {
     const baseUrl = window.location.origin + window.location.pathname;
-    return `${baseUrl}share.html?app=${appId}`;
+    return `${baseUrl.replace('index.html', '')}share.html?app=${appId}`;
 }
 
 // مشاركة التطبيق
@@ -331,8 +154,7 @@ async function loadApps() {
             });
             console.log("تم تحميل التطبيقات من Firebase:", allApps.length);
         } else {
-            allApps = sampleApps;
-            console.log("تم استخدام البيانات التجريبية:", allApps.length);
+            console.log("لا توجد تطبيقات في قاعدة البيانات");
         }
         
         // الترتيب: المميزة أولاً، ثم الشائعة، ثم المحدثة حديثاً
@@ -354,28 +176,12 @@ async function loadApps() {
     } catch (error) {
         console.error("خطأ في تحميل التطبيقات:", error);
         
-        allApps = sampleApps;
-        allApps.sort((a, b) => {
-            if (a.featured && !b.featured) return -1;
-            if (!a.featured && b.featured) return 1;
-            
-            if (a.trending && !b.trending) return -1;
-            if (!a.trending && b.trending) return 1;
-            
-            const aDate = a.updatedAt || a.createdAt;
-            const bDate = b.updatedAt || b.createdAt;
-            return new Date(bDate) - new Date(aDate);
-        });
-        
-        displayApps(allApps.slice(0, visibleAppsCount));
-        setupLoadMoreButton();
-        
         const appsContainer = document.getElementById('apps-list');
         if (appsContainer) {
             appsContainer.innerHTML = `
                 <div class="error-state">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <p>تم تحميل بيانات تجريبية للعرض</p>
+                    <p>خطأ في تحميل التطبيقات</p>
                     <small>${error.message}</small>
                 </div>
             `;
@@ -437,7 +243,23 @@ function displayApps(apps) {
     appsContainer.innerHTML = html;
     setupDescriptionToggle();
     
+    // إضافة event listeners للبطاقات
     setTimeout(() => {
+        document.querySelectorAll('.app-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // منع فتح رابط المشاركة إذا تم النقر على زر
+                if (e.target.closest('.app-actions')) {
+                    return;
+                }
+                
+                const appId = this.getAttribute('data-id');
+                if (appId) {
+                    const shareUrl = generateShareLink(appId);
+                    window.open(shareUrl, '_blank');
+                }
+            });
+        });
+        
         loadAds();
     }, 500);
     
@@ -454,7 +276,7 @@ function createAppCard(app) {
         : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
     
     return `
-        <div class="app-card" data-category="${app.category}" data-id="${app.id}">
+        <div class="app-card" data-category="${app.category}" data-id="${app.id}" style="cursor: pointer;">
             <div class="app-header">
                 ${appIcon}
                 <div class="app-info">
@@ -486,15 +308,15 @@ function createAppCard(app) {
             ${app.featured ? '<div class="featured-badge">⭐ مميز</div>' : ''}
             ${app.trending ? '<div class="trending-badge">🔥 شائع</div>' : ''}
             <div class="app-actions">
-                <button class="download-btn" onclick="downloadApp('${app.downloadURL}', '${app.id}')">
+                <button class="download-btn" onclick="event.stopPropagation(); downloadApp('${app.downloadURL}', '${app.id}')">
                     <i class="fas fa-download"></i>
                     تحميل
                 </button>
-                <button class="share-btn" onclick="shareApp('${app.id}', '${app.name}')">
+                <button class="share-btn" onclick="event.stopPropagation(); shareApp('${app.id}', '${app.name}')">
                     <i class="fas fa-share-alt"></i>
                 </button>
                 ${isAdmin() ? `
-                    <button class="delete-btn" onclick="deleteApp('${app.id}')">
+                    <button class="delete-btn" onclick="event.stopPropagation(); deleteApp('${app.id}')">
                         <i class="fas fa-trash"></i>
                     </button>
                 ` : ''}
@@ -601,7 +423,8 @@ function updateCurrentDisplay() {
 // إضافة مستمعات الأحداث لعرض المزيد
 function setupDescriptionToggle() {
     document.querySelectorAll('.show-more').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
             const description = this.previousElementSibling;
             description.classList.toggle('expanded');
             this.textContent = description.classList.contains('expanded') ? 'عرض أقل' : 'عرض المزيد';
@@ -738,10 +561,10 @@ function downloadApp(downloadURL, appId) {
         updateCurrentDisplay();
     }
     
-    if (downloadURL && downloadURL !== 'https://example.com/app1.zip') {
+    if (downloadURL && downloadURL.startsWith('http')) {
         window.open(downloadURL, '_blank');
     } else {
-        alert('هذا رابط تجريبي. في التطبيق الحقيقي، سيبدأ التحميل.');
+        alert('رابط التحميل غير متوفر حالياً');
     }
     
     showTempMessage('جاري تحميل التطبيق...', 'success');
@@ -755,7 +578,7 @@ async function deleteApp(appId) {
         console.log("جاري حذف التطبيق:", appId);
         
         const app = allApps.find(app => app.id === appId);
-        if (app && !sampleApps.some(sample => sample.id === appId)) {
+        if (app) {
             await deleteDoc(doc(db, "apps", appId));
         }
         
@@ -814,6 +637,53 @@ function showTempMessage(text, type) {
             }
         }, 300);
     }, 3000);
+}
+
+// تحميل إعلان البانر العلوي
+function loadBannerAd() {
+    const bannerContainer = document.getElementById('topBannerAd');
+    if (!bannerContainer) return;
+
+    const script1 = document.createElement('script');
+    script1.type = 'text/javascript';
+    script1.innerHTML = `
+        atOptions = {
+            'key' : '${adsterraConfig.banner.key}',
+            'format' : 'iframe',
+            'height' : ${adsterraConfig.banner.height},
+            'width' : ${adsterraConfig.banner.width},
+            'params' : {}
+        };
+    `;
+
+    const script2 = document.createElement('script');
+    script2.type = 'text/javascript';
+    script2.src = '//www.highperformanceformat.com/' + adsterraConfig.banner.key + '/invoke.js';
+    script2.async = true;
+
+    bannerContainer.appendChild(script1);
+    bannerContainer.appendChild(script2);
+}
+
+// تحميل الإعلان المنبثق
+function loadPopunderAd() {
+    // لا تحميل للمسؤولين
+    if (isAdmin()) return;
+    
+    // تحميل مرة واحدة فقط في الجلسة
+    if (sessionStorage.getItem('popunderLoaded')) return;
+
+    setTimeout(() => {
+        const popunderScript = document.createElement('script');
+        popunderScript.type = 'text/javascript';
+        popunderScript.src = adsterraConfig.popunder.script;
+        popunderScript.async = true;
+        
+        document.body.appendChild(popunderScript);
+        
+        // وضع علامة أن الإعلان تم تحميله
+        sessionStorage.setItem('popunderLoaded', 'true');
+    }, 3000); // تأخير 3 ثواني
 }
 
 // عرض الأقسام الخاصة

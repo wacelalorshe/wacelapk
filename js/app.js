@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحدث مع توزيع الإعلانات الجديد
+// js/app.js - الإصدار المحدث مع إضافة زر عرض التفاصيل
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -98,6 +98,12 @@ function formatDate(dateString) {
 function generateShareLink(appId) {
     const baseUrl = window.location.origin + window.location.pathname;
     return `${baseUrl.replace('index.html', '')}share.html?app=${appId}`;
+}
+
+// فتح صفحة التفاصيل
+function openAppDetails(appId) {
+    const shareUrl = generateShareLink(appId);
+    window.open(shareUrl, '_blank');
 }
 
 // مشاركة التطبيق
@@ -308,6 +314,10 @@ function createAppCard(app) {
             ${app.featured ? '<div class="featured-badge">⭐ مميز</div>' : ''}
             ${app.trending ? '<div class="trending-badge">🔥 شائع</div>' : ''}
             <div class="app-actions">
+                <button class="details-btn" onclick="event.stopPropagation(); openAppDetails('${app.id}')">
+                    <i class="fas fa-info-circle"></i>
+                    عرض التفاصيل
+                </button>
                 <button class="download-btn" onclick="event.stopPropagation(); downloadApp('${app.downloadURL}', '${app.id}')">
                     <i class="fas fa-download"></i>
                     تحميل
@@ -867,3 +877,4 @@ window.downloadApp = downloadApp;
 window.deleteApp = deleteApp;
 window.shareApp = shareApp;
 window.displaySpecialSection = displaySpecialSection;
+window.openAppDetails = openAppDetails;

@@ -1,99 +1,40 @@
-// js/admin.js - الإصدار المحدث مع التاريخ الميلادي والترتيب الجديد والإعلانات
-import { db } from './firebase-config.js';
-
-// استيراد دوال Firebase مباشرة
-import { 
-    collection, 
-    addDoc, 
-    getDocs, 
-    deleteDoc, 
-    doc,
-    updateDoc,
-    query,
-    orderBy
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
-// إعدادات Adsterra
-const adsterraConfig = {
-    banner: {
-        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1',
-        width: 320,
-        height: 50
-    },
-    popunder: {
-        script: '//pl28054761.effectivegatecpm.com/77/fa/de/77fade1a0c22ec2f2f9c4fb8723f5119.js'
-    },
-    largeBanner: {
-        key: 'b2aa6af095dd52e3abeff8d9a46bcf2b',
-        width: 728,
-        height: 90
-    },
-    normalBanner: {
-        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1',
-        width: 300,
-        height: 250
-    }
-};
+// js/admin.js - الإصدار المعدل للعمل بدون import
+console.log("تحميل لوحة التحكم...");
 
 let apps = [];
 let currentEditingApp = null;
 let searchTerm = '';
 
-// تنسيق التاريخ والوقت للعرض (الميلادي بالعربية)
+// تنسيق التاريخ والوقت للعرض
 function formatDateTime(dateString) {
     if (!dateString) return 'غير محدد';
-    const date = new Date(dateString);
-    
     try {
-        // تنسيق التاريخ
-        const dateOptions = {
-            year: 'numeric',
-            month: 'long',
+        const date = new Date(dateString);
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
             day: 'numeric',
-            calendar: 'gregory',
-            numberingSystem: 'arab'
-        };
-        
-        // تنسيق الوقت
-        const timeOptions = {
-            hour: '2-digit',
-            minute: '2-digit',
-            numberingSystem: 'arab'
-        };
-        
-        const datePart = date.toLocaleDateString('ar-SA', dateOptions);
-        const timePart = date.toLocaleTimeString('ar-SA', timeOptions);
-        return `${datePart} - ${timePart}`;
-    } catch (error) {
-        // Fallback في حالة وجود خطأ
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        const hour = date.getHours();
-        const minute = date.getMinutes();
-        return `${day}/${month}/${year} ${hour}:${minute}`;
-    }
-}
-
-// تنسيق التاريخ فقط (بدون وقت)
-function formatDate(dateString) {
-    if (!dateString) return 'غير محدد';
-    const date = new Date(dateString);
-    
-    try {
-        const options = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            calendar: 'gregory',
-            numberingSystem: 'arab'
+            calendar: 'gregory'
         };
         return date.toLocaleDateString('ar-SA', options);
     } catch (error) {
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
+        return 'غير محدد';
+    }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    try {
+        const date = new Date(dateString);
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            calendar: 'gregory'
+        };
+        return date.toLocaleDateString('ar-SA', options);
+    } catch (error) {
+        return 'غير محدد';
     }
 }
 
@@ -159,8 +100,17 @@ async function updateApp(e) {
 
     try {
         // تحديث التطبيق في Firebase
-        await updateDoc(doc(db, "apps", appId), appData);
-        showMessage('تم تحديث التطبيق بنجاح!', 'success');
+        if (window.firebaseDb) {
+            await firebaseDb.doc(`apps/${appId}`).update(appData);
+            showMessage('تم تحديث التطبيق بنجاح!', 'success');
+        } else {
+            // تحديث محلي للبيانات التجريبية
+            const appIndex = apps.findIndex(app => app.id === appId);
+            if (appIndex !== -1) {
+                apps[appIndex] = { ...apps[appIndex], ...appData };
+                showMessage('تم تحديث التطبيق بنجاح (محلي)!', 'success');
+            }
+        }
         
         // إغلاق النافذة
         closeEditModal();
@@ -183,10 +133,12 @@ function searchAdminApps() {
     
     // إظهار زر إعادة الضبط إذا كان هناك بحث
     const clearSearchBtn = document.querySelector('.clear-search-btn');
-    if (searchTerm) {
-        clearSearchBtn.style.display = 'flex';
-    } else {
-        clearSearchBtn.style.display = 'none';
+    if (clearSearchBtn) {
+        if (searchTerm) {
+            clearSearchBtn.style.display = 'flex';
+        } else {
+            clearSearchBtn.style.display = 'none';
+        }
     }
     
     displayAdminApps();
@@ -196,12 +148,16 @@ function searchAdminApps() {
 // مسح البحث
 function clearAdminSearch() {
     const searchInput = document.getElementById('adminSearchInput');
-    searchInput.value = '';
+    if (searchInput) {
+        searchInput.value = '';
+    }
     searchTerm = '';
     
     // إخفاء زر إعادة الضبط
     const clearSearchBtn = document.querySelector('.clear-search-btn');
-    clearSearchBtn.style.display = 'none';
+    if (clearSearchBtn) {
+        clearSearchBtn.style.display = 'none';
+    }
     
     displayAdminApps();
     updateSearchStats();
@@ -218,11 +174,11 @@ function updateSearchStats() {
             app.description.toLowerCase().includes(searchTerm) ||
             getCategoryName(app.category).toLowerCase().includes(searchTerm)
         );
-        searchResultsCount.textContent = filteredApps.length;
-        appsCount.textContent = `(${filteredApps.length} تطبيق - نتائج البحث)`;
+        if (searchResultsCount) searchResultsCount.textContent = filteredApps.length;
+        if (appsCount) appsCount.textContent = `(${filteredApps.length} تطبيق - نتائج البحث)`;
     } else {
-        searchResultsCount.textContent = '-';
-        appsCount.textContent = `(${apps.length} تطبيق)`;
+        if (searchResultsCount) searchResultsCount.textContent = '-';
+        if (appsCount) appsCount.textContent = `(${apps.length} تطبيق)`;
     }
 }
 
@@ -264,28 +220,67 @@ async function loadAdminApps() {
     try {
         console.log("بدء تحميل التطبيقات...");
         
-        // جلب جميع التطبيات بدون ترتيب أولي
-        const querySnapshot = await getDocs(collection(db, "apps"));
-        apps = [];
-        
-        querySnapshot.forEach((doc) => {
-            apps.push({
-                id: doc.id,
-                ...doc.data()
+        // محاولة التحميل من Firebase
+        if (window.firebaseDb) {
+            const querySnapshot = await firebaseDb.collection("apps").get();
+            apps = [];
+            
+            querySnapshot.forEach((doc) => {
+                apps.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
             });
-        });
+            
+            console.log("تم تحميل التطبيقات من Firebase:", apps.length);
+        } else {
+            // استخدام بيانات تجريبية
+            apps = [
+                {
+                    id: '1',
+                    name: 'تطبيق التواصل الاجتماعي',
+                    description: 'تطبيق رائع للتواصل مع الأصدقاء والعائلة مع ميزات متقدمة.',
+                    version: '1.0.0',
+                    size: '25',
+                    category: 'social',
+                    downloadURL: 'https://example.com/app1.zip',
+                    rating: 4.5,
+                    downloads: 1500,
+                    featured: true,
+                    trending: true,
+                    shareCount: 45,
+                    iconURL: '',
+                    createdAt: new Date('2024-03-15').toISOString(),
+                    updatedAt: new Date('2024-03-15').toISOString()
+                },
+                {
+                    id: '2',
+                    name: 'تطبيق الألعاب',
+                    description: 'ألعاب مسلية ومثيرة للجميع تحتوي على أكثر من 100 لعبة مختلفة.',
+                    version: '2.1.0',
+                    size: '45',
+                    category: 'games',
+                    downloadURL: 'https://example.com/app2.zip',
+                    rating: 4.2,
+                    downloads: 2300,
+                    trending: true,
+                    shareCount: 67,
+                    iconURL: '',
+                    createdAt: new Date('2024-03-14').toISOString(),
+                    updatedAt: new Date('2024-03-14').toISOString()
+                }
+            ];
+            console.log("استخدام البيانات التجريبية (Firebase غير متوفر):", apps.length);
+        }
         
         // الترتيب المخصص: المميزة أولاً، ثم الشائعة، ثم المحدثة حديثاً
         apps.sort((a, b) => {
-            // 1. التطبيقات المميزة أولاً
             if (a.featured && !b.featured) return -1;
             if (!a.featured && b.featured) return 1;
             
-            // 2. التطبيقات الشائعة ثانياً
             if (a.trending && !b.trending) return -1;
             if (!a.trending && b.trending) return 1;
             
-            // 3. الأحدث تحديثاً ثالثاً
             const aDate = a.updatedAt || a.createdAt;
             const bDate = b.updatedAt || b.createdAt;
             return new Date(bDate) - new Date(aDate);
@@ -296,64 +291,28 @@ async function loadAdminApps() {
         displayAdminApps();
     } catch (error) {
         console.error("Error loading apps:", error);
-        document.getElementById('adminAppsList').innerHTML = '<p style="color: red;">خطأ في تحميل التطبيقات: ' + error.message + '</p>';
+        const adminAppsList = document.getElementById('adminAppsList');
+        if (adminAppsList) {
+            adminAppsList.innerHTML = '<p style="color: red;">خطأ في تحميل التطبيقات: ' + error.message + '</p>';
+        }
     }
 }
 
 // تحديث الإحصائيات
 function updateStats() {
-    document.getElementById('totalApps').textContent = apps.length;
-    document.getElementById('activeApps').textContent = apps.length;
+    const totalApps = document.getElementById('totalApps');
+    const activeApps = document.getElementById('activeApps');
+    
+    if (totalApps) totalApps.textContent = apps.length;
+    if (activeApps) activeApps.textContent = apps.length;
     updateSearchStats();
     console.log("تم تحديث الإحصائيات:", apps.length);
-}
-
-// تحميل الإعلانات في لوحة التحكم
-function loadAdminAds() {
-    const adContainers = document.querySelectorAll('.ad-container-admin');
-    
-    adContainers.forEach((container, index) => {
-        container.innerHTML = '';
-        
-        const adId = `ad-admin-${Date.now()}-${index}`;
-        const adConfig = adsterraConfig.normalBanner;
-        
-        const adDiv = document.createElement('div');
-        adDiv.id = adId;
-        adDiv.className = 'ad-content';
-        
-        const script1 = document.createElement('script');
-        script1.type = 'text/javascript';
-        script1.innerHTML = `
-            atOptions = {
-                'key' : '${adConfig.key}',
-                'format' : 'iframe',
-                'height' : ${adConfig.height},
-                'width' : ${adConfig.width},
-                'params' : {}
-            };
-        `;
-        
-        const script2 = document.createElement('script');
-        script2.type = 'text/javascript';
-        script2.src = '//www.highperformanceformat.com/' + adConfig.key + '/invoke.js';
-        script2.async = true;
-        
-        container.appendChild(script1);
-        container.appendChild(adDiv);
-        container.appendChild(script2);
-        
-        setTimeout(() => {
-            if (!container.querySelector('iframe') && !container.innerHTML.includes('highperformanceformat')) {
-                container.innerHTML = '<div class="ad-placeholder">إعلان</div>';
-            }
-        }, 2000);
-    });
 }
 
 // عرض التطبيقات في لوحة التحكم
 function displayAdminApps() {
     const container = document.getElementById('adminAppsList');
+    if (!container) return;
     
     // تصفية التطبيقات حسب البحث
     let filteredApps = apps;
@@ -383,7 +342,7 @@ function displayAdminApps() {
     container.innerHTML = filteredApps.map(app => `
         <div class="admin-app-card">
             <div class="app-header">
-                ${app.iconURL ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}"></div>` : 
+                ${app.iconURL ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'${getAppIcon(app.category)}\\'></i>'"></div>` : 
                   `<div class="app-icon"><i class="${getAppIcon(app.category)}"></i></div>`}
                 <div class="app-info">
                     <h4>${app.name}</h4>
@@ -421,16 +380,9 @@ function displayAdminApps() {
             <div class="share-link-section">
                 <label>رابط المشاركة:</label>
                 <div class="share-link-container">
+                    <a href="${generateShareLink(app.id)}" target="_blank" class="share-link-preview">فتح صفحة المشاركة</a>
                     <input type="text" id="shareLink-${app.id}" value="${generateShareLink(app.id)}" readonly class="share-link-input">
                     <button class="btn-copy" onclick="copyShareLink('${app.id}')">نسخ</button>
-                </div>
-            </div>
-            
-            <!-- قسم الإعلان في لوحة التحكم -->
-            <div class="ad-container-admin" id="ad-admin-${app.id}">
-                <div class="ad-placeholder">
-                    <i class="fas fa-ad"></i>
-                    <span>جاري تحميل الإعلان...</span>
                 </div>
             </div>
             
@@ -446,15 +398,15 @@ function displayAdminApps() {
     document.querySelectorAll('.show-more').forEach(btn => {
         btn.addEventListener('click', function() {
             const description = this.previousElementSibling;
-            description.classList.toggle('expanded');
-            this.textContent = description.classList.contains('expanded') ? 'عرض أقل' : 'عرض المزيد';
+            if (description.classList.contains('expanded')) {
+                description.classList.remove('expanded');
+                this.textContent = 'عرض المزيد';
+            } else {
+                description.classList.add('expanded');
+                this.textContent = 'عرض أقل';
+            }
         });
     });
-    
-    // تحميل الإعلانات بعد عرض التطبيقات
-    setTimeout(() => {
-        loadAdminAds();
-    }, 100);
     
     console.log("تم عرض التطبيقات في لوحة التحكم");
 }
@@ -512,12 +464,20 @@ function initializeAddAppForm() {
 
         try {
             // إضافة التطبيق إلى Firebase
-            console.log("جاري إضافة التطبيق إلى Firebase...");
-            const docRef = await addDoc(collection(db, "apps"), appData);
-            console.log("تم إضافة التطبيق بنجاح! ID:", docRef.id);
-
-            // إظهار رسالة النجاح
-            showMessage('تم إضافة التطبيق بنجاح!', 'success');
+            if (window.firebaseDb) {
+                console.log("جاري إضافة التطبيق إلى Firebase...");
+                const docRef = await firebaseDb.collection("apps").add(appData);
+                console.log("تم إضافة التطبيق بنجاح! ID:", docRef.id);
+                showMessage('تم إضافة التطبيق بنجاح!', 'success');
+            } else {
+                // إضافة محلية للبيانات التجريبية
+                const newApp = {
+                    ...appData,
+                    id: 'app-' + Date.now()
+                };
+                apps.push(newApp);
+                showMessage('تم إضافة التطبيق بنجاح (محلي)!', 'success');
+            }
 
             // إعادة تعيين النموذج
             form.reset();
@@ -567,7 +527,14 @@ async function deleteAdminApp(appId) {
     
     try {
         console.log("جاري حذف التطبيق:", appId);
-        await deleteDoc(doc(db, "apps", appId));
+        
+        if (window.firebaseDb) {
+            await firebaseDb.doc(`apps/${appId}`).delete();
+        } else {
+            // حذف محلي للبيانات التجريبية
+            apps = apps.filter(app => app.id !== appId);
+        }
+        
         showMessage('تم حذف التطبيق بنجاح', 'success');
         await loadAdminApps(); // إعادة تحميل القائمة
     } catch (error) {

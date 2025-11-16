@@ -1,61 +1,18 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-    <meta name="google-site-verification" content="yv8Fapy9yxl2XxCh03uMYT4h-T8OShA4EnsGmg_Hbh0" />
+   <meta name="google-site-verification" content="yv8Fapy9yxl2XxCh03uMYT4h-T8OShA4EnsGmg_Hbh0" /> 
 <head>
+
     <meta name="google-site-verification" content="yv8Fapy9yxl2XxCh03uMYT4h-T8OShA4EnsGmg_Hbh0" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>وسيل بلاي - متجر التطبيقات العربي المجاني | تحميل تطبيقات وألعاب</title>
-    <meta name="description" content="وسيل بلاي - متجر التطبيقات العربي المجاني لتحميل أحدث التطبيقات والألعاب للاندرويد. تطبيقات التواصل، الألعاب، الإنتاجية، الذكاء الاصطناعي والأدوات مجاناً">
-    <meta name="keywords" content="تطبيقات, ألعاب, تحميل تطبيقات, وسيل بلاي, متجر تطبيقات, تطبيقات مجانية, تطبيقات اندرويد, العاب اندرويد, برامج موبايل">
-    <meta name="author" content="وسيل بلاي">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="وسيل بلاي - متجر التطبيقات العربي المجاني">
-    <meta property="og:description" content="حمّل أفضل التطبيقات والألعاب مجاناً من وسيل بلاي - متجر التطبيقات العربي الرائد">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://wacel-play.netlify.app">
-    <meta property="og:image" content="https://wacel-play.netlify.app/images/og-image.jpg">
-    <meta property="og:locale" content="ar_AR">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="وسيل بلاي - متجر التطبيقات العربي المجاني">
-    <meta name="twitter:description" content="حمّل أفضل التطبيقات والألعاب مجاناً من وسيل بلاي">
-    <meta name="twitter:image" content="https://wacel-play.netlify.app/images/twitter-image.jpg">
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "وسيل بلاي",
-        "description": "متجر تطبيقات عربي مجاني لتحميل أفضل التطبيقات والألعاب للهواتف الذكية",
-        "url": "https://wacel-play.netlify.app",
-        "applicationCategory": "SoftwareApplication",
-        "operatingSystem": "Android, iOS",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "author": {
-            "@type": "Organization",
-            "name": "وسيل بلاي",
-            "url": "https://wacel-play.netlify.app"
-        },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "ratingCount": "1500"
-        }
-    }
-    </script>
-    
+    <title>Wacel play-وسـيـل بلاي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="canonical" href="https://wacel-play.netlify.app/" />
+    <!-- إضافة Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 </head>
 <body>
     <!-- الشريط العلوي -->
@@ -78,34 +35,13 @@
         </div>
     </nav>
 
-    <!-- إعلان البانر العلوي (320x50) -->
-    <div class="top-banner-ad">
-        <div class="banner-ad-container" id="topBannerAd">
-            <!-- سيتم تحميل إعلان البانر هنا -->
-        </div>
-    </div>
-
-    <!-- شريط البحث المنبثق -->
-    <div id="searchModal" class="modal">
-        <div class="modal-content search-modal">
-            <span class="close">&times;</span>
-            <div class="search-container">
-                <div class="search-bar">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
-                    <button class="search-btn" onclick="performSearch()">بحث</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- المحتوى الرئيسي -->
     <main class="main-content">
         <!-- قسم الهيرو -->
         <section class="hero-section">
             <div class="hero-content">
-                <h1 class="hero-title">وسيل بلاي - متجر التطبيقات العربي المجاني</h1>
-                <p class="hero-subtitle">احصل على أفضل التطبيقات المدفوعة والألعاب مجاناً من وسيل بلاي - المنصة العربية الرائدة لتحميل تطبيقات الاندرويد</p>
+                <h1 class="hero-title">اكتشف عالم التطبيقات</h1>
+                <p class="hero-subtitle">احصل على أفضل التطبيقات المدفوعة من وسيل ستور مجانا </p>
             </div>
         </section>
 
@@ -148,7 +84,7 @@
         <!-- جميع التطبيقات -->
         <section class="all-apps-section">
             <div class="section-header">
-                <h2 class="section-title">تطبيقات وسيل بلاي - مكتبة شاملة للبرامج والألعاب</h2>
+                <h2 class="section-title">كل التطبيقات</h2>
             </div>
             <div id="apps-list" class="apps-grid">
                 <div class="loading-state">
@@ -183,7 +119,7 @@
             
             <div id="featured-section" class="special-section-content" style="display: none;">
                 <div class="section-header">
-                    <h2 class="section-title">تطبيقات مقترحة لك من وسيل بلاي</h2>
+                    <h2 class="section-title">مقترحة لك</h2>
                 </div>
                 <div id="featured-apps" class="apps-grid">
                     <!-- سيتم تعبئة التطبيقات المميزة هنا -->
@@ -192,7 +128,7 @@
             
             <div id="trending-section" class="special-section-content" style="display: none;">
                 <div class="section-header">
-                    <h2 class="section-title">التطبيقات الأكثر تحميلاً من وسيل بلاي</h2>
+                    <h2 class="section-title">الأكثر رواجاً</h2>
                 </div>
                 <div id="trending-apps" class="apps-grid">
                     <!-- سيتم تعبئة التطبيقات الشائعة هنا -->
@@ -201,51 +137,10 @@
             
             <div id="top-section" class="special-section-content" style="display: none;">
                 <div class="section-header">
-                    <h2 class="section-title">تطبيقات وسيل بلاي المميزة والأعلى تقييماً</h2>
+                    <h2 class="section-title">التطبيقات المميزة</h2>
                 </div>
                 <div id="top-apps" class="apps-grid">
                     <!-- سيتم تعبئة التطبيقات المميزة هنا -->
-                </div>
-            </div>
-        </section>
-
-        <!-- محتوى SEO إضافي -->
-        <section class="seo-content-section" style="background: var(--bg-secondary); padding: 3rem 0; margin: 2rem 0;">
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
-                <h2 style="color: var(--text-primary); margin-bottom: 1.5rem; text-align: center;">وسيل بلاي - أفضل متجر تطبيقات عربي مجاني</h2>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div>
-                        <h3 style="color: var(--primary); margin-bottom: 1rem;">🎯 لماذا تختار وسيل بلاي؟</h3>
-                        <ul style="color: var(--text-secondary); line-height: 1.8;">
-                            <li>تطبيقات أندرويد مجانية 100%</li>
-                            <li>أحدث الألعاب المدفوعة مجاناً</li>
-                            <li>تحديثات يومية للتطبيقات</li>
-                            <li>دعم كامل للغة العربية</li>
-                            <li>تحميل مباشر بدون إعلانات مزعجة</li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h3 style="color: var(--primary); margin-bottom: 1rem;">📱 فئات التطبيقات</h3>
-                        <ul style="color: var(--text-secondary); line-height: 1.8;">
-                            <li><strong>تطبيقات التواصل:</strong> واتساب، انستغرام، تيك توك</li>
-                            <li><strong>ألعاب أندرويد:</strong> ألعاب أكشن، ألغاز، رياضية</li>
-                            <li><strong>تطبيقات الإنتاجية:</strong> أدوات العمل، المذكرات</li>
-                            <li><strong>الذكاء الاصطناعي:</strong> تطبيقات AI متقدمة</li>
-                            <li><strong>الأدوات المساعدة:</strong> تطبيقات تحسين الأداء</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 10px; box-shadow: var(--shadow);">
-                    <h3 style="color: var(--text-primary); margin-bottom: 1rem;">ℹ️ عن وسيل بلاي</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.7;">
-                        وسيل بلاي هو المنصة العربية المتخصصة في توفير أفضل التطبيقات والألعاب المجانية لمستخدمي أندرويد. 
-                        نقدم تجربة تحميل سلسة وآمنة مع تحديثات مستمرة لأحدث الإصدارات. 
-                        سواء كنت تبحث عن تطبيقات التواصل الاجتماعي، الألعاب المسلية، أو أدوات العمل، 
-                        ستجد كل ما تحتاجه في متجر وسيل بلاي.
-                    </p>
                 </div>
             </div>
         </section>
@@ -288,6 +183,20 @@
         </div>
     </nav>
 
+    <!-- شريط البحث المنبثق -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content search-modal">
+            <span class="close">&times;</span>
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث عن التطبيقات...">
+                    <button class="search-btn" onclick="performSearch()">بحث</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- نموذج تسجيل الدخول -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
@@ -314,231 +223,10 @@
         </div>
     </div>
 
-    <script type="module" src="js/firebase-config.js"></script>
-    <script type="module" src="js/app.js"></script>
-    <script type="module" src="js/auth.js"></script>
-    
-    <!-- إضافة أنماط إضافية لزر عرض التفاصيل -->
-    <style>
-        /* أنماط زر عرض التفاصيل الجديد */
-        .details-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            font-size: 0.8rem;
-            box-shadow: var(--shadow);
-            min-height: 36px;
-            line-height: 1;
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .details-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            background: #2980b9;
-        }
-
-        .details-btn i {
-            font-size: 0.8rem;
-        }
-
-        /* تحسين تخطيط أزرار التطبيقات */
-        .app-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: auto;
-            padding-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .app-actions .details-btn {
-            flex: 2;
-            min-width: 120px;
-        }
-
-        .app-actions .download-btn {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            flex: 1;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            font-size: 0.8rem;
-            box-shadow: var(--shadow);
-            min-height: 36px;
-            line-height: 1;
-            min-width: 80px;
-        }
-
-        .app-actions .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            background: var(--primary-dark);
-        }
-
-        .app-actions .share-btn {
-            background: #00CB1C;
-            color: white;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            aspect-ratio: 1;
-            font-size: 0.8rem;
-            box-shadow: var(--shadow);
-            flex: 0.1;
-            min-height: 36px;
-            min-width: 36px;
-        }
-
-        .app-actions .share-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            background: #00a817;
-        }
-
-        .app-actions .delete-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            aspect-ratio: 1;
-            font-size: 0.8rem;
-            box-shadow: var(--shadow);
-            flex: 0.1;
-            min-height: 36px;
-            min-width: 36px;
-        }
-
-        .app-actions .delete-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            background: #c0392b;
-        }
-
-        /* تحسينات للشاشات الصغيرة */
-        @media (max-width: 768px) {
-            .app-actions {
-                flex-direction: row;
-                gap: 0.4rem;
-            }
-            
-            .details-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.75rem;
-                min-height: 32px;
-                min-width: 100px;
-            }
-            
-            .app-actions .details-btn {
-                flex: 2;
-                min-width: 100px;
-            }
-            
-            .app-actions .download-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.75rem;
-                min-height: 32px;
-                min-width: 70px;
-            }
-            
-            .app-actions .share-btn,
-            .app-actions .delete-btn {
-                padding: 0.4rem;
-                min-height: 32px;
-                min-width: 32px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .app-actions {
-                gap: 0.3rem;
-            }
-            
-            .details-btn {
-                padding: 0.35rem 0.6rem;
-                font-size: 0.7rem;
-                min-height: 30px;
-                min-width: 90px;
-                gap: 0.3rem;
-            }
-            
-            .details-btn i {
-                font-size: 0.7rem;
-            }
-            
-            .app-actions .details-btn {
-                min-width: 90px;
-            }
-            
-            .app-actions .download-btn {
-                padding: 0.35rem 0.6rem;
-                font-size: 0.7rem;
-                min-height: 30px;
-                min-width: 60px;
-                gap: 0.3rem;
-            }
-            
-            .app-actions .share-btn,
-            .app-actions .delete-btn {
-                padding: 0.35rem;
-                min-height: 30px;
-                min-width: 30px;
-            }
-        }
-
-        /* تحسينات للبطاقات القابلة للنقر */
-        .app-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        /* منع اختيار النص في البطاقات */
-        .app-card {
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        /* تحسين مظهر الأزرار داخل البطاقات */
-        .app-actions button {
-            pointer-events: auto;
-        }
-    </style>
+    <!-- تحميل ملفات JavaScript -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
 
     <script>
         // إدارة شريط البحث
@@ -590,14 +278,6 @@
                     document.getElementById('searchModal').style.display = 'block';
                 }
             });
-        });
-
-        // إضافة أيقونة W للزر
-        document.addEventListener('DOMContentLoaded', function() {
-            const iconBtn = document.querySelector('.icon-btn');
-            if (iconBtn) {
-                iconBtn.innerHTML = '<span class="icon-w">W</span>';
-            }
         });
     </script>
 </body>

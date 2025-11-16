@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحدث مع إضافة زر عرض التفاصيل
+// js/app.js - الإصدار المحدث والمصحح
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -7,9 +7,7 @@ import {
     getDocs, 
     deleteDoc, 
     doc, 
-    updateDoc,
-    query,
-    orderBy
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 let allApps = [];
@@ -102,6 +100,7 @@ function generateShareLink(appId) {
 
 // فتح صفحة التفاصيل
 function openAppDetails(appId) {
+    console.log("فتح تفاصيل التطبيق:", appId);
     const shareUrl = generateShareLink(appId);
     window.open(shareUrl, '_blank');
 }
@@ -260,8 +259,7 @@ function displayApps(apps) {
                 
                 const appId = this.getAttribute('data-id');
                 if (appId) {
-                    const shareUrl = generateShareLink(appId);
-                    window.open(shareUrl, '_blank');
+                    openAppDetails(appId);
                 }
             });
         });
@@ -278,11 +276,11 @@ function createAppCard(app) {
     const ratingStars = generateRatingStars(app.rating);
     
     const appIcon = app.iconURL 
-        ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}"></div>`
+        ? `<div class="app-icon"><img src="${app.iconURL}" alt="${app.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'${iconClass}\\'></i>'"></div>`
         : `<div class="app-icon"><i class="${iconClass}"></i></div>`;
     
     return `
-        <div class="app-card" data-category="${app.category}" data-id="${app.id}" style="cursor: pointer;">
+        <div class="app-card" data-category="${app.category}" data-id="${app.id}">
             <div class="app-header">
                 ${appIcon}
                 <div class="app-info">
@@ -314,19 +312,19 @@ function createAppCard(app) {
             ${app.featured ? '<div class="featured-badge">⭐ مميز</div>' : ''}
             ${app.trending ? '<div class="trending-badge">🔥 شائع</div>' : ''}
             <div class="app-actions">
-                <button class="details-btn" onclick="event.stopPropagation(); openAppDetails('${app.id}')">
+                <button class="details-btn" onclick="openAppDetails('${app.id}')">
                     <i class="fas fa-info-circle"></i>
                     عرض التفاصيل
                 </button>
-                <button class="download-btn" onclick="event.stopPropagation(); downloadApp('${app.downloadURL}', '${app.id}')">
+                <button class="download-btn" onclick="downloadApp('${app.id}')">
                     <i class="fas fa-download"></i>
                     تحميل
                 </button>
-                <button class="share-btn" onclick="event.stopPropagation(); shareApp('${app.id}', '${app.name}')">
+                <button class="share-btn" onclick="shareApp('${app.id}', '${app.name.replace(/'/g, "\\'")}')">
                     <i class="fas fa-share-alt"></i>
                 </button>
                 ${isAdmin() ? `
-                    <button class="delete-btn" onclick="event.stopPropagation(); deleteApp('${app.id}')">
+                    <button class="delete-btn" onclick="deleteApp('${app.id}')">
                         <i class="fas fa-trash"></i>
                     </button>
                 ` : ''}
@@ -562,22 +560,21 @@ function performSearch() {
 }
 
 // تحميل التطبيق
-function downloadApp(downloadURL, appId) {
+function downloadApp(appId) {
     console.log("تحميل التطبيق:", appId);
     
     const app = allApps.find(app => app.id === appId);
     if (app) {
         app.downloads = (app.downloads || 0) + 1;
         updateCurrentDisplay();
+        
+        if (app.downloadURL && app.downloadURL.startsWith('http')) {
+            window.open(app.downloadURL, '_blank');
+            showTempMessage('جاري تحميل التطبيق...', 'success');
+        } else {
+            showTempMessage('رابط التحميل غير متوفر حالياً', 'error');
+        }
     }
-    
-    if (downloadURL && downloadURL.startsWith('http')) {
-        window.open(downloadURL, '_blank');
-    } else {
-        alert('رابط التحميل غير متوفر حالياً');
-    }
-    
-    showTempMessage('جاري تحميل التطبيق...', 'success');
 }
 
 // حذف التطبيق (للمسؤول فقط)

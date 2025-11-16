@@ -17,99 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/style.css">
     
-    <script>
-        // دالة لتحديث بيانات التعريف ديناميكياً
-        function updateMetaTags(app) {
-            if (!app) return;
-            
-            // تحديث العنوان
-            document.title = `${app.name} - تحميل مجاني | وسيل بلاي`;
-            
-            // تحديث وصف الصفحة
-            let metaDescription = document.querySelector('meta[name="description"]');
-            if (!metaDescription) {
-                metaDescription = document.createElement('meta');
-                metaDescription.name = 'description';
-                document.head.appendChild(metaDescription);
-            }
-            metaDescription.content = `${app.description} - حمّل ${app.name} مجاناً من وسيل بلاي. ${app.size}MB | الإصدار ${app.version}`;
-            
-            // تحديث Open Graph
-            updateMetaProperty('og:title', `${app.name} - وسيل بلاي`);
-            updateMetaProperty('og:description', app.description);
-            updateMetaProperty('og:url', window.location.href);
-            
-            if (app.iconURL) {
-                updateMetaProperty('og:image', app.iconURL);
-            }
-            
-            // إضافة Structured Data للتطبيق
-            addAppStructuredData(app);
-        }
-        
-        function updateMetaProperty(property, content) {
-            let meta = document.querySelector(`meta[property="${property}"]`);
-            if (!meta) {
-                meta = document.createElement('meta');
-                meta.setAttribute('property', property);
-                document.head.appendChild(meta);
-            }
-            meta.setAttribute('content', content);
-        }
-        
-        function addAppStructuredData(app) {
-            // إزالة أي Structured Data موجود مسبقاً
-            const existingSchema = document.querySelector('script[type="application/ld+json"]');
-            if (existingSchema) {
-                existingSchema.remove();
-            }
-            
-            const schema = {
-                "@context": "https://schema.org",
-                "@type": "SoftwareApplication",
-                "name": app.name,
-                "description": app.description,
-                "applicationCategory": getSchemaCategory(app.category),
-                "operatingSystem": "ANDROID",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "USD"
-                },
-                "author": {
-                    "@type": "Organization",
-                    "name": "وسيل بلاي"
-                },
-                "downloadUrl": app.downloadURL
-            };
-            
-            if (app.rating) {
-                schema.aggregateRating = {
-                    "@type": "AggregateRating",
-                    "ratingValue": app.rating.toString(),
-                    "ratingCount": "100"
-                };
-            }
-            
-            const script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.textContent = JSON.stringify(schema);
-            document.head.appendChild(script);
-        }
-        
-        function getSchemaCategory(category) {
-            const categories = {
-                'games': 'GameApplication',
-                'social': 'SocialNetworkingApplication',
-                'entertainment': 'EntertainmentApplication',
-                'productivity': 'BusinessApplication',
-                'education': 'EducationalApplication',
-                'utility': 'UtilityApplication'
-            };
-            return categories[category] || 'MobileApplication';
-        }
-    </script>
-    
     <style>
         /* الأنماط الحالية لـ share.html تبقى كما هي */
         :root {
@@ -615,6 +522,97 @@
                 console.error('Error loading shared app:', error);
                 showErrorState('عذراً، لم يتم العثور على التطبيق المطلوب.');
             }
+        }
+
+        // دالة لتحديث بيانات التعريف ديناميكياً
+        function updateMetaTags(app) {
+            if (!app) return;
+            
+            // تحديث العنوان
+            document.title = `${app.name} - تحميل مجاني | وسيل بلاي`;
+            
+            // تحديث وصف الصفحة
+            let metaDescription = document.querySelector('meta[name="description"]');
+            if (!metaDescription) {
+                metaDescription = document.createElement('meta');
+                metaDescription.name = 'description';
+                document.head.appendChild(metaDescription);
+            }
+            metaDescription.content = `${app.description} - حمّل ${app.name} مجاناً من وسيل بلاي. ${app.size}MB | الإصدار ${app.version}`;
+            
+            // تحديث Open Graph
+            updateMetaProperty('og:title', `${app.name} - وسيل بلاي`);
+            updateMetaProperty('og:description', app.description);
+            updateMetaProperty('og:url', window.location.href);
+            
+            if (app.iconURL) {
+                updateMetaProperty('og:image', app.iconURL);
+            }
+            
+            // إضافة Structured Data للتطبيق
+            addAppStructuredData(app);
+        }
+        
+        function updateMetaProperty(property, content) {
+            let meta = document.querySelector(`meta[property="${property}"]`);
+            if (!meta) {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', property);
+                document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', content);
+        }
+        
+        function addAppStructuredData(app) {
+            // إزالة أي Structured Data موجود مسبقاً
+            const existingSchema = document.querySelector('script[type="application/ld+json"]');
+            if (existingSchema) {
+                existingSchema.remove();
+            }
+            
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                "name": app.name,
+                "description": app.description,
+                "applicationCategory": getSchemaCategory(app.category),
+                "operatingSystem": "ANDROID",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                },
+                "author": {
+                    "@type": "Organization",
+                    "name": "وسيل بلاي"
+                },
+                "downloadUrl": app.downloadURL
+            };
+            
+            if (app.rating) {
+                schema.aggregateRating = {
+                    "@type": "AggregateRating",
+                    "ratingValue": app.rating.toString(),
+                    "ratingCount": "100"
+                };
+            }
+            
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.textContent = JSON.stringify(schema);
+            document.head.appendChild(script);
+        }
+        
+        function getSchemaCategory(category) {
+            const categories = {
+                'games': 'GameApplication',
+                'social': 'SocialNetworkingApplication',
+                'entertainment': 'EntertainmentApplication',
+                'productivity': 'BusinessApplication',
+                'education': 'EducationalApplication',
+                'utility': 'UtilityApplication'
+            };
+            return categories[category] || 'MobileApplication';
         }
 
         // عرض محتوى المشاركة

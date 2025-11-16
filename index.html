@@ -317,6 +317,229 @@
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/app.js"></script>
     <script type="module" src="js/auth.js"></script>
+    
+    <!-- إضافة أنماط إضافية لزر عرض التفاصيل -->
+    <style>
+        /* أنماط زر عرض التفاصيل الجديد */
+        .details-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow);
+            min-height: 36px;
+            line-height: 1;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .details-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: #2980b9;
+        }
+
+        .details-btn i {
+            font-size: 0.8rem;
+        }
+
+        /* تحسين تخطيط أزرار التطبيقات */
+        .app-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+            padding-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .app-actions .details-btn {
+            flex: 2;
+            min-width: 120px;
+        }
+
+        .app-actions .download-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow);
+            min-height: 36px;
+            line-height: 1;
+            min-width: 80px;
+        }
+
+        .app-actions .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: var(--primary-dark);
+        }
+
+        .app-actions .share-btn {
+            background: #00CB1C;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow);
+            flex: 0.1;
+            min-height: 36px;
+            min-width: 36px;
+        }
+
+        .app-actions .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: #00a817;
+        }
+
+        .app-actions .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow);
+            flex: 0.1;
+            min-height: 36px;
+            min-width: 36px;
+        }
+
+        .app-actions .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: #c0392b;
+        }
+
+        /* تحسينات للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .app-actions {
+                flex-direction: row;
+                gap: 0.4rem;
+            }
+            
+            .details-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+                min-height: 32px;
+                min-width: 100px;
+            }
+            
+            .app-actions .details-btn {
+                flex: 2;
+                min-width: 100px;
+            }
+            
+            .app-actions .download-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+                min-height: 32px;
+                min-width: 70px;
+            }
+            
+            .app-actions .share-btn,
+            .app-actions .delete-btn {
+                padding: 0.4rem;
+                min-height: 32px;
+                min-width: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-actions {
+                gap: 0.3rem;
+            }
+            
+            .details-btn {
+                padding: 0.35rem 0.6rem;
+                font-size: 0.7rem;
+                min-height: 30px;
+                min-width: 90px;
+                gap: 0.3rem;
+            }
+            
+            .details-btn i {
+                font-size: 0.7rem;
+            }
+            
+            .app-actions .details-btn {
+                min-width: 90px;
+            }
+            
+            .app-actions .download-btn {
+                padding: 0.35rem 0.6rem;
+                font-size: 0.7rem;
+                min-height: 30px;
+                min-width: 60px;
+                gap: 0.3rem;
+            }
+            
+            .app-actions .share-btn,
+            .app-actions .delete-btn {
+                padding: 0.35rem;
+                min-height: 30px;
+                min-width: 30px;
+            }
+        }
+
+        /* تحسينات للبطاقات القابلة للنقر */
+        .app-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* منع اختيار النص في البطاقات */
+        .app-card {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* تحسين مظهر الأزرار داخل البطاقات */
+        .app-actions button {
+            pointer-events: auto;
+        }
+    </style>
+
     <script>
         // إدارة شريط البحث
         document.getElementById('searchIconTop').addEventListener('click', function() {
@@ -367,6 +590,14 @@
                     document.getElementById('searchModal').style.display = 'block';
                 }
             });
+        });
+
+        // إضافة أيقونة W للزر
+        document.addEventListener('DOMContentLoaded', function() {
+            const iconBtn = document.querySelector('.icon-btn');
+            if (iconBtn) {
+                iconBtn.innerHTML = '<span class="icon-w">W</span>';
+            }
         });
     </script>
 </body>

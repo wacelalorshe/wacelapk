@@ -1,4 +1,4 @@
-// js/app.js - الإصدار المحدث والمصحح
+// js/app.js - الإصدار المحدث بدون زر عرض التفاصيل
 import { db } from './firebase-config.js';
 
 // استيراد دوال Firebase مباشرة
@@ -248,11 +248,11 @@ function displayApps(apps) {
     appsContainer.innerHTML = html;
     setupDescriptionToggle();
     
-    // إضافة event listeners للبطاقات
+    // إضافة event listeners للبطاقات لفتح صفحة المشاركة عند النقر
     setTimeout(() => {
         document.querySelectorAll('.app-card').forEach(card => {
             card.addEventListener('click', function(e) {
-                // منع فتح رابط المشاركة إذا تم النقر على زر
+                // منع فتح صفحة المشاركة إذا تم النقر على زر
                 if (e.target.closest('.app-actions')) {
                     return;
                 }
@@ -312,10 +312,6 @@ function createAppCard(app) {
             ${app.featured ? '<div class="featured-badge">⭐ مميز</div>' : ''}
             ${app.trending ? '<div class="trending-badge">🔥 شائع</div>' : ''}
             <div class="app-actions">
-                <button class="details-btn" onclick="openAppDetails('${app.id}')">
-                    <i class="fas fa-info-circle"></i>
-                    عرض التفاصيل
-                </button>
                 <button class="download-btn" onclick="downloadApp('${app.id}')">
                     <i class="fas fa-download"></i>
                     تحميل

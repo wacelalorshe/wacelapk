@@ -13,6 +13,28 @@ import {
     orderBy
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+// إعدادات Adsterra
+const adsterraConfig = {
+    banner: {
+        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1',
+        width: 320,
+        height: 50
+    },
+    popunder: {
+        script: '//pl28054761.effectivegatecpm.com/77/fa/de/77fade1a0c22ec2f2f9c4fb8723f5119.js'
+    },
+    largeBanner: {
+        key: 'b2aa6af095dd52e3abeff8d9a46bcf2b',
+        width: 728,
+        height: 90
+    },
+    normalBanner: {
+        key: '5d17aac1d94f6ffe2742a2ce78e5b0b1',
+        width: 300,
+        height: 250
+    }
+};
+
 let apps = [];
 let currentEditingApp = null;
 let searchTerm = '';
@@ -290,46 +312,42 @@ function updateStats() {
 function loadAdminAds() {
     const adContainers = document.querySelectorAll('.ad-container-admin');
     
-    adContainers.forEach(container => {
-        // مسح المحتوى الحالي
+    adContainers.forEach((container, index) => {
         container.innerHTML = '';
         
-        // إنشاء عنصر iframe للإعلان
-        const iframe = document.createElement('iframe');
-        iframe.style.width = '100%';
-        iframe.style.height = '250px';
-        iframe.style.border = 'none';
-        iframe.style.borderRadius = '8px';
-        iframe.scrolling = 'no';
+        const adId = `ad-admin-${Date.now()}-${index}`;
+        const adConfig = adsterraConfig.normalBanner;
         
-        // إنشاء محتوى HTML للإعلان
-        const adHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body { margin: 0; padding: 0; background: transparent; }
-                </style>
-            </head>
-            <body>
-                <script type="text/javascript">
-                    atOptions = {
-                        'key' : 'e9bb9d40367d9e2b490048a472a6b5e0',
-                        'format' : 'iframe',
-                        'height' : 250,
-                        'width' : 300,
-                        'params' : {}
-                    };
-                </script>
-                <script type="text/javascript" src="//www.highperformanceformat.com/e9bb9d40367d9e2b490048a472a6b5e0/invoke.js"></script>
-            </body>
-            </html>
+        const adDiv = document.createElement('div');
+        adDiv.id = adId;
+        adDiv.className = 'ad-content';
+        
+        const script1 = document.createElement('script');
+        script1.type = 'text/javascript';
+        script1.innerHTML = `
+            atOptions = {
+                'key' : '${adConfig.key}',
+                'format' : 'iframe',
+                'height' : ${adConfig.height},
+                'width' : ${adConfig.width},
+                'params' : {}
+            };
         `;
         
-        // تعيين محتوى iframe
-        iframe.srcdoc = adHtml;
-        container.appendChild(iframe);
+        const script2 = document.createElement('script');
+        script2.type = 'text/javascript';
+        script2.src = '//www.highperformanceformat.com/' + adConfig.key + '/invoke.js';
+        script2.async = true;
+        
+        container.appendChild(script1);
+        container.appendChild(adDiv);
+        container.appendChild(script2);
+        
+        setTimeout(() => {
+            if (!container.querySelector('iframe') && !container.innerHTML.includes('highperformanceformat')) {
+                container.innerHTML = '<div class="ad-placeholder">إعلان</div>';
+            }
+        }, 2000);
     });
 }
 

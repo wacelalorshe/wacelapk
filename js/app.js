@@ -662,3 +662,85 @@ window.deleteApp = deleteApp;
 window.shareApp = shareApp;
 window.displaySpecialSection = displaySpecialSection;
 window.goToSharePage = goToSharePage;
+
+
+
+// PWA Functions
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+                console.log('Service Worker مسجل بنجاح:', registration.scope);
+            })
+            .catch(function(error) {
+                console.log('فشل تسجيل Service Worker:', error);
+            });
+    }
+}
+
+// التحقق من حالة الاتصال
+function checkConnection() {
+    if (!navigator.onLine) {
+        showOfflineMessage();
+    }
+    
+    window.addEventListener('online', function() {
+        showOnlineMessage();
+        // إعادة تحميل التطبيقات عند العودة للاتصال
+        loadApps();
+    });
+    
+    window.addEventListener('offline', showOfflineMessage);
+}
+
+function showOfflineMessage() {
+    const existingMessage = document.querySelector('.offline-banner');
+    if (existingMessage) return;
+    
+    const message = document.createElement('div');
+    message.className = 'offline-banner';
+    message.innerHTML = `
+        <i class="fas fa-wifi"></i>
+        أنت غير متصل بالإنترنت - الوضع غير متصل
+    `;
+    document.body.appendChild(message);
+}
+
+function showOnlineMessage() {
+    const existingMessage = document.querySelector('.online-banner');
+    if (existingMessage) existingMessage.remove();
+    
+    const offlineMessage = document.querySelector('.offline-banner');
+    if (offlineMessage) offlineMessage.remove();
+    
+    const message = document.createElement('div');
+    message.className = 'online-banner';
+    message.innerHTML = `
+        <i class="fas fa-wifi"></i>
+        تم استعادة الاتصال بالإنترنت
+    `;
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        if (message.parentNode) {
+            message.parentNode.removeChild(message);
+        }
+    }, 3000);
+}
+
+// تحديث تهيئة الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("تهيئة صفحة المتجر...");
+    
+    // تسجيل Service Worker
+    registerServiceWorker();
+    
+    // التحقق من الاتصال
+    checkConnection();
+    
+    // تحميل التطبيقات
+    loadApps();
+    
+    // ... باقي الكود الحالي
+});
+

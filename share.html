@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-	
-	<script type='text/javascript' src='//pl28083176.effectivegatecpm.com/67/16/da/6716daeae43f76302a6416dd488ef9b9.js'></script>
-	
-	<script type='text/javascript' src='//pl28054761.effectivegatecpm.com/77/fa/de/77fade1a0c22ec2f2f9c4fb8723f5119.js'></script>
-	
-	
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تحميل التطبيق - وسيل بلاي</title>
@@ -21,8 +15,6 @@
     <meta property="og:image" content="https://wacel-play.netlify.app/images/logo.png">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/style.css">
-    
     <style>
         /* الأنماط الحالية لـ share.html تبقى كما هي */
         :root {
@@ -230,6 +222,11 @@
         
         .btn-facebook {
             background: #1877F2;
+            color: white;
+        }
+        
+        .btn-telegram {
+            background: #0088cc;
             color: white;
         }
         
@@ -454,12 +451,9 @@
                 </a>
             </div>
         </div>
-        
-        
     </nav>
 
     <!-- المحتوى الرئيسي -->
-    	
     <main class="main-content">
         <div class="share-container">
             <div class="share-card">
@@ -471,18 +465,6 @@
                 </div>
             </div>
         </div>
-        
-        <script type="text/javascript">
-	atOptions = {
-		'key' : '5d17aac1d94f6ffe2742a2ce78e5b0b1',
-		'format' : 'iframe',
-		'height' : 50,
-		'width' : 320,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/5d17aac1d94f6ffe2742a2ce78e5b0b1/invoke.js"></script>
-        
     </main>
 
     <script type="module">
@@ -569,9 +551,6 @@
             if (app.iconURL) {
                 updateMetaProperty('og:image', app.iconURL);
             }
-            
-            // إضافة Structured Data للتطبيق
-            addAppStructuredData(app);
         }
         
         function updateMetaProperty(property, content) {
@@ -582,58 +561,6 @@
                 document.head.appendChild(meta);
             }
             meta.setAttribute('content', content);
-        }
-        
-        function addAppStructuredData(app) {
-            // إزالة أي Structured Data موجود مسبقاً
-            const existingSchema = document.querySelector('script[type="application/ld+json"]');
-            if (existingSchema) {
-                existingSchema.remove();
-            }
-            
-            const schema = {
-                "@context": "https://schema.org",
-                "@type": "SoftwareApplication",
-                "name": app.name,
-                "description": app.description,
-                "applicationCategory": getSchemaCategory(app.category),
-                "operatingSystem": "ANDROID",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "USD"
-                },
-                "author": {
-                    "@type": "Organization",
-                    "name": "وسيل بلاي"
-                },
-                "downloadUrl": app.downloadURL
-            };
-            
-            if (app.rating) {
-                schema.aggregateRating = {
-                    "@type": "AggregateRating",
-                    "ratingValue": app.rating.toString(),
-                    "ratingCount": "100"
-                };
-            }
-            
-            const script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.textContent = JSON.stringify(schema);
-            document.head.appendChild(script);
-        }
-        
-        function getSchemaCategory(category) {
-            const categories = {
-                'games': 'GameApplication',
-                'social': 'SocialNetworkingApplication',
-                'entertainment': 'EntertainmentApplication',
-                'productivity': 'BusinessApplication',
-                'education': 'EducationalApplication',
-                'utility': 'UtilityApplication'
-            };
-            return categories[category] || 'MobileApplication';
         }
 
         // عرض محتوى المشاركة
@@ -738,9 +665,13 @@
                             <i class="fab fa-twitter"></i>
                             تويتر
                         </button>
-                        <button class="btn-share-social btn-facebook" onclick="shareOnFacebook('${shareUrl}')">
+                        <button class="btn-share-social btn-facebook" onclick="shareOnFacebook('${shareText}', '${shareUrl}')">
                             <i class="fab fa-facebook"></i>
                             فيسبوك
+                        </button>
+                        <button class="btn-share-social btn-telegram" onclick="shareOnTelegram('${shareText}', '${shareUrl}')">
+                            <i class="fab fa-telegram"></i>
+                            تيليجرام
                         </button>
                     </div>
                     
@@ -816,38 +747,96 @@
             }
         }
 
-        // مشاركة على واتساب
+        // مشاركة على واتساب - الإصدار المحسن
         function shareOnWhatsApp(text, url) {
-            const shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
-            window.open(shareUrl, '_blank');
+            try {
+                // استخدام رابط واتساب الرسمي
+                const fullText = `${text} ${url}`;
+                const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`;
+                
+                // فتح في نافذة جديدة
+                window.open(shareUrl, '_blank', 'width=600,height=500');
+                
+                showTempMessage('جاري فتح واتساب...', 'success');
+            } catch (error) {
+                console.error('خطأ في مشاركة واتساب:', error);
+                showTempMessage('حدث خطأ في مشاركة واتساب', 'error');
+            }
         }
 
-        // مشاركة على تويتر
+        // مشاركة على تويتر - الإصدار المحسن
         function shareOnTwitter(text, url) {
-            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-            window.open(shareUrl, '_blank');
+            try {
+                // استخدام رابط تويتر الرسمي للمشاركة
+                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                
+                // فتح في نافذة جديدة
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+                
+                showTempMessage('جاري فتح تويتر...', 'success');
+            } catch (error) {
+                console.error('خطأ في مشاركة تويتر:', error);
+                showTempMessage('حدث خطأ في مشاركة تويتر', 'error');
+            }
         }
 
-        // مشاركة على فيسبوك
-        function shareOnFacebook(url) {
-            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-            window.open(shareUrl, '_blank');
+        // مشاركة على فيسبوك - الإصدار المحسن
+        function shareOnFacebook(text, url) {
+            try {
+                // استخدام رابط فيسبوك الرسمي للمشاركة
+                const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+                
+                // فتح في نافذة جديدة
+                window.open(shareUrl, '_blank', 'width=600,height=500');
+                
+                showTempMessage('جاري فتح فيسبوك...', 'success');
+            } catch (error) {
+                console.error('خطأ في مشاركة فيسبوك:', error);
+                showTempMessage('حدث خطأ في مشاركة فيسبوك', 'error');
+            }
+        }
+
+        // مشاركة على تيليجرام - إضافة جديدة
+        function shareOnTelegram(text, url) {
+            try {
+                const fullText = `${text} ${url}`;
+                const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                
+                // فتح في نافذة جديدة
+                window.open(shareUrl, '_blank', 'width=600,height=500');
+                
+                showTempMessage('جاري فتح تيليجرام...', 'success');
+            } catch (error) {
+                console.error('خطأ في مشاركة تيليجرام:', error);
+                showTempMessage('حدث خطأ في مشاركة تيليجرام', 'error');
+            }
         }
 
         // نسخ رابط المشاركة
         function copyShareLink(url) {
-            navigator.clipboard.writeText(url).then(() => {
-                showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
-            }).catch(() => {
-                // Fallback for older browsers
-                const tempInput = document.createElement('input');
-                tempInput.value = url;
-                document.body.appendChild(tempInput);
-                tempInput.select();
+            // إنشاء عنصر نصي مؤقت
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); // للهواتف المحمولة
+            
+            try {
+                // محاولة استخدام Clipboard API الحديث
+                navigator.clipboard.writeText(url).then(() => {
+                    showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
+                }).catch(() => {
+                    // استخدام الطريقة القديمة إذا فشلت
+                    document.execCommand('copy');
+                    showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
+                });
+            } catch (err) {
+                // استخدام الطريقة القديمة إذا فشلت
                 document.execCommand('copy');
-                document.body.removeChild(tempInput);
                 showTempMessage('تم نسخ رابط المشاركة إلى الحافظة!', 'success');
-            });
+            } finally {
+                document.body.removeChild(tempInput);
+            }
         }
 
         // بدء التحميل
@@ -938,6 +927,7 @@
         window.shareOnWhatsApp = shareOnWhatsApp;
         window.shareOnTwitter = shareOnTwitter;
         window.shareOnFacebook = shareOnFacebook;
+        window.shareOnTelegram = shareOnTelegram;
         window.copyShareLink = copyShareLink;
         window.startDownload = startDownload;
         window.goToHome = goToHome;
